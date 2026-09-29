@@ -772,17 +772,17 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_download_model_artifacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_eosvc</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_access_json</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
-                <span class="n">echo</span><span class="p">(</span><span class="s2">"Detected access.json. Downloading model artifacts via eosvc."</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Downloading model artifacts via eosvc"</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_eosvc</span><span class="p">():</span>
                     <span class="n">downloaded</span><span class="p">,</span> <span class="n">had_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_large_files_with_eosvc</span><span class="p">(</span>
                         <span class="n">destination</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">downloaded</span><span class="p">:</span>
-                        <span class="n">echo</span><span class="p">(</span><span class="s2">"Model artifacts downloaded via eosvc."</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Model artifacts downloaded via eosvc"</span><span class="p">)</span>
                         <span class="k">return</span>
                     <span class="k">if</span> <span class="n">had_error</span><span class="p">:</span>
                         <span class="n">echo</span><span class="p">(</span>
-                            <span class="s2">"eosvc encountered errors fetching artifacts. Falling back to Git LFS."</span><span class="p">,</span>
+                            <span class="s2">"Some model files could not be downloaded. Retrying another way."</span><span class="p">,</span>
                             <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -790,9 +790,8 @@
                             <span class="s2">"eosvc found no artifacts to download. Falling back to Git LFS."</span>
                         <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">echo</span><span class="p">(</span>
-                        <span class="s2">"Could not install eosvc automatically. Falling back to Git LFS."</span><span class="p">,</span>
-                        <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">"Could not install eosvc automatically. Falling back to Git LFS."</span>
                     <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -837,7 +836,10 @@
         <span class="n">url</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">repo_path</span>
         <span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>

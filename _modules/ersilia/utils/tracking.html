@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>ersilia.cli.echo - Ersilia documentation</title>
+        <title>ersilia.utils.tracking - Ersilia documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -303,141 +303,90 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for ersilia.cli.echo</h1><div class="highlight"><pre>
-<span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">emoji</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+          <h1>Source code for ersilia.utils.tracking</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span><span class="p">,</span> <span class="n">get_session_uuid</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">SILENCE_FILE</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="n">TRACKING_STUB</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"model_id"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>  <span class="c1"># ID of the model</span>
+    <span class="s2">"runs"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Number of runs</span>
+    <span class="s2">"input_size"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of input sizes, where len(input_sizes) == runs</span>
+    <span class="s2">"output_size"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of output sizes, where len(output_sizes) == runs</span>
+    <span class="s2">"avg_input_size"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of average input sizes, where len(avg_input_sizes) == runs</span>
+    <span class="s2">"avg_output_size"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of average output sizes, where len(avg_output_sizes) == runs</span>
+    <span class="s2">"container_memory_perc"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of container memory percentages, where len(cpu_time_seconds) == runs</span>
+    <span class="s2">"peak_container_memory_perc"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of peak container memory in MB, where len(peak_container_memory_MB) == runs</span>
+    <span class="s2">"container_cpu_perc"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of container CPU utilisation percentages, where len(container_cpu_time_seconds) == runs</span>
+    <span class="s2">"peak_container_cpu_perc"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of peak container CPU utilisation percentages, where len(peak_container_cpu_perc) == runs</span>
+    <span class="s2">"nan_count_agg"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of NaN count, where len(nan_count_agg) == runs</span>
+    <span class="s2">"mismatched_type_count"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of mismatched type count, where len(mismatched_type_agg) == runs</span>
+    <span class="s2">"correct_shape"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of correct shape count, where len(correct_shape) == runs</span>
+    <span class="s2">"warning_count"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of warning count, where len(warning_count) == runs</span>
+    <span class="s2">"error_count"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># List of error count, where len(error_count) == runs</span>
+<span class="p">}</span>
 
-<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
-
-
-<div class="viewcode-block" id="Silencer">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    A class to manage the silencing of CLI output.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    silence_file : str</span>
-<span class="sd">        Path to the silence file.</span>
-
-<span class="sd">    Methods</span>
-<span class="sd">    -------</span>
-<span class="sd">    is_silence()</span>
-<span class="sd">        Checks if the CLI output is silenced.</span>
-<span class="sd">    speak()</span>
-<span class="sd">        Enables CLI output.</span>
-<span class="sd">    silence()</span>
-<span class="sd">        Disables CLI output.</span>
-<span class="sd">    """</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">()</span>
-
-<div class="viewcode-block" id="Silencer.is_silence">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.is_silence">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Checks if the CLI output is silenced.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
-<span class="sd">            True if the CLI output is silenced, False otherwise.</span>
-<span class="sd">        """</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">"silence"</span><span class="p">]</span></div>
+<span class="n">RUN_DATA_STUB</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># This should not be used as is, always create a deep copy.</span>
+    <span class="s2">"input_size"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"output_size"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"avg_input_size"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"avg_output_size"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"container_memory_perc"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"peak_container_memory_perc"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"container_cpu_perc"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"peak_container_cpu_perc"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"nan_count_agg"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"mismatched_type_count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"correct_shape"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"warning_count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"error_count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
 
 
-<div class="viewcode-block" id="Silencer.speak">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.speak">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Enables CLI output.</span>
-<span class="sd">        """</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"silence"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+<div class="viewcode-block" id="init_tracking_summary">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.tracking.init_tracking_summary">[docs]</a>
+<span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init_tracking_summary</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">get_session_uuid</span><span class="p">()</span><span class="si">}</span><span class="s2">.json"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">TRACKING_STUB</span><span class="p">[</span><span class="s2">"model_id"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">model_id</span>  <span class="c1"># This won't affect models that run in different sessions, or if a new model is served in the same session.</span>
+            <span class="p">)</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">TRACKING_STUB</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="Silencer.silence">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.silence">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Disables CLI output.</span>
-<span class="sd">        """</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"silence"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
-</div>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="s2">"Could not create tracking summary file, check if session directory exists"</span>
+        <span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="echo">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.echo">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">harmonize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span>
+<div class="viewcode-block" id="update_tracking_summary">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.tracking.update_tracking_summary">[docs]</a>
+<span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_tracking_summary</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">incoming_data</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">get_session_uuid</span><span class="p">()</span><span class="si">}</span><span class="s2">.json"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">current</span><span class="p">[</span><span class="s2">"runs"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">current</span><span class="p">[</span><span class="s2">"model_id"</span><span class="p">]</span> <span class="o">!=</span> <span class="n">model_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Model ID mismatch for given tracking data"</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">incoming_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">current</span><span class="p">:</span>
+                    <span class="n">current</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> not found in tracking data"</span><span class="p">)</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">emoji</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">emoji</span><span class="o">.</span><span class="n">emojize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">"alias"</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">harmonize</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span>
-
-    <span class="n">color</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fg"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"color"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"style"</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"yellow"</span><span class="p">,</span> <span class="s2">"bright_yellow"</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"⚠"</span>
-    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"red"</span><span class="p">,</span> <span class="s2">"bright_red"</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"✖"</span>
-    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"green"</span><span class="p">,</span> <span class="s2">"bright_green"</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"✓"</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"▪"</span>
-
-    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
-
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">():</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">wrap_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">styles</span><span class="p">:</span>
-        <span class="n">styles</span><span class="p">[</span><span class="s2">"dim"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span></div>
-
-
-
-<div class="viewcode-block" id="spinner">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.spinner">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">spinner</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="n">console</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">)):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ▪  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"dim"</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">result</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✖  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
-            <span class="k">raise</span></div>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="s2">"Could not update tracking summary file, check if session directory exists"</span>
+        <span class="p">)</span></div>
 
 </pre></div>
         </article>

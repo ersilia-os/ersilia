@@ -304,7 +304,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.close</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
@@ -314,7 +316,7 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Closes the current session of the served model.</span>
 
-<span class="sd">    This command allows users to close the current session and clean up any resources.</span>
+<span class="sd">    This command stops the model served in this terminal and cleans up its resources.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -325,12 +327,15 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">        Close the current session:</span>
+<span class="sd">        Close the model served in this terminal:</span>
 <span class="sd">        $ ersilia close</span>
 <span class="sd">    """</span>
 
     <span class="c1"># Example usage: ersilia close {MODEL}</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">"Close model"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Close model"</span><span class="p">)</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Close the served model"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Stop the model served in this terminal and free its resources."</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">():</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
@@ -348,12 +353,29 @@
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"No model was served"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">"No model is being served in this terminal, so there is nothing to close."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="k">return</span>
+        <span class="k">if</span> <span class="n">service_class</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"pulled_docker"</span><span class="p">,</span> <span class="s2">"docker"</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+                <span class="c1"># Keep the record: if Docker is only slow or paused, the</span>
+                <span class="c1"># container still runs and must stay tracked.</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Docker is not running, so model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> cannot be closed now."</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="s2">"Its container stops along with Docker. Start Docker and run 'ersilia close' again to clear it."</span>
+                <span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
         <span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">":no_entry: Model </span><span class="si">{0}</span><span class="s2"> closed"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> closed."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">close</span></div>
 

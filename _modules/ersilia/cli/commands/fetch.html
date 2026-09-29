@@ -305,6 +305,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.fetch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 
@@ -367,8 +368,8 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">"--from_dockerhub"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">"Fetch from DockerHub (default)."</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Fetch from DockerHub (the default when no other source is given)."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">"--from_hosted"</span><span class="p">,</span>
@@ -394,18 +395,53 @@
         <span class="kn">import</span><span class="w"> </span><span class="nn">nest_asyncio</span>
 
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFetcher</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALREADY_FETCHED</span><span class="p">,</span> <span class="n">ModelFetcher</span>
 
         <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..run_checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">fail</span>
+
+        <span class="n">chosen</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">name</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">on</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="p">(</span><span class="s2">"--from_dir"</span><span class="p">,</span> <span class="n">from_dir</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"--from_github"</span><span class="p">,</span> <span class="n">from_github</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"--from_s3"</span><span class="p">,</span> <span class="n">from_s3</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"--from_dockerhub"</span><span class="p">,</span> <span class="n">from_dockerhub</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"--from_hosted"</span><span class="p">,</span> <span class="n">from_hosted</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">on</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chosen</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">UsageError</span><span class="p">(</span>
+                <span class="s2">"Choose only one source; got </span><span class="si">{0}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chosen</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="n">from_dockerhub</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">chosen</span> <span class="ow">or</span> <span class="n">from_dockerhub</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">from_dockerhub</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"--version only applies to DockerHub, so it is ignored."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">from_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">from_dir</span><span class="p">)):</span>
+                <span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The folder </span><span class="si">{</span><span class="n">from_dir</span><span class="si">}</span><span class="s2"> does not exist."</span><span class="p">)</span>
             <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="n">from_dir</span><span class="p">)</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">folder_id</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">from_dir</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">folder_id</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">folder_id</span> <span class="o">=</span> <span class="n">folder_id</span> <span class="ow">or</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
+            <span class="n">requested</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">folder_id</span> <span class="ow">and</span> <span class="n">requested</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">folder_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">):</span>
+                <span class="n">fail</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"The folder </span><span class="si">{</span><span class="n">from_dir</span><span class="si">}</span><span class="s2"> contains model </span><span class="si">{</span><span class="n">folder_id</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Run 'ersilia fetch </span><span class="si">{</span><span class="n">folder_id</span><span class="si">}</span><span class="s2"> --from_dir </span><span class="si">{</span><span class="n">from_dir</span><span class="si">}</span><span class="s2">'."</span><span class="p">,</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model_id_or_slug</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
-
-        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">from_dir</span><span class="p">,</span> <span class="n">from_github</span><span class="p">,</span> <span class="n">from_s3</span><span class="p">,</span> <span class="n">from_hosted</span><span class="p">]):</span>
-            <span class="n">from_dockerhub</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
             <span class="n">repo_path</span><span class="o">=</span><span class="n">from_dir</span><span class="p">,</span>
@@ -422,13 +458,17 @@
 
         <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">fetch_success</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">"Model fetched successfully"</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> fetched successfully."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> fetched."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Serve it with 'ersilia serve </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="n">ALREADY_FETCHED</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is already fetched."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch: </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-                <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"To fetch it again, delete it first with 'ersilia delete </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">'."</span>
             <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> could not be fetched."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">fetch</span></div>
 

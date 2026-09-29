@@ -906,7 +906,7 @@
             <span class="k">if</span> <span class="n">model_source</span> <span class="o">==</span> <span class="s2">"DockerHub"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="kc">False</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">"Unable to delete Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">. Docker engine is inactive."</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> cannot be deleted while Docker is not running. Start Docker and try again."</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"Model can be deleted."</span>
         <span class="k">else</span><span class="p">:</span>
@@ -926,6 +926,11 @@
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            Identifier of the model to be deleted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model was deleted.</span>
 <span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_inside_docker</span><span class="p">()</span> <span class="ow">and</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">list_eos_images</span><span class="p">():</span>
@@ -933,10 +938,10 @@
                 <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
             <span class="p">):</span>
                 <span class="n">echo</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Cannot delete model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">: its Docker image was fetched by a different user on this system."</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> cannot be deleted because another user on this machine fetched it."</span><span class="p">,</span>
                     <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="k">return</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_run_deleters</span><span class="p">():</span>
             <span class="n">ModelEosDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -951,9 +956,13 @@
             <span class="n">BruteDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Starting delete of model </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
-        <span class="n">spinner</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Deleting all data for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">_run_deleters</span><span class="p">)</span>
+        <span class="n">spinner</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Deleting model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">_run_deleters</span><span class="p">,</span>
+            <span class="n">done</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> deleted."</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> deleted successfully"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> deleted successfully"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="kc">True</span></div>
 </div>
 
 </pre></div>

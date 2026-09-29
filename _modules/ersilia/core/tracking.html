@@ -464,6 +464,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span> <span class="o">=</span> <span class="n">TabularResultLogger</span><span class="p">()</span>
 
+<div class="viewcode-block" id="RunTracker.validate_aws_access">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.validate_aws_access">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_aws_access</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -478,7 +480,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"AWS credentials are valid."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Invalid AWS credentials."</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">NoAWSCredentialsError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">NoAWSCredentialsError</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="RunTracker.log_files_metrics">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_files_metrics">[docs]</a>
@@ -696,6 +699,8 @@
         <span class="k">return</span> <span class="n">country</span></div>
 
 
+<div class="viewcode-block" id="RunTracker.create_event_data">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.create_event_data">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_event_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">time_seconds</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -769,7 +774,8 @@
             <span class="s2">"log_warning_count"</span><span class="p">:</span> <span class="n">run_data</span><span class="p">[</span><span class="s2">"warning_count"</span><span class="p">],</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
 
 <div class="viewcode-block" id="RunTracker.track">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.track">[docs]</a>

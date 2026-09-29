@@ -322,7 +322,300 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">yes_no_input</span>
 
-<span class="n">PULL_IMAGE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PULL_IMAGE"</span><span class="p">,</span> <span class="s2">"Y"</span><span class="p">)</span>
+<span class="c1"># Re-downloading an image the user already has is opt-in.</span>
+<span class="n">PULL_IMAGE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PULL_IMAGE"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PullProgress">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.PullProgress">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PullProgress</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Progress of a Docker image pull, from the Docker Engine API's pull events.</span>
+
+<span class="sd">    The Engine API reports progress as structured events (layer id, status,</span>
+<span class="sd">    and byte counts), the same across Docker versions, instead of the text</span>
+<span class="sd">    that ``docker pull`` prints.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expected_bytes : int, optional</span>
+<span class="sd">        Compressed size of the image, if known beforehand. Used as the total</span>
+<span class="sd">        until every layer has reported its own size.</span>
+<span class="sd">    layer_sizes : dict, optional</span>
+<span class="sd">        Compressed size of each layer, keyed by its short digest (the 12</span>
+<span class="sd">        characters Docker uses as layer id), if known beforehand (e.g. from</span>
+<span class="sd">        Docker Hub). Docker only reports a layer's size once it starts</span>
+<span class="sd">        downloading, so this keeps the total exact from the start.</span>
+<span class="sd">    """</span>
+
+    <span class="n">DONE</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Pull complete"</span><span class="p">,</span> <span class="s2">"Already exists"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_bytes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layer_sizes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_bytes</span> <span class="o">=</span> <span class="n">expected_bytes</span> <span class="ow">or</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span> <span class="o">=</span> <span class="n">layer_sizes</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="PullProgress.update">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.PullProgress.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Record one pull event.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        event : dict</span>
+<span class="sd">            A decoded event, e.g. ``{"id": "55d2dadd4bbc", "status":</span>
+<span class="sd">            "Downloading", "progressDetail": {"current": 1, "total": 2}}``.</span>
+<span class="sd">        """</span>
+        <span class="n">layer_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"status"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="c1"># Events without a layer (e.g. "Pulling from ...", "Digest: ...") and</span>
+        <span class="c1"># the first event, whose id is the tag, carry no layer progress.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">layer_id</span> <span class="ow">or</span> <span class="n">status</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Pulling from"</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="n">detail</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"progressDetail"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+            <span class="n">layer_id</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="s2">"size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layer_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="s2">"downloaded"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">"extracted"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">"status"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">layer</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">detail</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">detail</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"current"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">total</span><span class="p">:</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">],</span> <span class="n">total</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Downloading"</span><span class="p">):</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"downloaded"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Verifying Checksum"</span><span class="p">,</span> <span class="s2">"Download complete"</span><span class="p">):</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"downloaded"</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">status</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Extracting"</span><span class="p">):</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"downloaded"</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"extracted"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"Pull complete"</span><span class="p">:</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"downloaded"</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s2">"extracted"</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layers_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Number of layers pulled or already present."""</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">layer</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DONE</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layers_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Number of layers seen so far."""</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Bytes to download (compressed), as far as known."""</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="n">layer_id</span><span class="p">):</span>
+            <span class="c1"># Layers already present locally are not downloaded.</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">layer</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Already exists"</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="p">:</span>
+            <span class="c1"># Every listed layer counts from the start, until Docker reports</span>
+            <span class="c1"># it as already present; so the total can only shrink, early on.</span>
+            <span class="n">listed</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="n">size</span>
+                <span class="k">for</span> <span class="n">layer_id</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">unlisted</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">layer_id</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">layer_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">listed</span> <span class="o">+</span> <span class="n">unlisted</span>
+        <span class="n">present</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">layer</span> <span class="k">for</span> <span class="n">layer_id</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">known</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">present</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">present</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">known</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">known</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_bytes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">downloaded_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Bytes downloaded so far."""</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s2">"downloaded"</span><span class="p">]</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extracted_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Bytes extracted so far."""</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">layer</span><span class="p">[</span><span class="s2">"extracted"</span><span class="p">]</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extracting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether everything is downloaded and layers are being extracted."""</span>
+        <span class="c1"># Docker starts extracting a layer while others are still downloading;</span>
+        <span class="c1"># the text only switches to "extracting" once downloading is done.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloaded_bytes</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_bytes</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Extracting"</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="PullProgress.bar">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.PullProgress.bar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Completed and total units for a progress bar.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple of (float, float or None)</span>
+<span class="sd">            Downloading and extracting count as two halves when byte counts</span>
+<span class="sd">            are known; otherwise finished layers out of all layers. The total</span>
+<span class="sd">            is None until anything is known.</span>
+<span class="sd">        """</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_bytes</span>
+        <span class="k">if</span> <span class="n">total</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloaded_bytes</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extracted_bytes</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">total</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers_total</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers_done</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers_total</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PullProgress.describe">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.PullProgress.describe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Text shown next to the bar, e.g. "95/182 MB  3/14 layers".</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Megabytes (decimal, as Docker reports them) and layers.</span>
+<span class="sd">        """</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_bytes</span>
+        <span class="k">if</span> <span class="n">total</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extracted_bytes</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extracting</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloaded_bytes</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s2">"extracting "</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extracting</span> <span class="k">else</span> <span class="s2">""</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">done</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> MB"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers_total</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">layers_done</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">layers_total</span><span class="si">}</span><span class="s2"> layers"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">"  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="pull_with_progress">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.pull_with_progress">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pull_with_progress</span><span class="p">(</span>
+    <span class="n">repository</span><span class="p">,</span>
+    <span class="n">tag</span><span class="p">,</span>
+    <span class="n">callback</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">expected_bytes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">layer_sizes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Pull a Docker image through the Docker Engine API, reporting progress.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    repository : str</span>
+<span class="sd">        Image repository, e.g. "ersiliaos/eos3b5e".</span>
+<span class="sd">    tag : str</span>
+<span class="sd">        Image tag.</span>
+<span class="sd">    callback : callable</span>
+<span class="sd">        Called with a ``PullProgress`` after every event.</span>
+<span class="sd">    platform : str, optional</span>
+<span class="sd">        Platform to pull, e.g. "linux/amd64".</span>
+<span class="sd">    expected_bytes : int, optional</span>
+<span class="sd">        Compressed image size, if known.</span>
+<span class="sd">    layer_sizes : dict, optional</span>
+<span class="sd">        Compressed size of each layer by short digest, if known.</span>
+<span class="sd">    stop : threading.Event, optional</span>
+<span class="sd">        When set, the pull stops (e.g. after Ctrl+C).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If the pull fails.</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_docker_host</span>
+
+    <span class="n">set_docker_host</span><span class="p">()</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+    <span class="n">progress</span> <span class="o">=</span> <span class="n">PullProgress</span><span class="p">(</span><span class="n">expected_bytes</span><span class="o">=</span><span class="n">expected_bytes</span><span class="p">,</span> <span class="n">layer_sizes</span><span class="o">=</span><span class="n">layer_sizes</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span>
+            <span class="n">repository</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="n">platform</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stop</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"error"</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s2">"error"</span><span class="p">])</span>
+            <span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="n">callback</span><span class="p">(</span><span class="n">progress</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">,</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DockerException</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"connection to Docker lost: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<div class="viewcode-block" id="pull_error">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.pull_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pull_error</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Turn a pull failure into an error that says why and what to do.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The model identifier.</span>
+<span class="sd">    tag : str</span>
+<span class="sd">        The image tag that was pulled.</span>
+<span class="sd">    error : Exception</span>
+<span class="sd">        The failure reported by Docker.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ImagePullError</span>
+<span class="sd">        The error to raise.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.cli_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImagePullError</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">"no space left on device"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ImagePullError</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span>
+            <span class="s2">"Docker ran out of disk space"</span><span class="p">,</span>
+            <span class="s2">"Free space with 'docker system prune', or raise the disk limit in Docker Desktop &gt; Settings &gt; Resources."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"toomanyrequests"</span> <span class="ow">in</span> <span class="n">text</span> <span class="ow">or</span> <span class="s2">"rate limit"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ImagePullError</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span>
+            <span class="s2">"the Docker Hub download limit was reached"</span><span class="p">,</span>
+            <span class="s2">"Log in with 'docker login', or try again later."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"manifest unknown"</span> <span class="ow">in</span> <span class="n">text</span> <span class="ow">or</span> <span class="s2">"not found"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ImagePullError</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span>
+            <span class="s2">"version '</span><span class="si">{0}</span><span class="s2">' does not exist"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">),</span>
+            <span class="s2">"See the available versions at https://hub.docker.com/r/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/tags"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"connection to docker lost"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ImagePullError</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span>
+            <span class="s2">"Docker stopped responding during the download"</span><span class="p">,</span>
+            <span class="s2">"Start Docker and run the fetch again."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ImagePullError</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="s2">""</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="ModelPuller">
@@ -401,10 +694,23 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the image is available in DockerHub, False otherwise.</span>
 <span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.cli_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImagePullError</span>
+
         <span class="n">url</span> <span class="o">=</span> <span class="s2">"https://hub.docker.com/v2/repositories/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/tags/</span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span>
         <span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ImagePullError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+                <span class="s2">"Docker Hub could not be reached"</span><span class="p">,</span>
+                <span class="s2">"Check your internet connection and try again."</span><span class="p">,</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">429</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pull_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">,</span> <span class="s2">"toomanyrequests"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span> <span class="o">!=</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pull_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">,</span> <span class="s2">"manifest unknown"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">"The docker image </span><span class="si">{0}</span><span class="s2"> exists in DockerHub"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">)</span>
@@ -441,77 +747,46 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Image not found locally"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_remote_image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">"https://hub.docker.com/v2/repositories/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/tags/</span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_architecture</span><span class="p">(</span><span class="n">platform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># The architecture Docker pulls: the given platform, or this machine's.</span>
+        <span class="k">if</span> <span class="n">platform</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">platform</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">platform</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_platform</span>
+
+        <span class="n">machine</span> <span class="o">=</span> <span class="n">_platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s2">"arm64"</span> <span class="k">if</span> <span class="n">machine</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"arm64"</span><span class="p">,</span> <span class="s2">"aarch64"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"amd64"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_remote_image_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Compressed size and per-layer sizes of the image Docker will pull,</span>
+        <span class="c1"># from Docker Hub. (None, {}) if unknown.</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">"https://hub.docker.com/v2/repositories/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/tags/</span><span class="si">{2}</span><span class="s2">/images"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span>
         <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-                <span class="n">full_size</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"full_size"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">full_size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
+            <span class="n">arch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_architecture</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"architecture"</span><span class="p">)</span> <span class="o">!=</span> <span class="n">arch</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">layers</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">layer</span><span class="p">[</span><span class="s2">"digest"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">12</span><span class="p">]:</span> <span class="n">layer</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+                    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"layers"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+                    <span class="k">if</span> <span class="n">layer</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"digest"</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span> <span class="n">layers</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_pull_with_pty_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">progress_callback</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Blocking: run docker pull via PTY so docker outputs full layer progress."""</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">pty</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_re</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_sp</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_remote_image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_image_info</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">size</span> <span class="o">/</span> <span class="mf">1e6</span> <span class="k">if</span> <span class="n">size</span> <span class="k">else</span> <span class="kc">None</span>
 
-        <span class="n">ansi_re</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\x1b\[[0-9;]*[a-zA-Z]"</span><span class="p">)</span>
-        <span class="n">layer_re</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^([a-f0-9]{12,}): (.+)$"</span><span class="p">)</span>
-
-        <span class="n">master_fd</span><span class="p">,</span> <span class="n">slave_fd</span> <span class="o">=</span> <span class="n">pty</span><span class="o">.</span><span class="n">openpty</span><span class="p">()</span>
-        <span class="n">proc</span> <span class="o">=</span> <span class="n">_sp</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
-            <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span>
-            <span class="n">stdout</span><span class="o">=</span><span class="n">slave_fd</span><span class="p">,</span>
-            <span class="n">stderr</span><span class="o">=</span><span class="n">slave_fd</span><span class="p">,</span>
-            <span class="n">close_fds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">slave_fd</span><span class="p">)</span>
-
-        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">done</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">buf</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
-
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">chunk</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">master_fd</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
-                    <span class="k">break</span>
-                <span class="n">buf</span> <span class="o">+=</span> <span class="n">chunk</span>
-            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-                <span class="k">break</span>
-
-            <span class="n">parts</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">"[</span><span class="se">\r\n</span><span class="s2">]"</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
-            <span class="n">buf</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-            <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="n">ansi_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="n">m</span> <span class="o">=</span> <span class="n">layer_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-                    <span class="n">layer_id</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Pull complete"</span><span class="p">,</span> <span class="s2">"Already exists"</span><span class="p">):</span>
-                        <span class="n">done</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
-                    <span class="n">progress_callback</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">done</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">seen</span><span class="p">))</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">master_fd</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-        <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">_sp</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
-
+<div class="viewcode-block" id="ModelPuller.async_pull">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.async_pull">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_pull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -520,7 +795,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">do_pull</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                    <span class="s2">"Requested image </span><span class="si">{0}</span><span class="s2"> is available locally. Do you still want to fetch it? [Y/n]"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"The image of model </span><span class="si">{0}</span><span class="s2"> is already available locally. Download it again?"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
                     <span class="p">),</span>
                     <span class="n">default_answer</span><span class="o">=</span><span class="n">PULL_IMAGE</span><span class="p">,</span>
@@ -532,7 +807,8 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">do_pull</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Skipping pulling the image"</span><span class="p">)</span>
                 <span class="k">return</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_delete</span><span class="p">()</span>
+            <span class="c1"># The local image is not deleted first: 'docker pull' only</span>
+            <span class="c1"># replaces it once the new download has succeeded.</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Docker image of the model is not available locally"</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_available_in_dockerhub</span><span class="p">():</span>
@@ -542,9 +818,15 @@
 
             <span class="n">verbose</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 
-            <span class="n">remote_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_image_size_mb</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">remote_size</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Download size: ~</span><span class="si">{</span><span class="n">remote_size</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> MB (compressed)"</span><span class="p">)</span>
+            <span class="n">remote_bytes</span><span class="p">,</span> <span class="n">layer_sizes</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_image_info</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="p">)</span>
+            <span class="n">remote_size</span> <span class="o">=</span> <span class="n">remote_bytes</span> <span class="o">/</span> <span class="mf">1e6</span> <span class="k">if</span> <span class="n">remote_bytes</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">size_text</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">" (~</span><span class="si">{</span><span class="n">remote_size</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> MB compressed)"</span> <span class="k">if</span> <span class="n">remote_size</span> <span class="k">else</span> <span class="s2">""</span>
+                <span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Downloading the Docker image</span><span class="si">{</span><span class="n">size_text</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
             <span class="n">pull_command</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"docker pull </span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2">"</span>
@@ -578,52 +860,99 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Conventional pull failed, trying linux/amd64"</span><span class="p">)</span>
                     <span class="k">await</span> <span class="n">_run_pull</span><span class="p">(</span><span class="n">force_pull_command</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span> <span class="k">as</span> <span class="n">_Console</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.progress</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
                     <span class="n">BarColumn</span><span class="p">,</span>
-                    <span class="n">MofNCompleteColumn</span><span class="p">,</span>
                     <span class="n">Progress</span><span class="p">,</span>
                     <span class="n">TextColumn</span><span class="p">,</span>
                     <span class="n">TimeElapsedColumn</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span> <span class="k">as</span> <span class="n">_Text</span>
+
+                <span class="n">repository</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span>
 
                 <span class="k">with</span> <span class="n">Progress</span><span class="p">(</span>
-                    <span class="n">TextColumn</span><span class="p">(</span><span class="s2">"[bold cyan]  Downloading layers"</span><span class="p">),</span>
+                    <span class="c1"># Indented to line up under the text of the line above.</span>
+                    <span class="n">TextColumn</span><span class="p">(</span><span class="s2">"    "</span><span class="p">),</span>
                     <span class="n">BarColumn</span><span class="p">(),</span>
-                    <span class="n">MofNCompleteColumn</span><span class="p">(),</span>
+                    <span class="n">TextColumn</span><span class="p">(</span><span class="s2">"</span><span class="si">{task.fields[detail]}</span><span class="s2">"</span><span class="p">),</span>
                     <span class="n">TimeElapsedColumn</span><span class="p">(),</span>
                 <span class="p">)</span> <span class="k">as</span> <span class="n">progress</span><span class="p">:</span>
-                    <span class="n">task</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="n">task</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
 
-                    <span class="k">def</span><span class="w"> </span><span class="nf">on_progress</span><span class="p">(</span><span class="n">completed</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
-                        <span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">)</span>
+                    <span class="k">def</span><span class="w"> </span><span class="nf">on_progress</span><span class="p">(</span><span class="n">pull</span><span class="p">):</span>
+                        <span class="n">completed</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="n">pull</span><span class="o">.</span><span class="n">bar</span><span class="p">()</span>
+                        <span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                            <span class="n">task</span><span class="p">,</span>
+                            <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">,</span>
+                            <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span>
+                            <span class="n">detail</span><span class="o">=</span><span class="n">pull</span><span class="o">.</span><span class="n">describe</span><span class="p">(),</span>
+                        <span class="p">)</span>
+
+                    <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
 
                     <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_running_loop</span><span class="p">()</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
-                            <span class="kc">None</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_pull_with_pty_progress</span><span class="p">,</span>
-                            <span class="n">pull_command</span><span class="p">,</span>
+                    <span class="n">stop</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+                    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="n">platform</span><span class="p">):</span>
+                        <span class="c1"># A daemon thread, stopped on Ctrl+C, so an interrupt</span>
+                        <span class="c1"># does not wait for the whole download to finish.</span>
+                        <span class="n">done</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+
+                        <span class="k">def</span><span class="w"> </span><span class="nf">work</span><span class="p">():</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">result</span> <span class="o">=</span> <span class="n">pull</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="n">loop</span><span class="o">.</span><span class="n">call_soon_threadsafe</span><span class="p">(</span><span class="n">done</span><span class="o">.</span><span class="n">set_exception</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">loop</span><span class="o">.</span><span class="n">call_soon_threadsafe</span><span class="p">(</span><span class="n">done</span><span class="o">.</span><span class="n">set_result</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+                        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">work</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="k">await</span> <span class="n">done</span>
+                        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                            <span class="n">stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                            <span class="k">raise</span>
+
+                    <span class="k">def</span><span class="w"> </span><span class="nf">pull</span><span class="p">(</span><span class="n">platform</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">platform</span><span class="p">:</span>
+                            <span class="n">expected</span><span class="p">,</span> <span class="n">sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_image_info</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">expected</span><span class="p">,</span> <span class="n">sizes</span> <span class="o">=</span> <span class="n">remote_bytes</span><span class="p">,</span> <span class="n">layer_sizes</span>
+                        <span class="k">return</span> <span class="n">pull_with_progress</span><span class="p">(</span>
+                            <span class="n">repository</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">,</span>
                             <span class="n">on_progress</span><span class="p">,</span>
+                            <span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
+                            <span class="n">expected_bytes</span><span class="o">=</span><span class="n">expected</span><span class="p">,</span>
+                            <span class="n">layer_sizes</span><span class="o">=</span><span class="n">sizes</span><span class="p">,</span>
+                            <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span>
                         <span class="p">)</span>
-                    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">"Conventional pull failed, trying linux/amd64"</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">await</span> <span class="n">in_thread</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">e</span><span class="o">.</span><span class="n">ersilia_note</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="s2">"Download cancelled. Run the fetch again to resume."</span>
+                        <span class="p">)</span>
+                        <span class="k">raise</span>
+                    <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">"no matching manifest"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                            <span class="k">raise</span> <span class="n">pull_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+                        <span class="c1"># No image for this machine's architecture.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pull failed (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">), trying linux/amd64"</span><span class="p">)</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="s2">"No image for this machine's architecture; using the Intel (amd64) image, which runs slower."</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
                         <span class="p">)</span>
                         <span class="k">try</span><span class="p">:</span>
-                            <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
-                                <span class="kc">None</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_pull_with_pty_progress</span><span class="p">,</span>
-                                <span class="n">force_pull_command</span><span class="p">,</span>
-                                <span class="n">on_progress</span><span class="p">,</span>
-                            <span class="p">)</span>
-                        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="n">DockerConventionalPullError</span><span class="p">(</span>
-                                <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
-                            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+                            <span class="k">await</span> <span class="n">in_thread</span><span class="p">(</span><span class="s2">"linux/amd64"</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">pull_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+                    <span class="c1"># Show the bar full once Docker reports the pull as done.</span>
+                    <span class="n">total</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">total</span>
+                    <span class="k">if</span> <span class="n">total</span><span class="p">:</span>
+                        <span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">total</span><span class="p">)</span>
 
-                <span class="n">_Console</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_Text</span><span class="p">(</span><span class="s2">"  ✓  Pulled Docker image"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
+                <span class="n">echo</span><span class="p">(</span><span class="s2">"Docker image downloaded."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
 
             <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">size</span><span class="p">:</span>
@@ -636,8 +965,11 @@
             <span class="k">return</span> <span class="n">size</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Image </span><span class="si">{0}</span><span class="s2"> is not available"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="n">DockerImageNotAvailableError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DockerImageNotAvailableError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="ModelPuller.pull">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.pull">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -646,7 +978,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">do_pull</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                    <span class="s2">"Requested image </span><span class="si">{0}</span><span class="s2"> is available locally. Do you still want to fetch it? [Y/n]"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"The image of model </span><span class="si">{0}</span><span class="s2"> is already available locally. Download it again?"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
                     <span class="p">),</span>
                     <span class="n">default_answer</span><span class="o">=</span><span class="n">PULL_IMAGE</span><span class="p">,</span>
@@ -658,7 +990,8 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">do_pull</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Skipping pulling the image"</span><span class="p">)</span>
                 <span class="k">return</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_delete</span><span class="p">()</span>
+            <span class="c1"># The local image is not deleted first: 'docker pull' only</span>
+            <span class="c1"># replaces it once the new download has succeeded.</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Docker image of the model is not available locally"</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_available_in_dockerhub</span><span class="p">():</span>
@@ -712,6 +1045,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Image </span><span class="si">{0}</span><span class="s2"> is not available"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">))</span>
             <span class="k">raise</span> <span class="n">DockerImageNotAvailableError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
         </article>

@@ -337,17 +337,15 @@
 <span class="sd">        Prints an error message indicating the model was not found and exits the program.</span>
 <span class="sd">        """</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">"Model not found... </span><span class="si">{0}</span><span class="s2"> is not a valid model identifier"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">text</span>
-            <span class="p">),</span>
+            <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> was not found in the Ersilia Model Hub."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">"Find valid identifiers in the Ersilia Model Hub: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Check the identifier or slug. Browse the models at </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">ERSILIA_MODEL_HUB_URL</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 </div>
 
 
@@ -378,17 +376,81 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Prints an error message indicating the model was not found locally and exits the program.</span>
 <span class="sd">        """</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> could not be found in local device"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">"Please fetch the model from the Ersilia Model Hub: ersilia fetch </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> is not available locally."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">"Fetch it first with 'ersilia fetch </span><span class="si">{0}</span><span class="s2">'."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 </div>
+
+
+
+<span class="c1"># Shared wordings, so a situation reads the same in every command.</span>
+
+
+<div class="viewcode-block" id="no_model_served">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.no_model_served">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">no_model_served</span><span class="p">(</span><span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">hint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Tell the user that no model is served in this terminal.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fg : str, optional</span>
+<span class="sd">        "red" when the command cannot continue, "yellow" when nothing needed</span>
+<span class="sd">        to be done (e.g. ``ersilia close``).</span>
+<span class="sd">    hint : str, optional</span>
+<span class="sd">        What to do instead of serving a model, shown after the usual hint.</span>
+<span class="sd">    """</span>
+    <span class="n">echo</span><span class="p">(</span><span class="s2">"No model is being served in this terminal."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">fg</span><span class="p">)</span>
+    <span class="n">echo</span><span class="p">(</span><span class="s2">"Serve one first with 'ersilia serve MODEL'."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hint</span><span class="p">:</span>
+        <span class="n">echo</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fg</span> <span class="o">==</span> <span class="s2">"red"</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="wrong_extension">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.wrong_extension">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrong_extension</span><span class="p">(</span><span class="n">allowed</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Tell the user that an output file has an unsupported extension.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    allowed : list of str</span>
+<span class="sd">        The accepted extensions, e.g. [".csv", ".h5"].</span>
+<span class="sd">    err : bool, optional</span>
+<span class="sd">        Print to stderr.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">allowed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">" or "</span> <span class="o">+</span> <span class="n">allowed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">allowed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">echo</span><span class="p">(</span><span class="s2">"The output file must end in </span><span class="si">{0}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="report_error">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.report_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_error</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Print an error the standard way (message, then hint) and exit with code 1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    error : Exception</span>
+<span class="sd">        The error, typically an ``ErsiliaError``.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">user_message_and_hints</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">message</span><span class="p">,</span> <span class="n">hints</span> <span class="o">=</span> <span class="n">user_message_and_hints</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+    <span class="n">echo</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hints</span><span class="p">:</span>
+        <span class="n">echo</span><span class="p">(</span><span class="n">hints</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

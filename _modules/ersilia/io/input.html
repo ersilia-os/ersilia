@@ -311,8 +311,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">click</span><span class="w"> </span><span class="kn">import</span> <span class="n">secho</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.content.card</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCard</span>
@@ -764,8 +762,7 @@
                     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
                         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">r</span><span class="p">])</span>
                 <span class="k">return</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="ExampleGenerator.example">
@@ -788,7 +785,7 @@
 <span class="sd">        list or str</span>
 <span class="sd">            List of example data or file content if saved to file.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"predefined"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"curated"</span><span class="p">,</span> <span class="s2">"predefined"</span><span class="p">):</span>
             <span class="n">try_predefined</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">try_predefined</span> <span class="o">=</span> <span class="kc">False</span>
@@ -805,10 +802,9 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">deterministic</span><span class="p">:</span>
-            <span class="n">secho</span><span class="p">(</span>
-                <span class="s2">"Sampling input not randomly but in deterministic manner."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Using a fixed (not random) selection of example inputs."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Sampling input not randomly but in deterministic manner"</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -816,10 +812,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                     <span class="s2">"No predefined examples found for the model. Generating random examples."</span>
                 <span class="p">)</span>
+                <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Randomly sampling input"</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="ExampleGenerator.check_model_id">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.check_model_id">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -840,7 +840,8 @@
 <span class="sd">            If the model ID is None.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NullModelIdentifierError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NullModelIdentifierError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>

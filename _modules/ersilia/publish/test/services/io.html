@@ -859,6 +859,8 @@
         <span class="k">return</span> <span class="n">column_names</span></div>
 
     
+<div class="viewcode-block" id="IOService.get_directories_sizes">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_directories_sizes">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -871,8 +873,11 @@
 <span class="sd">        """</span>
         <span class="n">dir_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
         <span class="n">dir_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dir_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span>
-        <span class="k">return</span> <span class="n">dir_size</span>
+        <span class="k">return</span> <span class="n">dir_size</span></div>
 
+
+<div class="viewcode-block" id="IOService.get_env_sizes">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_env_sizes">[docs]</a>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_env_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -885,7 +890,8 @@
 <span class="sd">        """</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conda_env_size</span><span class="p">()</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">env_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span>
-        <span class="k">return</span> <span class="n">env_size</span>
+        <span class="k">return</span> <span class="n">env_size</span></div>
+
     
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_submit_smiles_and_get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">,</span> <span class="n">poll_interval</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>

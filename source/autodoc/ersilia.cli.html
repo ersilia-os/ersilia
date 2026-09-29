@@ -370,7 +370,9 @@
 <li class="toctree-l2"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.command"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.invoke"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.invoke()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.main"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.resolve_command"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.resolve_command()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -500,7 +502,7 @@ and dynamically imports and executes various CLI commands based on the user’s 
 <span id="ersilia-cli-echo-module"></span><h2>ersilia.cli.echo module<a class="headerlink" href="#module-ersilia.cli.echo" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">Silencer</span></span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">Silencer</span></span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class to manage the silencing of CLI output.</p>
 <dl class="py attribute">
@@ -516,25 +518,25 @@ and dynamically imports and executes various CLI commands based on the user’s 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.is_silence">
-<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.is_silence" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.is_silence" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the CLI output is silenced.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.speak">
-<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.speak" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.speak" title="Link to this definition">¶</a></dt>
 <dd><p>Enables CLI output.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.silence">
-<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.silence" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.silence" title="Link to this definition">¶</a></dt>
 <dd><p>Disables CLI output.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the CLI output is silenced.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -548,27 +550,86 @@ and dynamically imports and executes various CLI commands based on the user’s 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd><p>Disables CLI output.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd><p>Enables CLI output.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.echo.async_spinner">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">async_spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#async_spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.async_spinner" title="Link to this definition">¶</a></dt>
+<dd><p>Await <code class="docutils literal notranslate"><span class="pre">coro</span></code> while showing <code class="docutils literal notranslate"><span class="pre">text</span></code>, then print a success line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – What is happening, shown while <code class="docutils literal notranslate"><span class="pre">coro</span></code> runs.</p></li>
+<li><p><strong>coro</strong> (<em>coroutine</em>) – The work to await.</p></li>
+<li><p><strong>done</strong> (<em>str</em><em>, </em><em>optional</em>) – The success line printed afterwards. Defaults to <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.echo.confirm">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#confirm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.confirm" title="Link to this definition">¶</a></dt>
+<dd><p>Ask a yes/no question, formatted like the other lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> (<em>str</em>) – The question, e.g. “Continue?”.</p></li>
+<li><p><strong>default</strong> (<em>bool</em><em>, </em><em>optional</em>) – The answer when the user just presses Enter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The answer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.echo.echo">
-<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.echo" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.echo" title="Link to this definition">¶</a></dt>
+<dd><p>Print a message in the CLI’s standard style.</p>
+<p>The kind of message is given by <code class="docutils literal notranslate"><span class="pre">fg</span></code>: green is a success, yellow a
+warning, red an error, and anything else (or nothing) is info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The message. Newlines start indented continuation lines.</p></li>
+<li><p><strong>harmonize</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, print the text as is, without icon or indentation.</p></li>
+<li><p><strong>**styles</strong> – <code class="docutils literal notranslate"><span class="pre">fg</span></code> selects the kind of message; <code class="docutils literal notranslate"><span class="pre">err=True</span></code> prints to stderr.
+Other click styles are ignored when harmonizing, so every message
+of a kind looks the same.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.echo.spinner">
-<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.spinner" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.spinner" title="Link to this definition">¶</a></dt>
+<dd><p>Run <code class="docutils literal notranslate"><span class="pre">func</span></code> while showing <code class="docutils literal notranslate"><span class="pre">text</span></code>, then print a success line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – What is happening, shown while <code class="docutils literal notranslate"><span class="pre">func</span></code> runs.</p></li>
+<li><p><strong>func</strong> (<em>callable</em>) – The work to do.</p></li>
+<li><p><strong>done</strong> (<em>str</em><em>, </em><em>optional</em>) – The success line printed afterwards. Defaults to <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.cli.messages">
@@ -633,18 +694,123 @@ and dynamically imports and executes various CLI commands based on the user’s 
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.messages.no_model_served">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">no_model_served</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'red'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#no_model_served"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.no_model_served" title="Link to this definition">¶</a></dt>
+<dd><p>Tell the user that no model is served in this terminal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fg</strong> (<em>str</em><em>, </em><em>optional</em>) – “red” when the command cannot continue, “yellow” when nothing needed
+to be done (e.g. <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">close</span></code>).</p></li>
+<li><p><strong>hint</strong> (<em>str</em><em>, </em><em>optional</em>) – What to do instead of serving a model, shown after the usual hint.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.messages.report_error">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">report_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#report_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.report_error" title="Link to this definition">¶</a></dt>
+<dd><p>Print an error the standard way (message, then hint) and exit with code 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>error</strong> (<em>Exception</em>) – The error, typically an <code class="docutils literal notranslate"><span class="pre">ErsiliaError</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.messages.wrong_extension">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">wrong_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allowed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#wrong_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.wrong_extension" title="Link to this definition">¶</a></dt>
+<dd><p>Tell the user that an output file has an unsupported extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>allowed</strong> (<em>list</em><em> of </em><em>str</em>) – The accepted extensions, e.g. [“.csv”, “.h5”].</p></li>
+<li><p><strong>err</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print to stderr.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.cli.run_checks">
+<span id="ersilia-cli-run-checks-module"></span><h2>ersilia.cli.run_checks module<a class="headerlink" href="#module-ersilia.cli.run_checks" title="Link to this heading">¶</a></h2>
+<p>Checks of <cite>ersilia run</cite> inputs and outputs, done before the model is loaded.</p>
+<p>Each problem is reported with what is wrong and how to fix it, and the command
+exits with code 1.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.run_checks.check_run_arguments">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.run_checks.</span></span><span class="sig-name descname"><span class="pre">check_run_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/run_checks.html#check_run_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.run_checks.check_run_arguments" title="Link to this definition">¶</a></dt>
+<dd><p>Check the input and output of <cite>ersilia run</cite>, and prepare the input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – Path of the input CSV file.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – Path of the output file (.csv or .h5).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The input path to run, and a temporary folder to remove afterwards
+(when a single column was extracted from a wider file), or None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of (str, str or None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.run_checks.fail">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.run_checks.</span></span><span class="sig-name descname"><span class="pre">fail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/run_checks.html#fail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.run_checks.fail" title="Link to this definition">¶</a></dt>
+<dd><p>Print an error (and a hint) and exit with code 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – What went wrong.</p></li>
+<li><p><strong>hint</strong> (<em>str</em><em>, </em><em>optional</em>) – What to do about it.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-ersilia.cli">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.cli" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.echo">
-<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo" title="Link to this definition">¶</a></dt>
+<dd><p>Print a message in the CLI’s standard style.</p>
+<p>The kind of message is given by <code class="docutils literal notranslate"><span class="pre">fg</span></code>: green is a success, yellow a
+warning, red an error, and anything else (or nothing) is info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The message. Newlines start indented continuation lines.</p></li>
+<li><p><strong>harmonize</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, print the text as is, without icon or indentation.</p></li>
+<li><p><strong>**styles</strong> – <code class="docutils literal notranslate"><span class="pre">fg</span></code> selects the kind of message; <code class="docutils literal notranslate"><span class="pre">err=True</span></code> prints to stderr.
+Other click styles are ignored when harmonizing, so every message
+of a kind looks the same.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.spinner">
-<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.spinner" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.spinner" title="Link to this definition">¶</a></dt>
+<dd><p>Run <code class="docutils literal notranslate"><span class="pre">func</span></code> while showing <code class="docutils literal notranslate"><span class="pre">text</span></code>, then print a success line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – What is happening, shown while <code class="docutils literal notranslate"><span class="pre">func</span></code> runs.</p></li>
+<li><p><strong>func</strong> (<em>callable</em>) – The work to do.</p></li>
+<li><p><strong>done</strong> (<em>str</em><em>, </em><em>optional</em>) – The success line printed afterwards. Defaults to <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>
@@ -742,6 +908,8 @@ and dynamically imports and executes various CLI commands based on the user’s 
 <li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#ersilia.cli.echo.async_spinner"><code class="docutils literal notranslate"><span class="pre">async_spinner()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.echo.confirm"><code class="docutils literal notranslate"><span class="pre">confirm()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.cli.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.cli.echo.spinner"><code class="docutils literal notranslate"><span class="pre">spinner()</span></code></a></li>
 </ul>
@@ -759,6 +927,14 @@ and dynamically imports and executes various CLI commands based on the user’s 
 <li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">ModelNotInLocal.echo()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#ersilia.cli.messages.no_model_served"><code class="docutils literal notranslate"><span class="pre">no_model_served()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.messages.report_error"><code class="docutils literal notranslate"><span class="pre">report_error()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.messages.wrong_extension"><code class="docutils literal notranslate"><span class="pre">wrong_extension()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.cli.run_checks">ersilia.cli.run_checks module</a><ul>
+<li><a class="reference internal" href="#ersilia.cli.run_checks.check_run_arguments"><code class="docutils literal notranslate"><span class="pre">check_run_arguments()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.run_checks.fail"><code class="docutils literal notranslate"><span class="pre">fail()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.cli">Module contents</a><ul>

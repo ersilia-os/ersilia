@@ -1618,8 +1618,17 @@ and retrieving models.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.ModelCatalog.local">
-<span class="sig-name descname"><span class="pre">local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.local" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable"><span class="pre">CatalogTable</span></a></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#ModelCatalog.local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.local" title="Link to this definition">¶</a></dt>
+<dd><p>List models metadata from the local repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog table containing the models available locally.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable">CatalogTable</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1694,7 +1703,7 @@ such as pack mode, service class, model source, API schema, size, metadata, and 
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.content.information.InformationDisplayer">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.information.</span></span><span class="sig-name descname"><span class="pre">InformationDisplayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#InformationDisplayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.InformationDisplayer" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.information.</span></span><span class="sig-name descname"><span class="pre">InformationDisplayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serving</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#InformationDisplayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.InformationDisplayer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Class to display the information of a model.</p>
 <dl class="field-list simple">
@@ -1702,6 +1711,8 @@ such as pack mode, service class, model source, API schema, size, metadata, and 
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>info_data</strong> (<em>dict</em>) – The information data of the model.</p></li>
 <li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+<li><p><strong>serving</strong> (<em>dict</em><em>, </em><em>optional</em>) – How the model is being served (URL, PID, session…), shown in its own
+section. Keys are labels, values are what to show.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1711,6 +1722,26 @@ such as pack mode, service class, model source, API schema, size, metadata, and 
 <dd><p>Display the information about the model using a rich Panel layout.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.hub.content.information.version_label">
+<span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.information.</span></span><span class="sig-name descname"><span class="pre">version_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docker_tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#version_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.version_label" title="Link to this definition">¶</a></dt>
+<dd><p>The version to show for a model image, e.g. “latest (v1.0.1)”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>docker_tag</strong> (<em>str</em>) – The Docker image tag, often “latest”.</p></li>
+<li><p><strong>card</strong> (<em>dict</em>) – The model card; its “Release” field gives the actual version.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The tag, with the release in parentheses when the tag is “latest”.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -2085,6 +2116,7 @@ and vice versa, using local and remote sources.</p>
 <li><a class="reference internal" href="#ersilia.hub.content.information.InformationDisplayer.echo"><code class="docutils literal notranslate"><span class="pre">InformationDisplayer.echo()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#ersilia.hub.content.information.version_label"><code class="docutils literal notranslate"><span class="pre">version_label()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.hub.content.search">ersilia.hub.content.search module</a><ul>

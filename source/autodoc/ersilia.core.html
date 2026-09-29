@@ -571,8 +571,25 @@ such as the destination path and repository path.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.run" title="Link to this definition">¶</a></dt>
+<dd><p>Run the model with the given input and output.</p>
+<p>This method executes the model using the provided input and output parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em><em>, </em><em>optional</em>) – The input data, by default None.</p></li>
+<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – The output data, by default None.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The batch size, by default DEFAULT_BATCH_SIZE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the model run(such as output csv file name, json).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.schema">
@@ -592,8 +609,17 @@ of the model’s input and output data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.serve">
-<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.serve" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track_runs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.serve" title="Link to this definition">¶</a></dt>
+<dd><p>Serve the model by starting the necessary services.</p>
+<p>This method sets up the required dependencies, opens a session, and starts the model service.
+It registers the service class and output source, updates the model’s URL and process ID (PID),
+and tracks resource usage if tracking is enabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>track_runs</strong> (<em>str</em><em>, </em><em>optional</em>) – Whether to track runs, by default is None (i.e. do not track).</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.setup">
@@ -638,7 +664,7 @@ in the fetched models file.</p>
 <span id="ersilia-core-modelbase-module"></span><h2>ersilia.core.modelbase module<a class="headerlink" href="#module-ersilia.core.modelbase" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.modelbase.ModelBase">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.core.modelbase.</span></span><span class="sig-name descname"><span class="pre">ModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.core.modelbase.</span></span><span class="sig-name descname"><span class="pre">ModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id_or_slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Base class for managing models.</p>
 <p>This class provides foundational functionality for handling models, including initialization,
@@ -1049,8 +1075,21 @@ to Ersilia’s Splunk dashboard.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.create_event_data">
-<span class="sig-name descname"><span class="pre">create_event_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.tracking.RunTracker.create_event_data" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">create_event_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_seconds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.create_event_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.create_event_data" title="Link to this definition">¶</a></dt>
+<dd><p>Track the results of a model run.</p>
+<p>This method collects relevant data for the run, updates the session file with the stats,
+and uploads the data to AWS if credentials are available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data used in the model run.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data in the form of a CSV file path.</p></li>
+<li><p><strong>meta</strong> (<em>dict</em>) – The metadata of the model.</p></li>
+<li><p><strong>container_metrics</strong> (<em>dict</em>) – The container metrics data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_country">
@@ -1162,8 +1201,17 @@ and uploads the data to AWS if credentials are available.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.validate_aws_access">
-<span class="sig-name descname"><span class="pre">validate_aws_access</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.tracking.RunTracker.validate_aws_access" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">validate_aws_access</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.validate_aws_access"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.validate_aws_access" title="Link to this definition">¶</a></dt>
+<dd><p>Validate access to AWS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if AWS_ACCESS_KEY_ID and AWS_SECRET_KEY are available in the system</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

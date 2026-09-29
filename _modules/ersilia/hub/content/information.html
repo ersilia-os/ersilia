@@ -318,6 +318,7 @@
     <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span>
     <span class="n">PACKMODE_FILE</span><span class="p">,</span>
     <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
+    <span class="n">SERVICE_CLASS_LABELS</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.columns_information</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnsInformation</span>
@@ -458,6 +459,31 @@
 
 
 
+<div class="viewcode-block" id="version_label">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.version_label">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">version_label</span><span class="p">(</span><span class="n">docker_tag</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The version to show for a model image, e.g. "latest (v1.0.1)".</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    docker_tag : str</span>
+<span class="sd">        The Docker image tag, often "latest".</span>
+<span class="sd">    card : dict</span>
+<span class="sd">        The model card; its "Release" field gives the actual version.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or None</span>
+<span class="sd">        The tag, with the release in parentheses when the tag is "latest".</span>
+<span class="sd">    """</span>
+    <span class="n">release</span> <span class="o">=</span> <span class="p">(</span><span class="n">card</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Release"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">docker_tag</span> <span class="o">==</span> <span class="s2">"latest"</span> <span class="ow">and</span> <span class="n">release</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"latest (</span><span class="si">{</span><span class="n">release</span><span class="si">}</span><span class="s2">)"</span>
+    <span class="k">return</span> <span class="n">docker_tag</span></div>
+
+
+
 <div class="viewcode-block" id="InformationDisplayer">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.InformationDisplayer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InformationDisplayer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -470,11 +496,15 @@
 <span class="sd">        The information data of the model.</span>
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    serving : dict, optional</span>
+<span class="sd">        How the model is being served (URL, PID, session...), shown in its own</span>
+<span class="sd">        section. Keys are labels, values are what to show.</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_data</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_data</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serving</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span> <span class="o">=</span> <span class="n">info_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">serving</span> <span class="o">=</span> <span class="n">serving</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
@@ -495,15 +525,7 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
-        <span class="n">_service_class_labels</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">"pulled_docker"</span><span class="p">:</span> <span class="s2">"DockerHub"</span><span class="p">,</span>
-            <span class="s2">"docker"</span><span class="p">:</span> <span class="s2">"Docker (local)"</span><span class="p">,</span>
-            <span class="s2">"conda"</span><span class="p">:</span> <span class="s2">"Conda"</span><span class="p">,</span>
-            <span class="s2">"venv"</span><span class="p">:</span> <span class="s2">"Virtual environment"</span><span class="p">,</span>
-            <span class="s2">"system"</span><span class="p">:</span> <span class="s2">"System Python"</span><span class="p">,</span>
-            <span class="s2">"hosted"</span><span class="p">:</span> <span class="s2">"Hosted"</span><span class="p">,</span>
-            <span class="s2">"dummy"</span><span class="p">:</span> <span class="s2">"Dummy"</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="n">_service_class_labels</span> <span class="o">=</span> <span class="n">SERVICE_CLASS_LABELS</span>
 
         <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
         <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"card"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -545,13 +567,21 @@
         <span class="k">if</span> <span class="s2">"DockerHub"</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Docker Hub"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">"DockerHub"</span><span class="p">]))</span>
         <span class="k">if</span> <span class="n">docker_tag</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Version"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">docker_tag</span><span class="p">))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Version"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">version_label</span><span class="p">(</span><span class="n">docker_tag</span><span class="p">,</span> <span class="n">card</span><span class="p">)))</span>
         <span class="k">if</span> <span class="s2">"Docker Architecture"</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Architecture"</span><span class="p">,</span> <span class="n">fmt_arch</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">"Docker Architecture"</span><span class="p">]))</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">identifier</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  GitHub"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"https://github.com/ersilia-os/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+
+        <span class="c1"># Serving section</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">serving</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="s2">" Serving"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold magenta on grey15"</span><span class="p">),</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">serving</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
         <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="s2">"Overview"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Identifier"</span><span class="p">,</span> <span class="s2">"Slug"</span><span class="p">,</span> <span class="s2">"Status"</span><span class="p">,</span> <span class="s2">"Task"</span><span class="p">,</span> <span class="s2">"Subtask"</span><span class="p">]),</span>

@@ -340,8 +340,9 @@
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.async_pull">
-<span class="sig-name descname"><span class="pre">async_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.async_pull" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">async_pull</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller.async_pull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.async_pull" title="Link to this definition">¶</a></dt>
+<dd><p>Asynchronously pull the Docker image.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.is_available_in_dockerhub">
@@ -373,9 +374,158 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.pull">
-<span class="sig-name descname"><span class="pre">pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.pull" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">pull</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller.pull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.pull" title="Link to this definition">¶</a></dt>
+<dd><p>This method pulls the Docker image non-asynchronously.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.hub.pull.pull.</span></span><span class="sig-name descname"><span class="pre">PullProgress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#PullProgress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Progress of a Docker image pull, from the Docker Engine API’s pull events.</p>
+<p>The Engine API reports progress as structured events (layer id, status,
+and byte counts), the same across Docker versions, instead of the text
+that <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span></code> prints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expected_bytes</strong> (<em>int</em><em>, </em><em>optional</em>) – Compressed size of the image, if known beforehand. Used as the total
+until every layer has reported its own size.</p></li>
+<li><p><strong>layer_sizes</strong> (<em>dict</em><em>, </em><em>optional</em>) – Compressed size of each layer, keyed by its short digest (the 12
+characters Docker uses as layer id), if known beforehand (e.g. from
+Docker Hub). Docker only reports a layer’s size once it starts
+downloading, so this keeps the total exact from the start.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.DONE">
+<span class="sig-name descname"><span class="pre">DONE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('Pull</span> <span class="pre">complete',</span> <span class="pre">'Already</span> <span class="pre">exists')</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.DONE" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.bar">
+<span class="sig-name descname"><span class="pre">bar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#PullProgress.bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.bar" title="Link to this definition">¶</a></dt>
+<dd><p>Completed and total units for a progress bar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Downloading and extracting count as two halves when byte counts
+are known; otherwise finished layers out of all layers. The total
+is None until anything is known.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of (float, float or None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.describe">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#PullProgress.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.describe" title="Link to this definition">¶</a></dt>
+<dd><p>Text shown next to the bar, e.g. “95/182 MB  3/14 layers”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Megabytes (decimal, as Docker reports them) and layers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.downloaded_bytes">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">downloaded_bytes</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.downloaded_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>Bytes downloaded so far.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.extracted_bytes">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">extracted_bytes</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.extracted_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>Bytes extracted so far.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.extracting">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">extracting</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.extracting" title="Link to this definition">¶</a></dt>
+<dd><p>Whether everything is downloaded and layers are being extracted.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.layers_done">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">layers_done</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.layers_done" title="Link to this definition">¶</a></dt>
+<dd><p>Number of layers pulled or already present.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.layers_total">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">layers_total</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.layers_total" title="Link to this definition">¶</a></dt>
+<dd><p>Number of layers seen so far.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.total_bytes">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_bytes</span></span><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.total_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>Bytes to download (compressed), as far as known.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.PullProgress.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#PullProgress.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.PullProgress.update" title="Link to this definition">¶</a></dt>
+<dd><p>Record one pull event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<em>dict</em>) – A decoded event, e.g. <code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;:</span> <span class="pre">&quot;55d2dadd4bbc&quot;,</span> <span class="pre">&quot;status&quot;:</span>
+<span class="pre">&quot;Downloading&quot;,</span> <span class="pre">&quot;progressDetail&quot;:</span> <span class="pre">{&quot;current&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;total&quot;:</span> <span class="pre">2}}</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.pull_error">
+<span class="sig-prename descclassname"><span class="pre">ersilia.hub.pull.pull.</span></span><span class="sig-name descname"><span class="pre">pull_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#pull_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.pull_error" title="Link to this definition">¶</a></dt>
+<dd><p>Turn a pull failure into an error that says why and what to do.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The model identifier.</p></li>
+<li><p><strong>tag</strong> (<em>str</em>) – The image tag that was pulled.</p></li>
+<li><p><strong>error</strong> (<em>Exception</em>) – The failure reported by Docker.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The error to raise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ImagePullError" title="ersilia.utils.exceptions_utils.cli_exceptions.ImagePullError">ImagePullError</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.hub.pull.pull.pull_with_progress">
+<span class="sig-prename descclassname"><span class="pre">ersilia.hub.pull.pull.</span></span><span class="sig-name descname"><span class="pre">pull_with_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">platform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#pull_with_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.pull_with_progress" title="Link to this definition">¶</a></dt>
+<dd><p>Pull a Docker image through the Docker Engine API, reporting progress.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>repository</strong> (<em>str</em>) – Image repository, e.g. “ersiliaos/eos3b5e”.</p></li>
+<li><p><strong>tag</strong> (<em>str</em>) – Image tag.</p></li>
+<li><p><strong>callback</strong> (<em>callable</em>) – Called with a <code class="docutils literal notranslate"><span class="pre">PullProgress</span></code> after every event.</p></li>
+<li><p><strong>platform</strong> (<em>str</em><em>, </em><em>optional</em>) – Platform to pull, e.g. “linux/amd64”.</p></li>
+<li><p><strong>expected_bytes</strong> (<em>int</em><em>, </em><em>optional</em>) – Compressed image size, if known.</p></li>
+<li><p><strong>layer_sizes</strong> (<em>dict</em><em>, </em><em>optional</em>) – Compressed size of each layer by short digest, if known.</p></li>
+<li><p><strong>stop</strong> (<em>threading.Event</em><em>, </em><em>optional</em>) – When set, the pull stops (e.g. after Ctrl+C).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the pull fails.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -449,6 +599,21 @@
 <li><a class="reference internal" href="#ersilia.hub.pull.pull.ModelPuller.pull"><code class="docutils literal notranslate"><span class="pre">ModelPuller.pull()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress"><code class="docutils literal notranslate"><span class="pre">PullProgress</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.DONE"><code class="docutils literal notranslate"><span class="pre">PullProgress.DONE</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.bar"><code class="docutils literal notranslate"><span class="pre">PullProgress.bar()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.describe"><code class="docutils literal notranslate"><span class="pre">PullProgress.describe()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.downloaded_bytes"><code class="docutils literal notranslate"><span class="pre">PullProgress.downloaded_bytes</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.extracted_bytes"><code class="docutils literal notranslate"><span class="pre">PullProgress.extracted_bytes</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.extracting"><code class="docutils literal notranslate"><span class="pre">PullProgress.extracting</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.layers_done"><code class="docutils literal notranslate"><span class="pre">PullProgress.layers_done</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.layers_total"><code class="docutils literal notranslate"><span class="pre">PullProgress.layers_total</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.total_bytes"><code class="docutils literal notranslate"><span class="pre">PullProgress.total_bytes</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.PullProgress.update"><code class="docutils literal notranslate"><span class="pre">PullProgress.update()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.pull_error"><code class="docutils literal notranslate"><span class="pre">pull_error()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.pull.pull.pull_with_progress"><code class="docutils literal notranslate"><span class="pre">pull_with_progress()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.hub.pull">Module contents</a></li>

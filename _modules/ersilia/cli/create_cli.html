@@ -323,7 +323,11 @@
 <span class="sd">    ersilia_cli : module</span>
 <span class="sd">        The configured Ersilia CLI module.</span>
 <span class="sd">    """</span>
-    <span class="n">is_contributor</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">is_contributor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">is_contributor</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">is_contributor</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># Checking contributor status (a GitHub call) must never break the CLI.</span>
+        <span class="n">is_contributor</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">()</span>
 
@@ -341,11 +345,6 @@
 
     <span class="n">cmd</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-
-    <span class="c1"># TODO: functions only for contributors</span>
-    <span class="c1"># Functions only for contributors</span>
-    <span class="k">if</span> <span class="n">is_contributor</span><span class="p">:</span>
-        <span class="n">cmd</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">ersilia_cli</span></div>
 

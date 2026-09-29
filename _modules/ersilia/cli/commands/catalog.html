@@ -305,6 +305,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.catalog</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
@@ -312,6 +313,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 <span class="n">_console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
@@ -426,6 +428,21 @@
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">border_style</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">))</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_report_leftovers</span><span class="p">(</span><span class="n">model_ids</span><span class="p">):</span>
+    <span class="c1"># Remains of models that were not fully fetched or deleted.</span>
+    <span class="n">echo</span><span class="p">(</span>
+        <span class="s2">"Some models were not fully fetched or deleted: </span><span class="si">{0}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ids</span><span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">echo</span><span class="p">(</span>
+        <span class="s2">"Remove them with </span><span class="si">{0}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">" and "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'ersilia delete </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">'"</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model_ids</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+
 <div class="viewcode-block" id="catalog_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.catalog.catalog_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">catalog_cmd</span><span class="p">():</span>
@@ -445,8 +462,11 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">    Display model card for a specific model ID and show catalog in json format:</span>
-<span class="sd">    $ ersilia catalog --card &lt;model_id&gt; --as-json</span>
+<span class="sd">    Display the model card of a model:</span>
+<span class="sd">    $ ersilia catalog --card &lt;model_id&gt;</span>
+
+<span class="sd">    Save the Hub catalog, with more details, as JSON:</span>
+<span class="sd">    $ ersilia catalog --hub --more -o catalog.json</span>
 <span class="sd">    """</span>
 
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
@@ -454,7 +474,6 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">"List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.</span><span class="se">\n\n</span><span class="s2">For a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"-h/-l"</span><span class="p">,</span>
         <span class="s2">"--hub/--local"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -503,35 +522,35 @@
     <span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.content.card</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCard</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.content.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCatalog</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">report_error</span><span class="p">,</span> <span class="n">wrong_extension</span>
 
         <span class="k">if</span> <span class="n">card</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">model</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">"Error: --card option requires a model ID"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">),</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">"The --card option needs a model, e.g. 'ersilia catalog --card eos42ez'."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                 <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">card</span> <span class="ow">and</span> <span class="n">model</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
+
+            <span class="c1"># Accepts slugs and suggests close matches for a typo.</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
                 <span class="n">model_metadata</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">model_metadata</span><span class="p">:</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                        <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">"Error: No metadata found for model ID '</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">'"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span>
-                        <span class="p">),</span>
+                    <span class="n">echo</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"No information was found for model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
+                        <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                         <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="k">return</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)):</span>
-                        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                            <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                                <span class="s2">"Error: output file must have a .json or .csv extension."</span><span class="p">,</span>
-                                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-                            <span class="p">),</span>
-                            <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                        <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">)):</span>
+                        <span class="n">wrong_extension</span><span class="p">([</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">],</span> <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                         <span class="k">return</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">model_metadata</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">):</span>
@@ -552,41 +571,43 @@
                                         <span class="k">else</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">),</span>
                                     <span class="p">]</span>
                                 <span class="p">)</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model card saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model card saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">_print_model_card</span><span class="p">(</span><span class="n">model_metadata</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ErsiliaError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">report_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error fetching model metadata: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Could not get the information of model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                    <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">less</span><span class="o">=</span><span class="ow">not</span> <span class="n">more</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">hub</span><span class="p">:</span>
-                <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">ErsiliaError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">report_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">mc</span><span class="o">.</span><span class="n">leftovers</span><span class="p">:</span>
+                    <span class="n">_report_leftovers</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">leftovers</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                        <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                            <span class="s2">"No local models available. Please fetch a model by running 'ersilia fetch' command"</span><span class="p">,</span>
-                            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="s2">"No models are available locally."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="s2">"Fetch one with 'ersilia fetch MODEL'."</span><span class="p">)</span>
                     <span class="k">return</span>
             <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">_print_catalog</span><span class="p">(</span><span class="n">catalog_table</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)):</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                        <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                            <span class="s2">"Error: output file must have a .csv or .json extension."</span><span class="p">,</span>
-                            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-                        <span class="p">),</span>
-                        <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">)):</span>
+                    <span class="n">wrong_extension</span><span class="p">([</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">],</span> <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">return</span>
                 <span class="n">catalog_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Catalog saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Catalog saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">catalog</span></div>
 

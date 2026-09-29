@@ -305,7 +305,6 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.fetch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 
@@ -321,14 +320,20 @@
     <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">StandardModelExampleError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">throw_ersilia_exception</span><span class="p">,</span>
+    <span class="n">user_message_and_hints</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">STATUS_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_fetched</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.lazy_fetchers.dockerhub</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelDockerHubFetcher</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.lazy_fetchers.hosted</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelHostedFetcher</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.register.standard_example</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStandardExample</span>
 
 <span class="n">FetchResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">"FetchResult"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"fetch_success"</span><span class="p">,</span> <span class="s2">"reason"</span><span class="p">])</span>
+<span class="c1"># Reason returned when the model is already fetched; the CLI reports it as a</span>
+<span class="c1"># warning rather than a failure.</span>
+<span class="n">ALREADY_FETCHED</span> <span class="o">=</span> <span class="s2">"Model is already fetched."</span>
 
 
 <div class="viewcode-block" id="ModelFetcher">
@@ -409,11 +414,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">repo_path</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"docker"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"When packing mode is docker, dockerization is mandatory"</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">"When packing mode is docker, dockerization is mandatory"</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span>
-                <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
             <span class="n">dockerize</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_docker</span> <span class="o">=</span> <span class="n">dockerize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span> <span class="o">=</span> <span class="n">ModelDockerHubFetcher</span><span class="p">(</span>
@@ -456,7 +456,7 @@
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_fastapi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching the model Ersilia Pack (FastAPI)"</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">"Fetching the model using Ersilia Pack (FastAPI)"</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">"Installing the model. This can take a few minutes."</span><span class="p">)</span>
         <span class="n">fetch</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"ersilia.hub.fetch.fetch_fastapi"</span><span class="p">)</span>
         <span class="n">mf</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">ModelFetcherFromFastAPI</span><span class="p">(</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
@@ -471,7 +471,6 @@
             <span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Not installable with FastAPI"</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"Not installable with FastAPI"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">NotInstallableWithFastAPI</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
@@ -489,25 +488,18 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">spinner</span><span class="p">(</span><span class="s2">"Checking that container works"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+            <span class="n">spinner</span><span class="p">(</span><span class="s2">"Checking that the model runs"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">done</span><span class="o">=</span><span class="s2">"The model runs."</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="n">spinner</span><span class="p">(</span><span class="s2">"Shutting down container"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">close_model</span><span class="p">)</span>
+            <span class="n">ms</span><span class="o">.</span><span class="n">close_model</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching from DockerHub"</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">dest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model stored at: </span><span class="si">{</span><span class="n">dest</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching from hosted"</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">"Started fetching from hosted — this process may take some time..."</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_hosted_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching from hosted done"</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">"Fetching from hosted done"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_decide_if_use_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -520,7 +512,6 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_installed</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Docker Engine is not installed on your system."</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"Docker Engine is not installed on your system."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Docker is not active in your local"</span><span class="p">)</span>
@@ -529,7 +520,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">"Docker image of this model doesn't seem to be available"</span>
             <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"Docker image of this model doesn't seem to be available"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> has no Docker image on DockerHub."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
@@ -544,7 +535,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_hosted_fetcher</span><span class="o">.</span><span class="n">is_available</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"There is no hosted URL available for this model"</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"There is no hosted URL available for this model"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> has no hosted URL."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_hosted</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -566,72 +557,107 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the model exists locally, False otherwise.</span>
 <span class="sd">        """</span>
-        <span class="n">status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">status_file</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">status_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="s2">"done"</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">return</span> <span class="n">is_fetched</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_partial_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="c1"># A fetch that did not finish leaves a folder that looks like a model</span>
+        <span class="c1"># but cannot be served. The Docker image, if any, is kept so a retry</span>
+        <span class="c1"># does not download it again.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..delete.delete</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">ModelBundleDeleter</span><span class="p">,</span>
+            <span class="n">ModelEosDeleter</span><span class="p">,</span>
+            <span class="n">ModelFetchedEntryDeleter</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ModelEosDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="n">ModelBundleDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="n">ModelFetchedEntryDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not remove partial files: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_warn_if_archived</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="c1"># Archived models are no longer maintained and may fail to fetch or run.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ji</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">)</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Status"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"archived"</span><span class="p">:</span>
+                    <span class="n">echo</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is archived and no longer maintained; it may not work."</span><span class="p">,</span>
+                        <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">return</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchResult</span><span class="p">:</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="k">else</span> <span class="n">model_id</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Checking if </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> is available locally..."</span><span class="p">,</span> <span class="n">harmonize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="si">}</span><span class="s2">)"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="k">else</span> <span class="n">model_id</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Model doesn't exist on your system, fetching it now."</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model not found locally, fetching from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_source</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetching model </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_source</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_warn_if_archived</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Starting fetching procedure"</span><span class="p">)</span>
             <span class="n">do_dockerhub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_if_use_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">do_dockerhub</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_active</span>
-            <span class="p">):</span>
-                <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
-                    <span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">reason</span><span class="o">=</span><span class="s2">"Docker is not active on your system. Please start Docker and try again."</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">do_dockerhub</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_installed</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
+                        <span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">reason</span><span class="o">=</span><span class="s2">"Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github."</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_active</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
+                        <span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">reason</span><span class="o">=</span><span class="s2">"Docker is not running. Start Docker (e.g. Docker Desktop) and try again."</span><span class="p">,</span>
+                    <span class="p">)</span>
             <span class="k">if</span> <span class="n">do_dockerhub</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Decided to fetch from DockerHub"</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_use_docker</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
                         <span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">reason</span><span class="o">=</span><span class="s2">"Docker is not installed or active on your system."</span><span class="p">,</span>
+                        <span class="n">reason</span><span class="o">=</span><span class="s2">"Docker is not installed or not running."</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
                     <span class="n">fetch_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"Model fetched successfully"</span>
                 <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_hosted</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_hosted_fetcher</span><span class="o">.</span><span class="n">is_available</span><span class="p">(</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span>
+            <span class="p">):</span>
+                <span class="c1"># A hosted URL was asked for: do not silently build locally.</span>
+                <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
+                    <span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">"The hosted model at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hosted_url</span><span class="si">}</span><span class="s2"> could not be reached. Check the URL."</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="n">do_hosted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_if_use_hosted</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">do_hosted</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching from hosted"</span><span class="p">)</span>
-                <span class="n">echo</span><span class="p">(</span><span class="s2">"Fetching from hosted"</span><span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="s2">"Connecting to the hosted model."</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_hosted</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
                     <span class="n">fetch_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"Model fetched successfully"</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Overwriting"</span><span class="p">)</span>
-                <span class="n">echo</span><span class="p">(</span><span class="s2">"Overwriting"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching in your system, not from DockerHub"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">):</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="s2">"Installing from GitHub instead (needs conda, can take 10+ minutes)."</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span><span class="n">fetch_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"Model fetched successfully"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">"Model already exists on your system. If you want to fetch it again, please delete it first."</span>
             <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is already available locally. Delete it first to re-fetch."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span>
-                <span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">reason</span><span class="o">=</span><span class="s2">"Model already exists on your system. If you want to fetch it again, please delete the existing model first."</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span><span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">ALREADY_FETCHED</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelFetcher.fetch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher.fetch">[docs]</a>
@@ -658,13 +684,27 @@
 <span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_hosted</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is already available locally and can be served normally."</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is already fetched and can be served."</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="n">echo</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span><span class="n">fetch_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
 
-            <span class="n">fr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_partial_files</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                    <span class="n">note</span> <span class="o">=</span> <span class="s2">"The partial files were removed."</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"Fetch of </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed; the partial files were removed. Run 'ersilia fetch </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">' again."</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">e</span><span class="o">.</span><span class="n">ersilia_note</span> <span class="o">=</span> <span class="n">note</span>
+                <span class="k">raise</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">fr</span><span class="o">.</span><span class="n">fetch_success</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fr</span><span class="o">.</span><span class="n">reason</span> <span class="o">!=</span> <span class="n">ALREADY_FETCHED</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_remove_partial_files</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">fr</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_standard_csv_example</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -676,7 +716,7 @@
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error during folder creation: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error during folder creation: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not create the model folder: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_source_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_source</span><span class="p">)</span>
 
@@ -684,25 +724,21 @@
 
         <span class="k">except</span> <span class="p">(</span><span class="n">StandardModelExampleError</span><span class="p">,)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> occurred: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> occurred: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">,</span> <span class="n">hints</span> <span class="o">=</span> <span class="n">user_message_and_hints</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hints</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="n">hints</span><span class="p">)</span>
             <span class="n">do_delete</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                <span class="s2">"Do you want to delete the model artifacts? [Y/n]"</span><span class="p">,</span>
+                <span class="s2">"Delete the downloaded model files?"</span><span class="p">,</span>
                 <span class="n">default_answer</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">do_delete</span><span class="p">:</span>
                 <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"✅ Model '</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">' artifacts have been successfully deleted."</span>
-                <span class="p">)</span>
-                <span class="n">echo</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"✅ Model '</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">' artifacts have been successfully deleted."</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> files deleted."</span><span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Downloaded files of model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> deleted."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
 
-            <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"An unknown error occurred during fetching."</span>
-            <span class="p">)</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="n">message</span> <span class="ow">or</span> <span class="s2">"An unknown error occurred during fetching."</span>
             <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span><span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span></div>
 </div>
 

@@ -304,9 +304,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.delete</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">confirm</span><span class="p">,</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
@@ -335,7 +337,7 @@
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.delete.delete</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFullDeleter</span>
@@ -343,15 +345,43 @@
         <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
         <span class="n">can_delete</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">can_be_deleted</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">can_delete</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"Deleting model </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">harmonize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">"not available locally"</span> <span class="ow">in</span> <span class="n">reason</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not available locally."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s2">"not available locally"</span> <span class="ow">in</span> <span class="n">reason</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not available locally, so there is nothing to delete."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">echo</span><span class="p">(</span><span class="n">reason</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_close_if_served</span><span class="p">(</span><span class="n">model_ids</span><span class="p">):</span>
+        <span class="c1"># A model served in this terminal is closed before it is deleted, so</span>
+        <span class="c1"># its container and session record do not outlive it.</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">deregister_model_session</span>
+
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">served</span> <span class="o">=</span> <span class="n">_served_model</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">served</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_ids</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">served</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">())</span>
+        <span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">served</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">served</span><span class="si">}</span><span class="s2"> closed."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_served_model</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># A half-written session record: nothing usable is served.</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_served_here</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_served_model</span><span class="p">()</span> <span class="o">==</span> <span class="n">model_id</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_delete_all</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">"""Function to delete all locally available models"""</span>
@@ -359,55 +389,49 @@
 
         <span class="n">model_catalog</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
         <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">model_catalog</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">"No local models available."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">model_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">catalog_table</span> <span class="ow">and</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">)</span>
+            <span class="n">model_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+        <span class="c1"># Remains of models not fully fetched or deleted go too.</span>
+        <span class="n">model_ids</span> <span class="o">+=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model_catalog</span><span class="o">.</span><span class="n">leftovers</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_ids</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_ids</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"No models are available locally."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
             <span class="k">return</span>
-        <span class="n">local_models</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">local_models</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">"No local models available."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">return</span>
-        <span class="n">model_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">local_models</span><span class="p">]</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">"This will delete the following models: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ids</span><span class="p">)),</span>
+            <span class="s2">"This will delete </span><span class="si">{0}</span><span class="s2"> model</span><span class="si">{1}</span><span class="s2">: </span><span class="si">{2}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">model_ids</span><span class="p">),</span> <span class="s2">""</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"s"</span><span class="p">,</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_ids</span><span class="p">)</span>
+            <span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">"Are you sure you want to proceed?"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"Aborted."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">confirm</span><span class="p">(</span><span class="s2">"Continue?"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Aborted. No models were deleted."</span><span class="p">)</span>
             <span class="k">return</span>
+        <span class="n">_close_if_served</span><span class="p">(</span><span class="n">model_ids</span><span class="p">)</span>
         <span class="n">deleted_count</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">model_row</span> <span class="ow">in</span> <span class="n">local_models</span><span class="p">:</span>
-            <span class="n">model_id</span> <span class="o">=</span> <span class="n">model_row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">model_ids</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
                     <span class="n">deleted_count</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">":warning: Error deleting model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-                <span class="p">)</span>
-        <span class="k">if</span> <span class="n">deleted_count</span> <span class="ow">is</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_models</span><span class="p">):</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> could not be deleted: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">deleted_count</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_ids</span><span class="p">):</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">":thumbs_up: Completed the deletion of </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> locally available models!"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Deleted </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> model</span><span class="si">{</span><span class="s1">''</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">deleted_count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'s'</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">":thumbs_down: Failed to delete all models. Deleted </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">local_models</span><span class="p">)</span><span class="si">}</span><span class="s2"> models."</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Deleted </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> models."</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Example usage:</span>
     <span class="c1"># 1. Delete a specific model: ersilia delete {MODEL}</span>
     <span class="c1"># 2. Delete all models: ersilia delete --all</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Delete model from local computer"</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Delete a model from this computer"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">"Fully remove a model from the local computer. This includes the model files in the EOS directory, conda environment, Docker image and containers, pip package, and all associated database entries."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
@@ -419,11 +443,19 @@
             <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
 
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
-            <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_served_here</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">confirm</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is being served in this terminal. Close and delete it?"</span><span class="p">,</span>
+                    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">):</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Aborted. Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> was not deleted."</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">_close_if_served</span><span class="p">([</span><span class="n">model_id</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">":warning: Please specify a model to delete a model or use --all to delete all models."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">UsageError</span><span class="p">(</span>
+                <span class="s2">"Give a model to delete, or use --all to delete every local model."</span>
             <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">delete</span></div>

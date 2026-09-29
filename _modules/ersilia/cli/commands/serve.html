@@ -308,7 +308,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">confirm</span><span class="p">,</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
@@ -352,9 +352,9 @@
         <span class="k">if</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">write_store</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">"Enabled: Read Only"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="n">write_store</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">"Enabled: Writter Only"</span>
+            <span class="k">return</span> <span class="s2">"Enabled: Write Only"</span>
         <span class="k">if</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="n">write_store</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">"Enabled: Reader &amp; Writter "</span>
+            <span class="k">return</span> <span class="s2">"Enabled: Read &amp; Write"</span>
         <span class="k">return</span> <span class="s2">"Disabled"</span>
 
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
@@ -389,7 +389,7 @@
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"--tracking-use-case"</span><span class="p">,</span>
+        <span class="s2">"--tracking_use_case"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">(</span>
             <span class="p">[</span><span class="s2">"local"</span><span class="p">,</span> <span class="s2">"self-service"</span><span class="p">,</span> <span class="s2">"hosted"</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">),</span>
@@ -402,7 +402,7 @@
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"--enable-cache/--disable-cache"</span><span class="p">,</span>
+        <span class="s2">"--enable_cache/--disable_cache"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -412,7 +412,7 @@
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"--read-store"</span><span class="p">,</span>
+        <span class="s2">"--read_store"</span><span class="p">,</span>
         <span class="s2">"-rs"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -423,7 +423,7 @@
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"--write-store"</span><span class="p">,</span>
+        <span class="s2">"--write_store"</span><span class="p">,</span>
         <span class="s2">"-ws"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -436,15 +436,17 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">"--access"</span><span class="p">,</span>
         <span class="s2">"-a"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">"public"</span><span class="p">,</span> <span class="s2">"private"</span><span class="p">]),</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">show_default</span><span class="o">=</span><span class="s2">"unset"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">"Visibility for predictions written to the Isaura store. "</span>
-            <span class="s2">"One of: public, private. Required with `--write-store`."</span>
+            <span class="s2">"One of: public, private. Required with `--write_store`."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"--nearest-neigbors"</span><span class="p">,</span>
+        <span class="s2">"--nearest_neighbors"</span><span class="p">,</span>
+        <span class="s2">"--nearest_neigbors"</span><span class="p">,</span>
         <span class="s2">"-nn"</span><span class="p">,</span>
         <span class="s2">"nearest_neighbors"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -457,11 +459,11 @@
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"--max-cache-memory-frac"</span><span class="p">,</span>
+        <span class="s2">"--max_cache_memory_frac"</span><span class="p">,</span>
         <span class="s2">"max_memory"</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FloatRange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">min_open</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">"0.5"</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"0.3"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">"Maximum fraction (0.0-1.0) of system RAM the Redis cache may use."</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span>
@@ -478,6 +480,7 @@
     <span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.content.information</span><span class="w"> </span><span class="kn">import</span> <span class="n">version_label</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
             <span class="n">ModelNotAvailableLocallyError</span><span class="p">,</span>
         <span class="p">)</span>
@@ -490,6 +493,7 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span>
 
         <span class="n">sess</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">requested</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">stale_model</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">served_model</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"stale"</span><span class="p">:</span>
             <span class="c1"># Recorded as served, but no longer running: nothing to close.</span>
@@ -498,7 +502,8 @@
         <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"running"</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
 
-            <span class="k">if</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span> <span class="o">==</span> <span class="n">stale_model</span><span class="p">:</span>
+            <span class="n">requested</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">requested</span><span class="o">.</span><span class="n">model_id</span> <span class="o">==</span> <span class="n">stale_model</span><span class="p">:</span>
                 <span class="c1"># The same model is already running here: nothing to do.</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_connect_url</span>
@@ -516,18 +521,26 @@
         <span class="n">existing_session</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="n">already_served</span> <span class="o">=</span> <span class="n">existing_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"model_id"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">already_served</span><span class="p">:</span>
+            <span class="c1"># Check the requested model before touching the one being served,</span>
+            <span class="c1"># so a typo or an unfetched model does not close it for nothing.</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
+
+            <span class="n">requested</span> <span class="o">=</span> <span class="n">requested</span> <span class="ow">or</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">requested</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">requested</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not available locally."</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetch it first with 'ersilia fetch </span><span class="si">{</span><span class="n">requested</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"A model is already being served in this terminal: </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> is already being served in this terminal."</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Close </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> and serve </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> instead?"</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">confirm</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Close </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> and serve </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> instead?"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">):</span>
-                <span class="n">echo</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Aborted. </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> is still being served."</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Aborted. </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> is still being served."</span><span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="c1"># Actually close the previously served model so its Docker</span>
             <span class="c1"># container and session are shut down before serving the new one.</span>
@@ -537,28 +550,26 @@
             <span class="p">)</span>
             <span class="n">previous_mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">already_served</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">":no_entry: Model </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> closed"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> closed."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
         <span class="n">sess</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span>
             <span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">access</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">,</span> <span class="n">enable_cache</span>
         <span class="p">)</span>
         <span class="n">store_stat</span> <span class="o">=</span> <span class="n">store_status</span><span class="p">(</span><span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_installed</span><span class="p">(</span><span class="s2">"isaura"</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">read_store</span> <span class="ow">or</span> <span class="n">write_store</span><span class="p">):</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">"Isaura is not installed! Please install isaura in your env by running simply </span><span class="se">\n</span><span class="s2">&gt;&gt; pip install git+https://github.com/ersilia-os/isaura.git.</span><span class="se">\n</span><span class="s2">To start all isaura services, run this command &gt;&gt; isaura engine -s."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                <span class="s2">"Isaura is needed to use the store, but it is not installed."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span>
+            <span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">"Install it with 'pip install git+https://github.com/ersilia-os/isaura.git'</span><span class="se">\n</span><span class="s2">and start its services with 'isaura engine -s'."</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">"Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute &gt;&gt; isaura engine -s. "</span>
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">write_store</span> <span class="ow">and</span> <span class="n">access</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">"You need to specifiy the access as [public or private] to write to store!"</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">"You need to specifiy the access as [public or private] to write to store!"</span>
-            <span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Writing to the store needs an access level."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Add '--access public' or '--access private'."</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Writing to the store needs --access public or private."</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -574,11 +585,8 @@
                 <span class="n">nearest_neighbors</span><span class="o">=</span><span class="n">nearest_neighbors</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">ModelNotAvailableLocallyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> is not available locally, so it cannot be served."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetch it first by running: ersilia fetch </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> is not available locally."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetch it first with 'ersilia fetch </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
@@ -590,8 +598,9 @@
 
         <span class="n">mdl</span><span class="o">.</span><span class="n">serve</span><span class="p">(</span><span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mdl</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"No URL found. Service unsuccessful."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
-            <span class="k">return</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> could not be started."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Run the command again with 'ersilia -v serve' to see the details."</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">register_model_session</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">)</span>
 
@@ -608,9 +617,12 @@
             <span class="n">enable_cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
             <span class="n">tracking_enabled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">track</span><span class="p">),</span>
             <span class="n">tracking_use_case</span><span class="o">=</span><span class="n">tracking_use_case</span><span class="p">,</span>
-            <span class="n">version</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"docker_tag"</span><span class="p">),</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">version_label</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"docker_tag"</span><span class="p">),</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"card"</span><span class="p">)),</span>
         <span class="p">)</span>
 
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">"Run it with 'ersilia run -i INPUT.csv -o OUTPUT.csv', and stop it with 'ersilia close'."</span>
+        <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> is successfully served!"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">serve</span></div>

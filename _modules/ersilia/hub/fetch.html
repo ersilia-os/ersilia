@@ -304,7 +304,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">validators</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">validators</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
@@ -315,6 +318,34 @@
 <span class="n">REQUIREMENTS_TXT</span> <span class="o">=</span> <span class="s2">"requirements.txt"</span>
 <span class="n">STATUS_FILE</span> <span class="o">=</span> <span class="s2">"status.json"</span>
 <span class="n">DONE_TAG</span> <span class="o">=</span> <span class="s2">"done"</span>
+
+
+<div class="viewcode-block" id="is_fetched">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.is_fetched">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_fetched</span><span class="p">(</span><span class="n">model_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Tell whether the model in a folder finished fetching.</span>
+
+<span class="sd">    A model counts as fetched only when its status file says it is done, so a</span>
+<span class="sd">    half-finished fetch is never mistaken for a working model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_dir : str</span>
+<span class="sd">        The model's folder in the dest directory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the fetch finished.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DONE_TAG</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
 
 <span class="n">HOST_URL</span> <span class="o">=</span> <span class="s2">"Host URL"</span>
 <span class="n">IDENTIFIER</span> <span class="o">=</span> <span class="s2">"Identifier"</span>

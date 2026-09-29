@@ -308,7 +308,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
@@ -329,6 +328,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.content.columns_information</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnsInformation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.output</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericOutputAdapter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.isaura</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsauraStore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.cli_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ModelNotRespondingError</span><span class="p">,</span>
+    <span class="n">NoInputProcessedError</span><span class="p">,</span>
+    <span class="n">ResultCountMismatchError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ensure_ready</span><span class="p">,</span> <span class="n">normalize_connect_url</span>
 
 <span class="n">MAX_INPUT_ROWS_STANDARD</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -588,7 +593,9 @@
             <span class="n">header</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">fieldnames</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="c1"># Surrounding spaces (common in spreadsheet exports) are removed</span>
+                <span class="c1"># here, once, so inputs and their results always match.</span>
+                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">data_list</span></div>
 
 
@@ -688,6 +695,8 @@
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">):</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">ResultCountMismatchError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="kc">None</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"result"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
                 <span class="n">batch_meta</span> <span class="o">=</span> <span class="p">(</span>
@@ -698,13 +707,12 @@
                 <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="kc">None</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="c1"># The server is unreachable or hung, not a bad molecule: splitting</span>
-            <span class="c1"># the batch would only repeat the wait, so fail right away.</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Model server at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> did not respond (connect timeout "</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">RUN_CONNECT_TIMEOUT</span><span class="si">}</span><span class="s2">s, read timeout </span><span class="si">{</span><span class="n">RUN_READ_TIMEOUT</span><span class="si">}</span><span class="s2">s): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
-            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">except</span> <span class="n">ErsiliaError</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">):</span>
+            <span class="c1"># The server is gone: splitting the batch would only repeat the</span>
+            <span class="c1"># failure for every input and write empty rows.</span>
+            <span class="k">raise</span> <span class="n">ModelNotRespondingError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">during_run</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Batch of size </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -754,7 +762,10 @@
             <span class="n">input_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_data</span><span class="p">]</span>
 
         <span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="n">_ensure_ready</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_ensure_ready</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">attempts</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelNotRespondingError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_stream_output</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_streaming</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span>
@@ -762,6 +773,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Waiting for server response"</span><span class="p">)</span>
         <span class="n">results</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_result</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Server response received"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_empty_inputs</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">results</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">))</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
         <span class="n">et</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -800,22 +812,37 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_post_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">st</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Streaming output to </span><span class="si">{0}</span><span class="s2"> batch by batch"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
         <span class="n">written</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">empty</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Batches go to a hidden partial file, renamed to the output at the</span>
+        <span class="c1"># end, so a failed or interrupted run never leaves a half-written file.</span>
+        <span class="n">folder</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">stem</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">partial</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">".</span><span class="si">{0}</span><span class="s2">.partial</span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stem</span><span class="p">,</span> <span class="n">ext</span><span class="p">))</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">write_batch</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">):</span>
             <span class="k">nonlocal</span> <span class="n">written</span>
             <span class="n">batch_inputs</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)]</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_empty_inputs</span><span class="p">(</span><span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span><span class="o">.</span><span class="n">write_batch</span><span class="p">(</span>
-                <span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">written</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">,</span> <span class="n">partial</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">written</span> <span class="o">&gt;</span> <span class="mi">0</span>
             <span class="p">)</span>
             <span class="n">written</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Waiting for server response"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_result</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">on_batch</span><span class="o">=</span><span class="n">write_batch</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_result</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">on_batch</span><span class="o">=</span><span class="n">write_batch</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">written</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Inputs and outputs are not matching"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_empty</span><span class="p">(</span><span class="n">empty</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">partial</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">ersilia_note</span> <span class="o">=</span> <span class="s2">"No output was written."</span>
+            <span class="k">raise</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">partial</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
         <span class="n">et</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"All batches processed in </span><span class="si">{</span><span class="n">et</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds"</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">written</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Inputs and outputs are not matching"</span><span class="p">)</span>
 
         <span class="n">ft</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output generated to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">ft</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> seconds"</span><span class="p">)</span>
@@ -881,7 +908,6 @@
 
             <span class="k">return</span> <span class="n">path</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.progress</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
             <span class="n">BarColumn</span><span class="p">,</span>
             <span class="n">MofNCompleteColumn</span><span class="p">,</span>
@@ -890,18 +916,20 @@
             <span class="n">TimeElapsedColumn</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">Console</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[bold cyan]Running model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">[/bold cyan]"</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
-        <span class="n">num_batches</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">total</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Running </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> input</span><span class="si">{</span><span class="s1">'s'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Running model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">total</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> input</span><span class="si">{</span><span class="s1">'s'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
 
         <span class="k">with</span> <span class="n">Progress</span><span class="p">(</span>
-            <span class="n">TextColumn</span><span class="p">(</span><span class="s2">"[bold cyan]</span><span class="si">{task.description}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="c1"># Indented to line up under the text of the line above.</span>
+            <span class="n">TextColumn</span><span class="p">(</span><span class="s2">"    "</span><span class="p">),</span>
             <span class="n">BarColumn</span><span class="p">(),</span>
             <span class="n">MofNCompleteColumn</span><span class="p">(),</span>
             <span class="n">TimeElapsedColumn</span><span class="p">(),</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">progress</span><span class="p">:</span>
-            <span class="n">task</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">num_batches</span><span class="p">)</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
                 <span class="n">batch_items</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
@@ -962,7 +990,7 @@
                     <span class="n">on_batch</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">overall_results</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)]</span> <span class="o">=</span> <span class="n">batch_results</span>
-                <span class="n">progress</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_items</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">all_replacements</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">write_replacements_txt</span><span class="p">(</span><span class="n">all_replacements</span><span class="p">)</span>
@@ -1085,6 +1113,35 @@
             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_values</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
             <span class="n">standardized</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"input"</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys_flat</span><span class="p">,</span> <span class="n">values</span><span class="p">))})</span>
         <span class="k">return</span> <span class="n">standardized</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_empty_inputs</span><span class="p">(</span><span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">):</span>
+        <span class="c1"># Inputs whose outputs are all empty (the model could not process them).</span>
+        <span class="n">empty</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">inp</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"input"</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span> <span class="ow">or</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">):</span>
+                <span class="n">empty</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"input"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">inp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">empty</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_report_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
+        <span class="c1"># Tell the user about inputs the model could not process, instead of</span>
+        <span class="c1"># writing empty rows silently.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">empty</span><span class="p">)</span> <span class="o">==</span> <span class="n">total</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NoInputProcessedError</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+
+        <span class="n">examples</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">'"</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">empty</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">empty</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">total</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> inputs could not be processed and have empty values (e.g. </span><span class="si">{</span><span class="n">examples</span><span class="si">}</span><span class="s2">)."</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">"Check that they are valid inputs for this model (e.g. valid SMILES)."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_same_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>

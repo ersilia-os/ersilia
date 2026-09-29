@@ -351,7 +351,50 @@
 <span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_ERRORS_SUGGESTION</span> <span class="o">=</span> <span class="s2">"bold"</span>
 <span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">HEADER_TEXT</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Ersilia version: </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_align_commands_with_options</span><span class="p">():</span>
+    <span class="c1"># rich-click stretches the commands table to the panel width and gives</span>
+    <span class="c1"># the extra space to the name column, so command descriptions start</span>
+    <span class="c1"># further right than option descriptions. Size the name column to the</span>
+    <span class="c1"># option columns instead (options here are flags, with no metavar).</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rich_click.rich_panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">RichCommandPanel</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">get_table</span> <span class="o">=</span> <span class="n">RichCommandPanel</span><span class="o">.</span><span class="n">get_table</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">aligned_get_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">formatter</span><span class="p">):</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">get_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">formatter</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">opts</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="n">secondary_opts</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Option</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">hidden</span>
+            <span class="p">]</span>
+            <span class="n">long_</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">n</span> <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"--"</span><span class="p">)))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span>
+            <span class="p">)</span>
+            <span class="n">short</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">n</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">o</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"--"</span><span class="p">)))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span>
+            <span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">expand</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="n">long_</span> <span class="o">+</span> <span class="n">short</span> <span class="o">+</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">short</span> <span class="k">else</span> <span class="n">long_</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="n">RichCommandPanel</span><span class="o">.</span><span class="n">get_table</span> <span class="o">=</span> <span class="n">aligned_get_table</span>
+
+
+<span class="n">_align_commands_with_options</span><span class="p">()</span>
+
 <span class="c1"># ruff: noqa: D101, D102</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_option</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="c1"># --from-github works like --from_github, without listing both spellings</span>
+    <span class="c1"># in the help.</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ErsiliaCommandGroup">
@@ -361,6 +404,11 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.command">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"cls"</span><span class="p">,</span> <span class="n">RichCommand</span><span class="p">)</span>
+        <span class="c1"># Set on each command too, so it also applies when a command is</span>
+        <span class="c1"># invoked directly (scripts, tests), not only through 'ersilia'.</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"context_settings"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"token_normalize_func"</span><span class="p">,</span> <span class="n">_normalize_option</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"context_settings"</span><span class="p">]</span> <span class="o">=</span> <span class="n">settings</span>
         <span class="k">return</span> <span class="n">RichGroup</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -373,13 +421,52 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">argv</span> <span class="ow">or</span> <span class="s2">"--help"</span> <span class="ow">in</span> <span class="n">argv</span> <span class="ow">or</span> <span class="s2">"-h"</span> <span class="ow">in</span> <span class="n">argv</span><span class="p">:</span>
             <span class="n">_print_logo</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErsiliaCommandGroup.invoke">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.invoke">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="c1"># Ctrl+C anywhere (including at a prompt) ends with one short line,</span>
+        <span class="c1"># never a traceback.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Abort</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Interrupted."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
+            <span class="n">note</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"ersilia_note"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">__context__</span><span class="p">,</span> <span class="s2">"ersilia_note"</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">note</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">130</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErsiliaCommandGroup.resolve_command">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.resolve_command">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="c1"># Suggest the closest command for a typo, e.g. 'ersilia server'.</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"-"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
+
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">get_close_matches</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_commands</span><span class="p">(</span><span class="n">ctx</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="n">ctx</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No such command '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'. Did you mean '</span><span class="si">{</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">'?"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resolve_command</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
 </div>
 
 
 
 <span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
     <span class="bp">cls</span><span class="o">=</span><span class="n">ErsiliaCommandGroup</span><span class="p">,</span>
-    <span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">"show_default"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="n">context_settings</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"show_default"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"help_option_names"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"-h"</span><span class="p">,</span> <span class="s2">"--help"</span><span class="p">],</span>
+        <span class="s2">"token_normalize_func"</span><span class="p">:</span> <span class="n">_normalize_option</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="n">epilog</span><span class="o">=</span><span class="s2">"To learn more about a specific command, run: ersilia COMMAND --help"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">)</span>

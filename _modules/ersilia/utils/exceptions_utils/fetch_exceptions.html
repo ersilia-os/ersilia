@@ -314,7 +314,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">FetchErsiliaError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Error occured while fetching model: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Error occurred while fetching model: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
@@ -335,7 +335,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">S3DownloaderError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Error occured while fetching model from S3: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Error occurred while fetching model from S3: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
@@ -350,7 +350,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">GetFetchErsiliaError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Error occured while fetching model: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Error occurred while fetching model: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
@@ -408,7 +408,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s1">'Error occured while installing package by running "'</span>
+            <span class="s1">'Error occurred while installing package by running "'</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_name</span>
             <span class="o">+</span> <span class="s1">'" command </span><span class="se">\n</span><span class="s1">'</span>
         <span class="p">)</span>
@@ -494,11 +494,11 @@
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">"Cannot fetch model from Docker Hub since Docker is not active."</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">"Docker is not running, so the model cannot be fetched from DockerHub."</span>
         <span class="k">return</span> <span class="n">text</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">"Make sure that Docker is running on your computer. We recommend to use Docker Desktop."</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">"Start Docker (e.g. Docker Desktop) and try again."</span>
         <span class="k">return</span> <span class="n">text</span></div>
 
 
@@ -514,11 +514,13 @@
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not installable with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">packing_strategy</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> cannot be installed with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">packing_strategy</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">text</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"This model is not compatible with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">packing_strategy</span><span class="si">}</span><span class="s2">. Please check the model structure or reach out to Ersilia directly to report this error."</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">"Please report this at https://github.com/ersilia-os/ersilia/issues."</span>
         <span class="k">return</span> <span class="n">text</span></div>
 
 
@@ -527,7 +529,7 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableWithFastAPI">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NotInstallableWithFastAPI</span><span class="p">(</span><span class="n">NotInstallableError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="nb">super</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">"FastAPI"</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">"FastAPI"</span><span class="p">)</span></div>
 
 
 

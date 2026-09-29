@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>ersilia.api.echo - Ersilia documentation</title>
+        <title>ersilia.cli.run_checks - Ersilia documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -303,138 +303,174 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for ersilia.api.echo</h1><div class="highlight"><pre>
-<span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">emoji</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+          <h1>Source code for ersilia.cli.run_checks</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Checks of `ersilia run` inputs and outputs, done before the model is loaded.</span>
+
+<span class="sd">Each problem is reported with what is wrong and how to fix it, and the command</span>
+<span class="sd">exits with code 1.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">SILENCE_FILE</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
-
-<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+<span class="n">INPUT_HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"smiles"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">}</span>
+<span class="c1"># A first line made only of SMILES atoms and symbols (e.g. "CCO", "c1ccccc1")</span>
+<span class="c1"># is an input, not a header. Ordinary column names ("name", "smiles", "ID")</span>
+<span class="c1"># do not match.</span>
+<span class="n">_LOOKS_LIKE_SMILES</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[CNOSPFIBrclnosp0-9()=#\[\]@+\-</span><span class="se">\\</span><span class="s2">/.%]{2,}"</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Silencer">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.echo.Silencer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="fail">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.run_checks.fail">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fail</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">hint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    A class to manage the silencing of CLI output.</span>
+<span class="sd">    Print an error (and a hint) and exit with code 1.</span>
 
-<span class="sd">    Attributes</span>
+<span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    silence_file : str</span>
-<span class="sd">        Path to the silence file.</span>
-
-<span class="sd">    Methods</span>
-<span class="sd">    -------</span>
-<span class="sd">    is_silence()</span>
-<span class="sd">        Checks if the CLI output is silenced.</span>
-<span class="sd">    speak()</span>
-<span class="sd">        Enables CLI output.</span>
-<span class="sd">    silence()</span>
-<span class="sd">        Disables CLI output.</span>
+<span class="sd">    message : str</span>
+<span class="sd">        What went wrong.</span>
+<span class="sd">    hint : str, optional</span>
+<span class="sd">        What to do about it.</span>
 <span class="sd">    """</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">()</span>
-
-<div class="viewcode-block" id="Silencer.is_silence">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.echo.Silencer.is_silence">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Checks if the CLI output is silenced.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
-<span class="sd">            True if the CLI output is silenced, False otherwise.</span>
-<span class="sd">        """</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">"silence"</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="Silencer.speak">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.echo.Silencer.speak">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Enables CLI output.</span>
-<span class="sd">        """</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"silence"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Silencer.silence">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.echo.Silencer.silence">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Disables CLI output.</span>
-<span class="sd">        """</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"silence"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
-</div>
+    <span class="n">echo</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hint</span><span class="p">:</span>
+        <span class="n">echo</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="echo">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.echo.echo">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">harmonize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_input_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".xlsx"</span><span class="p">,</span> <span class="s2">".xls"</span><span class="p">)):</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is an Excel file; the input must be a CSV file."</span><span class="p">,</span>
+            <span class="s2">"Export it as CSV (one column of inputs) first."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="s2">"."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]:</span>
+            <span class="n">fail</span><span class="p">(</span>
+                <span class="s2">"The input must be a CSV file, not a single input."</span><span class="p">,</span>
+                <span class="s2">"To run one molecule, put it in a CSV file, e.g. printf 'smiles</span><span class="se">\\</span><span class="s2">nCCO</span><span class="se">\\</span><span class="s2">n' &gt; input.csv"</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="s2">"The input must be a CSV file with one column of inputs."</span><span class="p">,</span>
+            <span class="s2">"Save it as a comma-separated .csv file."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Input file </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> does not exist."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is a folder, not a file."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"The input file </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">,</span>
+            <span class="s2">"It needs a header line (e.g. 'smiles') and one input per line."</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">emoji</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">emoji</span><span class="o">.</span><span class="n">emojize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">"alias"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">harmonize</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_rows</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8-sig"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"The input file </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is not UTF-8 encoded."</span><span class="p">,</span>
+            <span class="s1">'Save it as "CSV UTF-8" and try again.'</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">csv</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The input file </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> could not be read as CSV: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
-    <span class="n">color</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fg"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"color"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"style"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"yellow"</span><span class="p">,</span> <span class="s2">"bright_yellow"</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"⚠"</span>
-    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"red"</span><span class="p">,</span> <span class="s2">"bright_red"</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"✖"</span>
+<div class="viewcode-block" id="check_run_arguments">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.run_checks.check_run_arguments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_run_arguments</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Check the input and output of `ersilia run`, and prepare the input.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : str</span>
+<span class="sd">        Path of the input CSV file.</span>
+<span class="sd">    output : str</span>
+<span class="sd">        Path of the output file (.csv or .h5).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of (str, str or None)</span>
+<span class="sd">        The input path to run, and a temporary folder to remove afterwards</span>
+<span class="sd">        (when a single column was extracted from a wider file), or None.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrong_extension</span>
+
+    <span class="n">_check_input_file</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".csv"</span><span class="p">,</span> <span class="s2">".h5"</span><span class="p">)):</span>
+        <span class="n">wrong_extension</span><span class="p">([</span><span class="s2">".csv"</span><span class="p">,</span> <span class="s2">".h5"</span><span class="p">])</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="s2">"The output file is the same as the input file."</span><span class="p">,</span>
+            <span class="s2">"Choose a different output file, so the input is not overwritten."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"."</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+        <span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The output folder </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> does not exist."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">W_OK</span><span class="p">):</span>
+        <span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot write to the output folder </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> (permission denied)."</span><span class="p">)</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">_read_rows</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">r</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"The input file </span><span class="si">{</span><span class="nb">input</span><span class="si">}</span><span class="s2"> has no content."</span><span class="p">,</span>
+            <span class="s2">"It needs a header line (e.g. 'smiles') and one input per line."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">header</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">";"</span> <span class="ow">in</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="s2">"The input file looks tab or semicolon separated."</span><span class="p">,</span>
+            <span class="s2">"Save it as a comma-separated CSV file with one column of inputs."</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">fail</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"The input file </span><span class="si">{</span><span class="nb">input</span><span class="si">}</span><span class="s2"> has a header but no inputs."</span><span class="p">,</span>
+            <span class="s2">"Add one input per line below the header."</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">tmp_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">named</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">INPUT_HEADERS</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">named</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">fail</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"The input file has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span><span class="si">}</span><span class="s2"> columns (</span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">)."</span><span class="p">,</span>
+                <span class="s2">"Keep only the column with the inputs, or name it 'smiles'."</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">named</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"The input file has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span><span class="si">}</span><span class="s2"> columns; using '</span><span class="si">{</span><span class="n">header</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">'."</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"ersilia-run-"</span><span class="p">)</span>
+        <span class="n">single</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">"input.csv"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">single</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">header</span><span class="p">[</span><span class="n">col</span><span class="p">]])</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">else</span> <span class="s2">""</span><span class="p">])</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">single</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"✓"</span>
-
-    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
-
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">():</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">wrap_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">styles</span><span class="p">:</span>
-        <span class="n">styles</span><span class="p">[</span><span class="s2">"fg"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"green"</span>
-
-    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span></div>
-
-
-
-<div class="viewcode-block" id="spinner">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.echo.spinner">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">spinner</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">console</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">)):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✓  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">result</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✖  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
-            <span class="k">raise</span></div>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">INPUT_HEADERS</span> <span class="ow">and</span> <span class="n">_LOOKS_LIKE_SMILES</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">first</span><span class="p">):</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"The first line '</span><span class="si">{</span><span class="n">first</span><span class="si">}</span><span class="s2">' looks like an input, not a header. It was treated as a header and skipped."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Add a header line (e.g. 'smiles') to include it."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="p">,</span> <span class="n">tmp_dir</span></div>
 
 </pre></div>
         </article>

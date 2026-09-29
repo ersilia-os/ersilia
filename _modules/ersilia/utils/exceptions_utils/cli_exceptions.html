@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>ersilia.cli.commands.run - Ersilia documentation</title>
+        <title>ersilia.utils.exceptions_utils.cli_exceptions - Ersilia documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -303,132 +303,147 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for ersilia.cli.commands.run</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+          <h1>Source code for ersilia.utils.exceptions_utils.cli_exceptions</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span class="c1"># ruff: noqa: D101, D102</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
+<span class="c1"># Errors for situations a user can run into with the CLI. Each one says what</span>
+<span class="c1"># happened and, in the hint, what to do next.</span>
 
 
-<div class="viewcode-block" id="run_cmd">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.run.run_cmd">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Runs a specified model.</span>
-
-<span class="sd">    This command allows users to run a specified model with given inputs.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    function</span>
-<span class="sd">        The run command function to be used by the CLI and for testing in the pytest.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    .. code-block:: console</span>
-
-<span class="sd">        Run a model by its ID with input data:</span>
-<span class="sd">        $ ersilia run -i &lt;input_data&gt; --as-table</span>
-
-<span class="sd">        Run a model with batch size:</span>
-<span class="sd">        $ ersilia run -i &lt;input_data&gt; -b 50</span>
-<span class="sd">    """</span>
-
-    <span class="c1"># Example usage: ersilia run -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Run predictions on the served model"</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">"Run predictions using the currently served model. Input must be a single-column CSV file. Output can be saved as .csv or .h5. A model must be served before running this command."</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"-i"</span><span class="p">,</span>
-        <span class="s2">"--input"</span><span class="p">,</span>
-        <span class="s2">"input"</span><span class="p">,</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">"Path to a single-column CSV file containing the input data."</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"-o"</span><span class="p">,</span>
-        <span class="s2">"--output"</span><span class="p">,</span>
-        <span class="s2">"output"</span><span class="p">,</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">"Path to the output file. Accepted formats: .csv, .h5."</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">"-b"</span><span class="p">,</span>
-        <span class="s2">"--batch_size"</span><span class="p">,</span>
-        <span class="s2">"batch_size"</span><span class="p">,</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">IntRange</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">"Number of inputs processed per batch."</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-
-        <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">..run_checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_run_arguments</span>
-
-        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">served_model</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">served_model</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"stale"</span><span class="p">:</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">clear_stale</span><span class="p">(</span><span class="n">served_model</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">served_model</span><span class="si">}</span><span class="s2"> is no longer running in this terminal (its server stopped)."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Serve it again with 'ersilia serve </span><span class="si">{</span><span class="n">served_model</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
-        <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
-        <span class="n">output_source</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_output_source</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">no_model_served</span>
-
-            <span class="n">no_model_served</span><span class="p">()</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">output_basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="n">output_model_ids</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"eos[0-9][a-z0-9]</span><span class="si">{3}</span><span class="s2">"</span><span class="p">,</span> <span class="n">output_basename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">output_model_ids</span> <span class="ow">and</span> <span class="n">output_model_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">model_id</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"The output file name mentions </span><span class="si">{</span><span class="n">output_model_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, but the served model is </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"Use an output file name that matches the served model."</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">run_input</span><span class="p">,</span> <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">check_run_arguments</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="p">,</span>
-            <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
-            <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span>
-            <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="RunNotSupportedError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.RunNotSupportedError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunNotSupportedError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> cannot be run with 'ersilia run': </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span> <span class="n">reason</span>
         <span class="p">)</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
-        <span class="n">started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">run_input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">tmp_dir</span><span class="p">:</span>
-                <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-                <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># Success means an output file written by this run, not an old one.</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">started</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"No output was written."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output written to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">run</span></div>
+<div class="viewcode-block" id="ModelNotRespondingError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ModelNotRespondingError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelNotRespondingError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">during_run</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">during_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> stopped responding during the run."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_id</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"No output was written. Serve it again with 'ersilia serve </span><span class="si">{0}</span><span class="s2">' and rerun."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_id</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> is not responding at </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">"It may have stopped. Serve it again with 'ersilia serve </span><span class="si">{0}</span><span class="s2">'."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">model_id</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ResultCountMismatchError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ResultCountMismatchError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResultCountMismatchError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">got</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> returned </span><span class="si">{1}</span><span class="s2"> results for </span><span class="si">{2}</span><span class="s2"> inputs, so they cannot be matched to the inputs."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span> <span class="n">got</span><span class="p">,</span> <span class="n">expected</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"No output was written. Please report this model at https://github.com/ersilia-os/ersilia/issues."</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NoInputProcessedError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.NoInputProcessedError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoInputProcessedError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">total</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"The input could not be processed."</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"None of the </span><span class="si">{0:,}</span><span class="s2"> inputs could be processed."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"No output was written. Check that the inputs are valid for this model (e.g. valid SMILES)."</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ModelStartError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ModelStartError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelStartError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="n">hint</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="HubUnreachableError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.HubUnreachableError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HubUnreachableError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Could not reach the Ersilia Model Hub."</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"Check your internet connection and try again. You can also browse the models at https://catalog.ersilia.io"</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DockerNotInstalledError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.DockerNotInstalledError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DockerNotInstalledError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Docker is not installed."</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"Install it from https://docs.docker.com/get-docker/ and try again, or fetch the model with --from_github."</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PortInUseError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.PortInUseError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortInUseError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Port </span><span class="si">{0}</span><span class="s2"> is already in use."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"Choose another with --port, or leave it out to use a free port."</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ImageMissingError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ImageMissingError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageMissingError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"The Docker image of model </span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">) is missing."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span> <span class="n">image</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"It may have been removed with 'docker rmi'. Run 'ersilia delete </span><span class="si">{0}</span><span class="s2">' and then 'ersilia fetch </span><span class="si">{0}</span><span class="s2">'."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span>
+        <span class="p">)</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ImagePullError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ImagePullError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImagePullError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Could not download the Docker image of model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="p">,</span> <span class="n">reason</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="n">hint</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConfigFileError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.cli_exceptions.ConfigFileError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigFileError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Ersilia's settings file </span><span class="si">{0}</span><span class="s2"> is damaged."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"Delete it and run the command again; it will be created anew."</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

@@ -309,10 +309,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich</span><span class="w"> </span><span class="kn">import</span> <span class="n">box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.padding</span><span class="w"> </span><span class="kn">import</span> <span class="n">Padding</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 
@@ -322,9 +324,10 @@
     <span class="n">inputimeout</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">TimeoutOccurred</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CONDA_BOOTSTRAP</span><span class="p">,</span> <span class="n">VERBOSE_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CONDA_BOOTSTRAP</span><span class="p">,</span> <span class="n">SERVICE_CLASS_LABELS</span><span class="p">,</span> <span class="n">VERBOSE_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_connect_url</span>
 
 <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
 
@@ -490,7 +493,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">answer</span> <span class="o">=</span> <span class="n">inputimeout</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">TimeoutOccurred</span><span class="p">:</span>
-        <span class="n">answer</span> <span class="o">=</span> <span class="n">default_answer</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">answer</span></div>
 
 
@@ -515,10 +518,31 @@
 <span class="sd">    bool</span>
 <span class="sd">        True if the user's input is 'yes', False otherwise.</span>
 <span class="sd">    """</span>
-    <span class="n">ans</span> <span class="o">=</span> <span class="n">raw_input_with_timeout</span><span class="p">(</span>
-        <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="o">=</span><span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+    <span class="c1"># Show the choices so that the capital letter is the real default, and</span>
+    <span class="c1"># indent the prompt like the other lines of the CLI.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s*\[[yYnN]/[yYnN]\]\s*$"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">default_no</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_answer</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="s2">"No"</span> <span class="k">if</span> <span class="n">default_no</span> <span class="k">else</span> <span class="s2">"Yes"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">isatty</span><span class="p">():</span>
+        <span class="c1"># Nobody can answer (e.g. a script): use the default at once.</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s2"> (no terminal to ask; using the default)."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">default_no</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"[y/N, </span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> s]"</span>
+        <span class="k">if</span> <span class="n">default_no</span>
+        <span class="k">else</span> <span class="sa">f</span><span class="s2">"[Y/n, </span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> s]"</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">ans</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ans</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">raw_input_with_timeout</span><span class="p">(</span>
+        <span class="n">prompt</span><span class="o">=</span><span class="sa">f</span><span class="s2">"  ▪  </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">choices</span><span class="si">}</span><span class="s2"> "</span><span class="p">,</span>
+        <span class="n">default_answer</span><span class="o">=</span><span class="n">default_answer</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No answer; continuing with </span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="n">default_answer</span>
+    <span class="k">elif</span> <span class="n">ans</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
         <span class="n">ans</span> <span class="o">=</span> <span class="n">default_answer</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">ans</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"n"</span><span class="p">:</span>
@@ -562,17 +586,23 @@
         <span class="n">pad_edge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Model"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[bold]</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">[/bold] ([dim]</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">[/dim])"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_off</span><span class="p">(</span><span class="n">enabled</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">enabled</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"[green]</span><span class="si">{</span><span class="n">text</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'Enabled'</span><span class="si">}</span><span class="s2">[/green]"</span>
+        <span class="k">return</span> <span class="s2">"[dim]Disabled[/dim]"</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Model"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[bold]</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">[/bold] [dim](</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">)[/dim]"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">version</span><span class="p">:</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Version"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[dim]</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">[/dim]"</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"URL"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[link=</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">][cyan]</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">[/cyan][/link]"</span><span class="p">)</span>
-
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Version"</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+    <span class="c1"># The server listens on 0.0.0.0, which browsers cannot open: show the</span>
+    <span class="c1"># local address instead, and link its interactive API docs.</span>
+    <span class="n">local_url</span> <span class="o">=</span> <span class="n">normalize_connect_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+    <span class="n">docs_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_url</span><span class="si">}</span><span class="s2">/docs"</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"URL"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[link=</span><span class="si">{</span><span class="n">local_url</span><span class="si">}</span><span class="s2">][cyan]</span><span class="si">{</span><span class="n">local_url</span><span class="si">}</span><span class="s2">[/cyan][/link]"</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Docs"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[link=</span><span class="si">{</span><span class="n">docs_url</span><span class="si">}</span><span class="s2">][cyan]</span><span class="si">{</span><span class="n">docs_url</span><span class="si">}</span><span class="s2">[/cyan][/link]"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"-1"</span><span class="p">:</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"PID"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[yellow]</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">[/yellow]"</span><span class="p">)</span>
-
-    <span class="n">srv_display</span> <span class="o">=</span> <span class="s2">"DockerHub"</span> <span class="k">if</span> <span class="n">srv</span> <span class="o">==</span> <span class="s2">"pulled_docker"</span> <span class="k">else</span> <span class="n">srv</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Service"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[yellow]</span><span class="si">{</span><span class="n">srv_display</span><span class="si">}</span><span class="s2">[/yellow]"</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Session"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[yellow]</span><span class="si">{</span><span class="n">session_dir</span><span class="si">}</span><span class="s2">[/yellow]"</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"PID"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pid</span><span class="p">))</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Service"</span><span class="p">,</span> <span class="n">SERVICE_CLASS_LABELS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">srv</span><span class="p">,</span> <span class="n">srv</span><span class="p">))</span>
 
     <span class="n">all_apis</span> <span class="o">=</span> <span class="n">apis</span> <span class="ow">or</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="s2">"run"</span> <span class="ow">in</span> <span class="n">all_apis</span><span class="p">:</span>
@@ -581,23 +611,14 @@
         <span class="n">all_apis</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"run"</span><span class="p">]</span>
     <span class="k">if</span> <span class="s2">"info"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_apis</span><span class="p">:</span>
         <span class="n">all_apis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"info"</span><span class="p">)</span>
-    <span class="n">endpoints_display</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[cyan]</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">[/cyan]"</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_apis</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Endpoints"</span><span class="p">,</span> <span class="n">endpoints_display</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Endpoints"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_apis</span><span class="p">))</span>
 
-    <span class="n">store_style</span> <span class="o">=</span> <span class="s2">"red"</span> <span class="k">if</span> <span class="n">store_stat</span> <span class="o">==</span> <span class="s2">"Disabled"</span> <span class="k">else</span> <span class="s2">"green"</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Store"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">store_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">store_stat</span><span class="si">}</span><span class="s2">[/</span><span class="si">{</span><span class="n">store_style</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
-
-    <span class="n">cache_text</span> <span class="o">=</span> <span class="s2">"Enabled"</span> <span class="k">if</span> <span class="n">enable_cache</span> <span class="k">else</span> <span class="s2">"Disabled"</span>
-    <span class="n">cache_style</span> <span class="o">=</span> <span class="s2">"green"</span> <span class="k">if</span> <span class="n">enable_cache</span> <span class="k">else</span> <span class="s2">"red"</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Local cache"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">cache_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">cache_text</span><span class="si">}</span><span class="s2">[/</span><span class="si">{</span><span class="n">cache_style</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">tracking_enabled</span><span class="p">:</span>
-        <span class="n">tracking_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Enabled (</span><span class="si">{</span><span class="n">tracking_use_case</span><span class="si">}</span><span class="s2">)"</span>
-        <span class="n">tracking_style</span> <span class="o">=</span> <span class="s2">"green"</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">tracking_text</span> <span class="o">=</span> <span class="s2">"Disabled"</span>
-        <span class="n">tracking_style</span> <span class="o">=</span> <span class="s2">"red"</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Tracking"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">tracking_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">tracking_text</span><span class="si">}</span><span class="s2">[/</span><span class="si">{</span><span class="n">tracking_style</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Store"</span><span class="p">,</span> <span class="n">on_off</span><span class="p">(</span><span class="n">store_stat</span> <span class="o">!=</span> <span class="s2">"Disabled"</span><span class="p">,</span> <span class="n">store_stat</span><span class="p">))</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"Local cache"</span><span class="p">,</span> <span class="n">on_off</span><span class="p">(</span><span class="n">enable_cache</span><span class="p">))</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+        <span class="s2">"Tracking"</span><span class="p">,</span>
+        <span class="n">on_off</span><span class="p">(</span><span class="n">tracking_enabled</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Enabled (</span><span class="si">{</span><span class="n">tracking_use_case</span><span class="si">}</span><span class="s2">)"</span><span class="p">),</span>
+    <span class="p">)</span>
 
     <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
         <span class="n">table</span><span class="p">,</span>
@@ -605,8 +626,9 @@
         <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">border_style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="c1"># Indented like the "  ✓  " lines printed before it.</span>
     <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Padding</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
     <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span></div>
 
 </pre></div>

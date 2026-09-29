@@ -347,8 +347,10 @@ and view model cards for specific models.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<p>Display model card for a specific model ID and show catalog in json format:
-$ ersilia catalog –card &lt;model_id&gt; –as-json</p>
+<p>Display the model card of a model:
+$ ersilia catalog –card &lt;model_id&gt;</p>
+<p>Save the Hub catalog, with more details, as JSON:
+$ ersilia catalog –hub –more -o catalog.json</p>
 </dd></dl>
 
 </section>
@@ -358,7 +360,7 @@ $ ersilia catalog –card &lt;model_id&gt; –as-json</p>
 <dt class="sig sig-object py" id="ersilia.cli.commands.close.close_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.close.</span></span><span class="sig-name descname"><span class="pre">close_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/close.html#close_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.close.close_cmd" title="Link to this definition">¶</a></dt>
 <dd><p>Closes the current session of the served model.</p>
-<p>This command allows users to close the current session and clean up any resources.</p>
+<p>This command stops the model served in this terminal and cleans up its resources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The close command function to be used by the CLI and for testing in the pytest.</p>
@@ -368,7 +370,7 @@ $ ersilia catalog –card &lt;model_id&gt; –as-json</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Close the current session:</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Close the model served in this terminal:</span>
 <span class="gp">$ </span>ersilia<span class="w"> </span>close
 </pre></div>
 </div>
@@ -573,6 +575,13 @@ calling <code class="xref py py-meth docutils literal notranslate"><span class="
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.cli.commands.ErsiliaCommandGroup.invoke">
+<span class="sig-name descname"><span class="pre">invoke</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands.html#ErsiliaCommandGroup.invoke"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.ErsiliaCommandGroup.invoke" title="Link to this definition">¶</a></dt>
+<dd><p>Given a context, this invokes the attached callback (if it exists)
+in the right way.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.commands.ErsiliaCommandGroup.main">
 <span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands.html#ErsiliaCommandGroup.main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.ErsiliaCommandGroup.main" title="Link to this definition">¶</a></dt>
 <dd><p>This is the way to invoke a script with all the bells and
@@ -601,7 +610,7 @@ return but shut down the interpreter.  If
 this is set to <cite>False</cite> they will be
 propagated to the caller and the return
 value of this function is the return value
-of <code class="xref py py-meth docutils literal notranslate"><span class="pre">invoke()</span></code>.</p></li>
+of <a class="reference internal" href="#ersilia.cli.commands.ErsiliaCommandGroup.invoke" title="ersilia.cli.commands.ErsiliaCommandGroup.invoke"><code class="xref py py-meth docutils literal notranslate"><span class="pre">invoke()</span></code></a>.</p></li>
 <li><p><strong>windows_expand_args</strong> – Expand glob patterns, user dir, and
 env vars in command line args on Windows.</p></li>
 <li><p><strong>extra</strong> – extra keyword arguments are forwarded to the context
@@ -621,6 +630,11 @@ patterns, user dir, and env vars are expanded.</p>
 <p><span class="versionmodified changed">Changed in version 3.0: </span>Added the <code class="docutils literal notranslate"><span class="pre">standalone_mode</span></code> parameter.</p>
 </div>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.cli.commands.ErsiliaCommandGroup.resolve_command">
+<span class="sig-name descname"><span class="pre">resolve_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands.html#ErsiliaCommandGroup.resolve_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.ErsiliaCommandGroup.resolve_command" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -730,7 +744,9 @@ patterns, user dir, and env vars are expanded.</p>
 <li><a class="reference internal" href="#module-ersilia.cli.commands">Module contents</a><ul>
 <li><a class="reference internal" href="#ersilia.cli.commands.ErsiliaCommandGroup"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.cli.commands.ErsiliaCommandGroup.command"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.command()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.commands.ErsiliaCommandGroup.invoke"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.invoke()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.cli.commands.ErsiliaCommandGroup.main"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.main()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.commands.ErsiliaCommandGroup.resolve_command"><code class="docutils literal notranslate"><span class="pre">ErsiliaCommandGroup.resolve_command()</span></code></a></li>
 </ul>
 </li>
 </ul>

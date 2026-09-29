@@ -306,6 +306,7 @@
           <h1>Source code for ersilia.cli.commands.info</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 
@@ -327,6 +328,51 @@
 <span class="sd">        The info command function to be used by the CLI.</span>
 <span class="sd">    """</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_serving</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">mdl</span><span class="p">):</span>
+        <span class="c1"># How the model is being served in this terminal, for the Serving</span>
+        <span class="c1"># section: the same details as the 'Model served' summary.</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">SERVICE_CLASS_LABELS</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_connect_url</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">pid</span> <span class="o">=</span> <span class="n">container</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">pid_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pid_file</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pid_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+            <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">pid</span><span class="p">,</span> <span class="n">url</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">container</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">normalize_connect_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+            <span class="n">rows</span><span class="p">[</span><span class="s2">"URL"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"[link=</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">][cyan]</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">[/cyan][/link]"</span>
+            <span class="n">rows</span><span class="p">[</span><span class="s2">"Docs"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"[link=</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/docs][cyan]</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/docs[/cyan][/link]"</span>
+        <span class="k">if</span> <span class="n">pid</span> <span class="ow">and</span> <span class="n">pid</span> <span class="o">!=</span> <span class="s2">"-1"</span><span class="p">:</span>
+            <span class="n">rows</span><span class="p">[</span><span class="s2">"PID"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pid</span>
+        <span class="k">if</span> <span class="n">container</span> <span class="ow">and</span> <span class="n">container</span> <span class="o">!=</span> <span class="s2">"-"</span><span class="p">:</span>
+            <span class="n">rows</span><span class="p">[</span><span class="s2">"Container"</span><span class="p">]</span> <span class="o">=</span> <span class="n">container</span>
+        <span class="n">rows</span><span class="p">[</span><span class="s2">"Session"</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"service_class"</span><span class="p">)</span>
+        <span class="n">rows</span><span class="p">[</span><span class="s2">"Service"</span><span class="p">]</span> <span class="o">=</span> <span class="n">SERVICE_CLASS_LABELS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="n">service</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rows</span><span class="p">[</span><span class="s2">"Endpoints"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">get_apis</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">read</span><span class="p">,</span> <span class="n">write</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"read_store"</span><span class="p">),</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"write_store"</span><span class="p">)</span>
+        <span class="n">store</span> <span class="o">=</span> <span class="s2">"Disabled"</span>
+        <span class="k">if</span> <span class="n">read</span> <span class="ow">or</span> <span class="n">write</span><span class="p">:</span>
+            <span class="n">store</span> <span class="o">=</span> <span class="s2">"Enabled: "</span> <span class="o">+</span> <span class="s2">" &amp; "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">on</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"Read"</span><span class="p">,</span> <span class="n">read</span><span class="p">),</span> <span class="p">(</span><span class="s2">"Write"</span><span class="p">,</span> <span class="n">write</span><span class="p">))</span> <span class="k">if</span> <span class="n">on</span>
+            <span class="p">)</span>
+        <span class="n">rows</span><span class="p">[</span><span class="s2">"Store"</span><span class="p">]</span> <span class="o">=</span> <span class="n">store</span>
+        <span class="n">rows</span><span class="p">[</span><span class="s2">"Local cache"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Enabled"</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"local_cache"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"Disabled"</span>
+        <span class="n">rows</span><span class="p">[</span><span class="s2">"Tracking"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Enabled"</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"track_runs"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"Disabled"</span>
+        <span class="k">return</span> <span class="n">rows</span>
+
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">"Get model information"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">"Display information about the currently served model, including its title, description, identifiers, GitHub and S3 links, and Docker Hub details. A model must be served before running this command."</span><span class="p">,</span>
@@ -342,6 +388,7 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.content.information</span><span class="w"> </span><span class="kn">import</span> <span class="n">InformationDisplayer</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">no_model_served</span><span class="p">,</span> <span class="n">wrong_extension</span>
 
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">served_model</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">served_model</span><span class="p">()</span>
@@ -349,27 +396,23 @@
             <span class="n">session</span><span class="o">.</span><span class="n">clear_stale</span><span class="p">(</span><span class="n">served_model</span><span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">served_model</span><span class="si">}</span><span class="s2"> is no longer running in this terminal (its server stopped)."</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Serve it again with 'ersilia serve </span><span class="si">{</span><span class="n">served_model</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
-            <span class="k">return</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">"No model is currently served."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+            <span class="n">no_model_served</span><span class="p">(</span>
+                <span class="n">hint</span><span class="o">=</span><span class="s2">"To read a model's card without serving it, use 'ersilia catalog --card MODEL'."</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">)):</span>
+            <span class="n">wrong_extension</span><span class="p">([</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">],</span> <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
         <span class="n">info</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)):</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                        <span class="s2">"Error: output file must have a .json or .csv extension."</span><span class="p">,</span>
-                        <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">return</span>
             <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">):</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -386,9 +429,9 @@
                                 <span class="k">else</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">),</span>
                             <span class="p">]</span>
                         <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model information saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model information saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">InformationDisplayer</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
+            <span class="n">InformationDisplayer</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">serving</span><span class="o">=</span><span class="n">_serving</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">mdl</span><span class="p">))</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">info</span></div>
 

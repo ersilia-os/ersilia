@@ -406,7 +406,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">"card"</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"card"</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">"Slug"</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">slug</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Slug"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"slug"</span><span class="p">)</span>
+            <span class="c1"># A card without a slug is not a model of the Hub.</span>
+            <span class="k">return</span> <span class="n">slug</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">slug</span> <span class="k">else</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Slug.decode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.decode">[docs]</a>

@@ -306,13 +306,42 @@
           <h1>Source code for ersilia.core.modelbase</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DOCKER_INFO_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.content.slug</span><span class="w"> </span><span class="kn">import</span> <span class="n">Slug</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..hub.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">DONE_TAG</span><span class="p">,</span> <span class="n">STATUS_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..hub.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_fetched</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidModelIdentifierError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_suggest_model</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># The closest models in the Hub (up to three), e.g. "eos3b5e</span>
+    <span class="c1"># (molecular-weight)", or None (also when the Hub cannot be reached).</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+
+        <span class="n">models</span> <span class="o">=</span> <span class="n">JsonModelsInterface</span><span class="p">()</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">identifier</span><span class="p">,</span> <span class="n">slug</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Slug"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identifier</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">)"</span> <span class="k">if</span> <span class="n">slug</span> <span class="k">else</span> <span class="n">identifier</span>
+            <span class="n">names</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+            <span class="k">if</span> <span class="n">slug</span><span class="p">:</span>
+                <span class="n">names</span><span class="p">[</span><span class="n">slug</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">get_close_matches</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="nb">list</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">))[:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">labels</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">" or "</span> <span class="o">+</span> <span class="n">labels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ModelBase">
@@ -342,6 +371,10 @@
         <span class="k">if</span> <span class="n">model_id_or_slug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span>
         <span class="k">if</span> <span class="n">model_id_or_slug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_id_or_slug</span> <span class="o">=</span> <span class="n">model_id_or_slug</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># Identifiers are lower case (e.g. EOS3B5E is eos3b5e).</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(?i)eos[0-9][a-z0-9]</span><span class="si">{3}</span><span class="s2">"</span><span class="p">,</span> <span class="n">model_id_or_slug</span><span class="p">):</span>
+                <span class="n">model_id_or_slug</span> <span class="o">=</span> <span class="n">model_id_or_slug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">model_id_or_slug</span>
             <span class="n">slugger</span> <span class="o">=</span> <span class="n">Slug</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">slugger</span><span class="o">.</span><span class="n">is_slug</span><span class="p">(</span><span class="n">model_id_or_slug</span><span class="p">):</span>
@@ -351,7 +384,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id_or_slug</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slugger</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="n">InvalidModelIdentifierError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">InvalidModelIdentifierError</span><span class="p">(</span>
+                    <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">suggestion</span><span class="o">=</span><span class="n">_suggest_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Repo path specified: </span><span class="si">{</span><span class="n">repo_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -406,25 +441,9 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_available_locally_from_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">fetch_status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fetch_status_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No status file exists"</span><span class="p">)</span>
-            <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fetch_status_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">is_fetched</span> <span class="o">=</span> <span class="n">status</span><span class="p">[</span><span class="n">DONE_TAG</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Is fetched: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">is_fetched</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">is_fetched</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_is_available_locally_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">fetched</span> <span class="o">=</span> <span class="n">is_fetched</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Is fetched: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fetched</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">fetched</span>
 
 <div class="viewcode-block" id="ModelBase.is_available_locally">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>
@@ -438,12 +457,9 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is available locally, False otherwise.</span>
 <span class="sd">        """</span>
-        <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_status</span><span class="p">()</span>
-        <span class="n">bd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_dockerhub</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">bs</span> <span class="ow">or</span> <span class="n">bd</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="c1"># A folder left by a failed fetch has no finished status, so it does</span>
+        <span class="c1"># not count as fetched.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_status</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModelBase.was_fetched_from_dockerhub">
