@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import patch
 
+import pytest
+
 from ersilia.setup.requirements.git import GitLfsRequirement
-from ersilia.utils.exceptions_utils.setup_exceptions import GitLfsSetupError
 
 
 def test_git_lfs_not_installed_raises_error(capsys):
@@ -14,7 +14,7 @@ def test_git_lfs_not_installed_raises_error(capsys):
         with pytest.raises(SystemExit):
             req.is_installed(install_if_necessary=False)
         captured = capsys.readouterr()
-        assert "Git LFS is not installed" in captured.out
+        assert "Git LFS is not installed" in captured.err
 
 
 def test_git_lfs_installed_returns_true():

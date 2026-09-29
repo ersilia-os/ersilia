@@ -173,3 +173,22 @@ class EmptyOutputError(ErsiliaError):
         with open(log_file, "r") as f:
             log = f.read()
         return log
+
+
+SESSION_NAME_HINT = "Use letters, digits, '.', '_' or '-' (up to 64 characters, not only digits), e.g. ERSILIA_SESSION=myproject."
+
+
+class SessionNameError(ErsiliaError):
+    """
+    Raised when ERSILIA_SESSION holds a name that cannot name a session.
+
+    Parameters
+    ----------
+    name : str
+        The value of ERSILIA_SESSION.
+    """
+
+    def __init__(self, name):
+        self.message = "ERSILIA_SESSION={0!r} is not a valid session name.".format(name)
+        self.hints = SESSION_NAME_HINT
+        ErsiliaError.__init__(self, self.message, self.hints)

@@ -1,3 +1,4 @@
+import os
 import sys
 
 from ..default import ERSILIA_MODEL_HUB_URL
@@ -68,6 +69,47 @@ class ModelNotInLocal(object):
 # Shared wordings, so a situation reads the same in every command.
 
 
+def served_elsewhere_hint():
+    """
+    Point to ERSILIA_SESSION when the model may be in another session.
+
+    Commands started through wrappers such as ``conda run``, make or CI steps
+    each get a new session: a model served by one such command is stopped by
+    the next (its session's process has ended), or runs in a session that
+    this command cannot see. Nothing is printed otherwise.
+    """
+    try:
+        from ..utils.session import (
+            SESSION_ENV,
+            models_served_elsewhere,
+            models_stopped_by_cleanup,
+        )
+
+        stopped = models_stopped_by_cleanup()
+        served = [] if stopped else models_served_elsewhere()
+    except Exception:
+        return
+    if stopped:
+        echo(
+            "Model {0} was served by an earlier command whose process has ended, "
+            "so it was stopped.".format(stopped[0])
+        )
+    elif served:
+        model_id, session_dir = served[0]
+        echo(
+            "Model {0} is being served in another session ({1}).".format(
+                model_id, os.path.basename(session_dir)
+            )
+        )
+    else:
+        return
+    echo(
+        "If you run Ersilia through a wrapper such as 'conda run', make or CI steps, "
+        "each command gets a new session: set {0}=<name> to share one, "
+        "e.g. export {0}=myproject.".format(SESSION_ENV)
+    )
+
+
 def no_model_served(fg="red", hint=None):
     """
     Tell the user that no model is served in this terminal.
@@ -84,6 +126,7 @@ def no_model_served(fg="red", hint=None):
     echo("Serve one first with 'ersilia serve MODEL'.")
     if hint:
         echo(hint)
+    served_elsewhere_hint()
     if fg == "red":
         sys.exit(1)
 

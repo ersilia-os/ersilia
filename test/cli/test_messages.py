@@ -29,18 +29,27 @@ def default_verbosity():
     logger.set_verbosity(0)
 
 
+@pytest.fixture(autouse=True)
+def _nothing_served_elsewhere(monkeypatch):
+    # The "served in another session" hint depends on the machine.
+    monkeypatch.setattr("ersilia.utils.session.models_served_elsewhere", lambda: [])
+
+
 @pytest.mark.parametrize(
     "fg, icon",
     [("green", "✓"), (None, "▪"), ("cyan", "▪"), ("yellow", "⚠"), ("red", "✖")],
 )
 def test_echo_icon_by_kind(capsys, fg, icon):
     echo("Hello.", fg=fg, bold=True)
-    assert capsys.readouterr().out == f"  {icon}  Hello.\n"
+    captured = capsys.readouterr()
+    # Errors go to stderr, everything else to stdout.
+    printed = captured.err if icon == "✖" else captured.out
+    assert printed == f"  {icon}  Hello.\n"
 
 
 def test_echo_continuation_lines_hang_under_the_text(capsys):
     echo("First line.\nSecond line.", fg="red")
-    assert capsys.readouterr().out == "  ✖  First line.\n     Second line.\n"
+    assert capsys.readouterr().err == "  ✖  First line.\n     Second line.\n"
 
 
 def test_echo_does_not_render_emoji_shortcodes(capsys):
@@ -61,7 +70,7 @@ def test_shared_wordings_are_errors_that_exit_1(capsys):
     with pytest.raises(SystemExit) as e:
         wrong_extension([".json", ".csv"])
     assert e.value.code == 1
-    assert capsys.readouterr().out == (
+    assert capsys.readouterr().err == (
         "  ✖  No model is being served in this terminal.\n"
         "  ▪  Serve one first with 'ersilia serve MODEL'.\n"
         "  ✖  The output file must end in .json or .csv.\n"
@@ -116,7 +125,7 @@ def test_errors_show_message_and_hint_not_the_exception_block(capsys):
 
     with pytest.raises(SystemExit):
         serve()
-    out = capsys.readouterr().out
+    out = capsys.readouterr().err
     assert out.startswith(
         "  ✖  Model eos9zzz was not found in the Ersilia Model Hub.\n  ▪  "
     )
@@ -130,7 +139,7 @@ def test_errors_raised_inside_coroutines_are_formatted(capsys):
 
     with pytest.raises(SystemExit):
         asyncio.run(fetch())
-    assert "  ✖  Model eos9zzz was not found" in capsys.readouterr().out
+    assert "  ✖  Model eos9zzz was not found" in capsys.readouterr().err
 
 
 def _invoke(cmd_factory, args, model_id=None):

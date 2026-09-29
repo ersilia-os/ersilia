@@ -71,6 +71,9 @@ def example_cmd():
                 fg="red",
             )
             echo("Give one, e.g. 'ersilia example eos42ez -o input.csv'.")
+            from ..messages import served_elsewhere_hint
+
+            served_elsewhere_hint()
             sys.exit(1)
         if mode == "curated":
             check_curated_examples(model_id)
