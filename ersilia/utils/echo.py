@@ -16,6 +16,12 @@ from ..utils.session import get_session_dir
 # Every line is "  <icon>  <text>": the icon at column 2 and the text at
 # column 5. The running spinner uses the same columns.
 console = Console()
+# Errors go to stderr, so scripts can tell them apart from normal output.
+_err_console = Console(stderr=True)
+
+# Hint lines printed right after an error belong to it: they go to stderr
+# too, until the next success, warning or running step.
+_after_error = False
 
 # When quiet, nothing is printed (used by the Python API unless verbose).
 _quiet = False
@@ -152,7 +158,14 @@ def echo(text, harmonize=True, **styles):
         ``fg`` selects the kind of message; ``err=True`` prints to stderr.
         Other click styles are ignored when harmonizing, so every message
         of a kind looks the same.
+
+    Notes
+    -----
+    Errors are printed to stderr, and so are the info lines that follow an
+    error (its hints), until the next success, warning or running step.
+    Everything else goes to stdout.
     """
+    global _after_error
     if _quiet:
         return
     if getattr(logger, "verbosity", 0) == 1:
@@ -162,7 +175,36 @@ def echo(text, harmonize=True, **styles):
         return click.echo(click.style(text, **styles), err=err)
     color = styles.get("fg") or styles.get("color")
     icon, fg = _KINDS.get(color, ("▪", None))
+    if icon == "✖":
+        _after_error = True
+    elif icon != "▪":
+        _after_error = False
+    err = err or _after_error
     return click.echo(click.style(_format(text, icon), fg=fg), err=err)
+
+
+def reset():
+    """
+    Start a new command: output goes to stdout until the next error.
+
+    Called when each CLI command or Python API call starts, so that a
+    previous error does not send later lines to stderr.
+    """
+    global _after_error
+    _after_error = False
+
+
+def _failed(text):
+    # A step that failed, printed like an error line (to stderr).
+    global _after_error
+    _after_error = True
+    _err_console.print(Text(_format(text, "✖"), style="red"))
+
+
+def _start_step():
+    # A new running step: what follows is no longer part of an error.
+    global _after_error
+    _after_error = False
 
 
 class _SpinnerLine:
@@ -234,11 +276,12 @@ def spinner(text, func, *args, done=None, **kwargs):
         return func(*args, **kwargs)
     if getattr(logger, "verbosity", 0) == 1:
         return func(*args, **kwargs)
+    _start_step()
     with _running(text):
         try:
             result = func(*args, **kwargs)
         except Exception:
-            console.print(Text(_format(text, "✖"), style="red"))
+            _failed(text)
             raise
     console.print(Text(_format(done or text, "✓"), style="green"))
     return result
@@ -261,11 +304,12 @@ async def async_spinner(text, coro, done=None):
         return await coro
     if getattr(logger, "verbosity", 0) == 1:
         return await coro
+    _start_step()
     with _running(text):
         try:
             result = await coro
         except Exception:
-            console.print(Text(_format(text, "✖"), style="red"))
+            _failed(text)
             raise
     console.print(Text(_format(done or text, "✓"), style="green"))
     return result

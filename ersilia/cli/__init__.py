@@ -6,6 +6,23 @@
 # - ersilia itself runs on CPU;
 # - the shell profile gets the CLI snippet.
 import os
+import sys
+
+from ..utils.session import invalid_session_name
+
+# An invalid ERSILIA_SESSION is reported before anything else runs.
+if invalid_session_name() is not None:
+    from ..utils.echo import echo as _echo
+    from ..utils.exceptions_utils.exceptions import SESSION_NAME_HINT
+
+    _echo(
+        "ERSILIA_SESSION={0!r} is not a valid session name.".format(
+            invalid_session_name()
+        ),
+        fg="red",
+    )
+    _echo(SESSION_NAME_HINT)
+    sys.exit(1)
 
 os.umask(0)
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
