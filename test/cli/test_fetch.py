@@ -29,6 +29,16 @@ def runner():
             MODEL_ID,
             ["--from_dockerhub"],
         ),  # Test with --from_dockerhub flag
+        (
+            "molecular-weight",
+            MODEL_ID,
+            ["--from_apptainer"],
+        ),  # Test with --from_apptainer flag
+        (
+            "molecular-weight",
+            MODEL_ID,
+            ["--from_apptainer", "--version", "v1"],
+        ),  # --version applies to Apptainer too
     ],
 )
 def test_fetch_multiple_model(
@@ -112,3 +122,33 @@ if __name__ == "__main__":
         None, None, runner, "molecular-weight", MODEL_ID, ["--from_github"]
     )
     test_fetch_unknown_model(None, None, runner)
+
+
+@patch("ersilia.core.modelbase.ModelBase")
+@patch(
+    "ersilia.hub.fetch.fetch.ModelFetcher.__init__",
+    return_value=None,
+)
+@patch(
+    "ersilia.hub.fetch.fetch.ModelFetcher.fetch",
+    return_value=FetchResult(True, "Model fetched successfully"),
+)
+def test_fetch_from_apptainer_is_passed_on(
+    mock_fetch, mock_init, mock_model_base, runner
+):
+    """Verify that --from_apptainer reaches the fetcher, and DockerHub is not forced."""
+    mock_model_base.return_value = MagicMock(model_id=MODEL_ID, slug="slug")
+    result = runner.invoke(fetch_cmd(), [MODEL_ID, "--from_apptainer"])
+    assert result.exit_code == 0, result.output
+    kwargs = mock_init.call_args.kwargs
+    assert kwargs["force_from_apptainer"] is True
+    assert kwargs["force_from_dockerhub"] is False
+
+
+def test_fetch_from_apptainer_and_dockerhub_conflict(runner):
+    """Verify that asking for two sources is refused."""
+    result = runner.invoke(
+        fetch_cmd(), [MODEL_ID, "--from_apptainer", "--from_dockerhub"]
+    )
+    assert result.exit_code != 0
+    assert "Choose only one source" in result.output

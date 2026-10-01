@@ -20,6 +20,7 @@ from ...utils.exceptions_utils.throw_ersilia_exception import (
 )
 from ...utils.terminal import yes_no_input
 from . import is_fetched
+from .lazy_fetchers.apptainer import ModelApptainerFetcher
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
@@ -56,6 +57,8 @@ class ModelFetcher(ErsiliaBase):
         Whether to force fetching from S3.
     force_from_dockerhub : bool, optional
         Whether to force fetching from DockerHub.
+    force_from_apptainer : bool, optional
+        Whether to fetch the model as an Apptainer image.
     img_version : str, optional
         Version of the model image.
     force_from_hosted : bool, optional
@@ -87,6 +90,7 @@ class ModelFetcher(ErsiliaBase):
         force_from_github: bool = False,
         force_from_s3: bool = False,
         force_from_dockerhub: bool = False,
+        force_from_apptainer: bool = False,
         img_version: str = None,
         force_from_hosted: bool = False,
         force_with_fastapi: bool = False,
@@ -108,14 +112,25 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
             dockerize = True
         self.do_docker = dockerize
+        self.force_from_apptainer = force_from_apptainer
+        self.model_apptainer_fetcher = ModelApptainerFetcher(
+            config_json=self.config_json, version=img_version
+        )
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
             overwrite=self.overwrite,
             config_json=self.config_json,
             img_tag=img_version,
             force_with_fastapi=force_with_fastapi,
         )
-        self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
-        self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()
+        if self.force_from_apptainer:
+            # Docker is not needed, and is often not there (e.g. on HPC).
+            self.is_docker_installed = False
+            self.is_docker_active = False
+        else:
+            self.is_docker_installed = (
+                self.model_dockerhub_fetcher.is_docker_installed()
+            )
+            self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()
         self.model_hosted_fetcher = ModelHostedFetcher(
             url=hosted_url, config_json=self.config_json
         )
@@ -132,6 +147,7 @@ class ModelFetcher(ErsiliaBase):
             self.force_from_github: "GitHub",
             self.force_from_s3: "Amazon S3",
             self.force_from_dockerhub: "DockerHub",
+            self.force_from_apptainer: "Apptainer",
             self.force_from_hosted: "Hosted services",
             self.local_dir is not None: "Local Repository",
         }
@@ -285,31 +301,61 @@ class ModelFetcher(ErsiliaBase):
                     )
                 return
 
+    @staticmethod
+    def _apptainer_alternative(model_id):
+        # On Linux, Apptainer can replace Docker (e.g. on HPC clusters).
+        from ...setup.requirements.apptainer import ApptainerRequirement
+
+        requirement = ApptainerRequirement()
+        if not requirement.is_linux():
+            return ""
+        if requirement.is_installed():
+            return "\nApptainer is installed here, so you can fetch it without Docker: 'ersilia fetch {0} --from_apptainer'.".format(
+                model_id
+            )
+        return "\nOn Linux without Docker (e.g. HPC clusters), you can use Apptainer instead: 'ersilia fetch {0} --from_apptainer'.".format(
+            model_id
+        )
+
     async def _fetch(self, model_id: str) -> FetchResult:
         label = f"{model_id} ({self.slug})" if self.slug else model_id
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
+            if self.force_from_apptainer:
+                # Can Apptainer run here? Said before anything else happens.
+                from ...setup.requirements.apptainer import ApptainerRequirement
+
+                ApptainerRequirement().check()
             echo(f"Fetching model {label} from {self.model_source}.")
             self._warn_if_archived(model_id)
             self.logger.debug("Starting fetching procedure")
+            if self.force_from_apptainer:
+                self.logger.debug("Fetching as an Apptainer image")
+                await self.model_apptainer_fetcher.fetch(model_id)
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
             if self.force_from_dockerhub and not do_dockerhub:
                 if not self.is_docker_installed:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github.",
+                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github."
+                        + self._apptainer_alternative(model_id),
                     )
                 if not self.is_docker_active:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again.",
+                        reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again."
+                        + self._apptainer_alternative(model_id),
                     )
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not installed or not running.",
+                        reason="Docker is not installed or not running."
+                        + self._apptainer_alternative(model_id),
                     )
                 await self._fetch_from_dockerhub(model_id=model_id)
                 return FetchResult(

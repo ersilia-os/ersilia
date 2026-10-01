@@ -13,6 +13,7 @@ from ..db.environments.managers import DockerManager
 from ..default import (
     ALLOWED_API_NAMES,
     APIS_LIST_FILE,
+    APPTAINER_INFO_FILE,
     DEFAULT_DOCKER_NETWORK_BRIDGE,
     DEFAULT_DOCKER_NETWORK_NAME,
     DEFAULT_VENV,
@@ -1576,3 +1577,278 @@ class HostedService(BaseServing):
         Close the hosted service.
         """
         pass
+
+
+class ApptainerImageService(BaseServing):
+    """
+    Service class for models fetched as Apptainer images (SIFs).
+
+    The image holds an ersilia-pack model server. It is started as a local
+    process with ``apptainer exec <sif> ersilia_model_serve``, on a free port,
+    like the local FastAPI service. No daemon is involved, so this runs on
+    Linux machines without Docker (e.g. HPC clusters).
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        Not used; the URL is known once the model is served.
+    """
+
+    START_TIMEOUT_SECONDS = 300
+    START_ERRORS = ("Traceback (most recent call last)", "CalledProcessError")
+
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self._port_given = preferred_port is not None
+        self.info = self._read_info()
+        self.url = None
+        self.pid = -1
+
+    def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        ApptainerImageService
+            The instance of the service.
+        """
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
+        self.close()
+
+    def _read_info(self):
+        info_file = os.path.join(self._model_path(self.model_id), APPTAINER_INFO_FILE)
+        if not os.path.exists(info_file):
+            return None
+        try:
+            with open(info_file, "r") as f:
+                return json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return None
+
+    def is_available(self) -> bool:
+        """
+        Check if the model can be served from its Apptainer image.
+
+        Returns
+        -------
+        bool
+            True if the model was fetched as an Apptainer image. Whether
+            Apptainer and the image are there is checked by ``serve``, which
+            says clearly what is missing.
+        """
+        return bool(self.info and self.info.get("apptainer"))
+
+    def _get_apis(self):
+        apis_list = self._get_apis_from_apis_list()
+        return apis_list or ["run"]
+
+    def _is_ready(self):
+        for path in ("/healthz", ""):
+            try:
+                if requests.get(self.url + path, timeout=5).status_code == 200:
+                    return True
+            except requests.exceptions.RequestException:
+                pass
+        return False
+
+    def _log_tail(self, log_file, lines=8):
+        try:
+            with open(log_file, "r", errors="ignore") as f:
+                return "\n".join(f.read().splitlines()[-lines:])
+        except OSError:
+            return ""
+
+    def _wait_until_ready(self, process, log_file):
+        from ..utils.exceptions_utils.cli_exceptions import ModelStartError
+
+        hint = "Run 'ersilia -v serve {0}' to see the model's log.".format(
+            self.model_id
+        )
+        deadline = time.time() + self.START_TIMEOUT_SECONDS
+        while not self._is_ready():
+            log = self._log_tail(log_file, lines=200)
+            if any(error in log for error in self.START_ERRORS):
+                self.logger.info(
+                    "Last lines of the model's log:\n" + self._log_tail(log_file)
+                )
+                raise ModelStartError(self.model_id, "stopped while starting", hint)
+            # The 'apptainer' process may exit once the server is started in
+            # the background, so only a failing exit code means a failure.
+            code = process.poll()
+            if code not in (None, 0):
+                self.logger.info(
+                    "Last lines of the model's log:\n" + self._log_tail(log_file)
+                )
+                raise ModelStartError(
+                    self.model_id,
+                    "stopped while starting (exit code {0})".format(code),
+                    hint,
+                )
+            if time.time() > deadline:
+                raise ModelStartError(
+                    self.model_id,
+                    "did not start after {0} minutes".format(
+                        self.START_TIMEOUT_SECONDS // 60
+                    ),
+                    hint,
+                )
+            time.sleep(SLEEP_SECONDS)
+
+    def _listening_pid(self):
+        # The server outlives the 'apptainer' process that started it, so the
+        # process to stop on close is the one listening on the port.
+        import psutil
+
+        try:
+            for conn in psutil.net_connections(kind="inet"):
+                if (
+                    conn.laddr
+                    and conn.laddr.port == self.port
+                    and conn.status == psutil.CONN_LISTEN
+                    and conn.pid
+                ):
+                    return conn.pid
+        except (psutil.AccessDenied, OSError):
+            pass
+        return None
+
+    def _stop(self, process):
+        # Everything started here shares the process group of 'process'.
+        import signal
+
+        pid = self._listening_pid()
+        if pid:
+            kill_process_tree(pid)
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+
+    def serve(self):
+        """
+        Serve the model from its Apptainer image.
+
+        Raises
+        ------
+        ApptainerNotLinuxError
+            If this machine does not run Linux.
+        ApptainerNotInstalledError
+            If Apptainer is not installed.
+        ModelStartError
+            If the image is missing or the model does not start.
+        PortInUseError
+            If the port asked for is already in use.
+        """
+        import subprocess
+
+        from ..setup.requirements.apptainer import ApptainerRequirement
+        from ..utils.apptainer import SimpleApptainer
+        from ..utils.exceptions_utils.cli_exceptions import (
+            ApptainerNotInstalledError,
+            ModelStartError,
+            PortInUseError,
+        )
+        from ..utils.ports import is_port_in_use
+
+        try:
+            binary = ApptainerRequirement().check()
+        except ApptainerNotInstalledError:
+            # e.g. a new shell on a cluster, without 'module load apptainer':
+            # say that this model needs it.
+            raise ApptainerNotInstalledError(self.model_id)
+        info = self.info or {}
+        sif = info.get("sif_path")
+        if not sif or not os.path.isfile(sif):
+            raise ModelStartError(
+                self.model_id,
+                "has no Apptainer image on this machine",
+                "Fetch it again with 'ersilia delete {0}' and then 'ersilia fetch {0} --from_apptainer'.".format(
+                    self.model_id
+                ),
+            )
+        if self._port_given:
+            if is_port_in_use(self.port):
+                raise PortInUseError(self.port)
+        else:
+            self.port = find_free_port()
+        runner = SimpleApptainer(
+            info.get("binary") or binary, use_unshare=info.get("use_unshare", False)
+        )
+        command = runner.exec_args(sif) + [
+            "ersilia_model_serve",
+            "--bundle_path",
+            info["bundle_path"],
+            "--port",
+            str(self.port),
+        ]
+        log_file = os.path.join(make_temp_dir(prefix="ersilia-"), "serve.log")
+        self.logger.debug("Starting: {0}".format(" ".join(command)))
+        self.url = "http://127.0.0.1:{0}".format(self.port)
+        with open(log_file, "w") as log:
+            process = subprocess.Popen(
+                command,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                stdin=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+        try:
+            self._wait_until_ready(process, log_file)
+        except BaseException:
+            # A failed or interrupted start must not leave the server running.
+            self._stop(process)
+            raise
+        self.pid = self._listening_pid() or process.pid
+        self.logger.debug("Model server process: {0}".format(self.pid))
+        self._apis_list = self._get_apis()
+
+    def api(self, api_name: str, input: dict) -> dict:
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
+        return self._api_with_url(api_name=api_name, input=input)
+
+    def close(self):
+        """
+        Stop the model server.
+        """
+        if self.pid and self.pid > 0:
+            kill_process_tree(self.pid)
+        self.pid = -1

@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from ..default import EOS
+from ..default import EOS, SIF_DIR
 from .conda import SimpleConda
 from .docker import SimpleDocker
 from .echo import echo, spinner
@@ -88,3 +88,19 @@ class Uninstaller(object):
             )
         else:
             echo("Ersilia uninstalled.", fg="green")
+        self._note_kept_sifs()
+
+    def _note_kept_sifs(self):
+        # A SIF folder moved with ERSILIA_SIF_DIR is outside the Ersilia
+        # folder, and may be shared, so it is left alone.
+        sif_dir = os.path.abspath(SIF_DIR)
+        if sif_dir.startswith(os.path.abspath(EOS) + os.sep):
+            return
+        if os.path.isdir(sif_dir) and any(
+            f.endswith(".sif") for f in os.listdir(sif_dir)
+        ):
+            echo(
+                "The Apptainer images in {0} (ERSILIA_SIF_DIR) were kept; delete them yourself if you no longer need them.".format(
+                    sif_dir
+                )
+            )

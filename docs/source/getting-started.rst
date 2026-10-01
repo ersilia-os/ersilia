@@ -63,6 +63,35 @@ session with ``ERSILIA_SESSION``:
 
 Errors are printed to stderr, so they can be told apart from normal output.
 
+Linux without Docker
+--------------------
+
+On Linux machines without Docker, such as HPC clusters, fetch models as
+`Apptainer <https://apptainer.org>`_ images instead. Serving, running and
+closing work as above.
+
+Ersilia does not install Apptainer. On HPC clusters it is usually available as
+a module; otherwise, see the
+`installation guide <https://apptainer.org/docs/admin/main/installation.html>`_.
+
+.. code-block:: bash
+
+   # on a cluster: load Apptainer (the module may be called singularity)
+   module load apptainer
+
+   # on Ubuntu, to install it yourself
+   sudo add-apt-repository -y ppa:apptainer/ppa && sudo apt install -y apptainer
+
+.. code-block:: bash
+
+   # download the model's Apptainer image instead of its Docker image
+   ersilia fetch eos4e40 --from_apptainer
+
+   # optional: keep the images outside your home folder (e.g. small quotas)
+   export ERSILIA_SIF_DIR=/scratch/$USER/sifs
+
+From Python, use ``Model("eos4e40").fetch(from_apptainer=True)``.
+
 See :doc:`cli` for all commands and options.
 
 Python
