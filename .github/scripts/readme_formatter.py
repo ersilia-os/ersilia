@@ -42,6 +42,8 @@ class ReadmeFormatter():
             text += "* [DockerHub]({0}) ({1})\n".format(
                 d["DockerHub"], ", ".join(d["Docker Architecture"])
             )
+        if "Apptainer" in d:
+            text += "* [Apptainer]({0})\n".format(d["Apptainer"])
         text += "\n"
         text += "## Citation\n\n"
         text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(
@@ -169,6 +171,8 @@ class ReadmeFormatter():
             text += "- **Docker Architecture:** {0}\n".format(", ".join(["`{0}`".format(x) for x in d.get("Docker Architecture")]))
         if d.get("S3"):
             text += "- **S3 Storage**: [{0}]({0})\n".format(d.get("S3"))
+        if d.get("Apptainer"):
+            text += "- **Apptainer**: [{0}]({0})\n".format(d.get("Apptainer"))
         text += "\n"
 
         # Resource Consumption
