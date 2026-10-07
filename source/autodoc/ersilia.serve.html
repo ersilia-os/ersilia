@@ -338,11 +338,248 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="ersilia-serve-api-module">
-<h2>ersilia.serve.api module<a class="headerlink" href="#ersilia-serve-api-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.serve.api">
+<span id="ersilia-serve-api-module"></span><h2>ersilia.serve.api module<a class="headerlink" href="#module-ersilia.serve.api" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.serve.api.Api">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.serve.api.</span></span><span class="sig-name descname"><span class="pre">Api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to interact with the API for a given model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The URL of the API.</p></li>
+<li><p><strong>api_name</strong> (<em>str</em>) – The name of the API.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em>) – Configuration in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">"eosxxxx"</span><span class="p">,</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">"http://0.0.0.0:25512/"</span><span class="p">,</span>
+    <span class="n">api_name</span><span class="o">=</span><span class="s2">"run"</span><span class="p">,</span>
+    <span class="n">config_json</span><span class="o">=</span><span class="p">{},</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="nb">input</span><span class="o">=</span><span class="s2">"input.json"</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="s2">"output.csv"</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.api.Api.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.meta" title="Link to this definition">¶</a></dt>
+<dd><p>Get metadata from the output adapter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Metadata information.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.api.Api.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post" title="Link to this definition">¶</a></dt>
+<dd><p>Post input data to the API and get the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.api.Api.post_only_calculations">
+<span class="sig-name descname"><span class="pre">post_only_calculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_only_calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_only_calculations" title="Link to this definition">¶</a></dt>
+<dd><p>Post input data to the API and get the result, performing only calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.api.Api.post_only_reads">
+<span class="sig-name descname"><span class="pre">post_only_reads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_only_reads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_only_reads" title="Link to this definition">¶</a></dt>
+<dd><p>Post input data to the API and get the result, performing only reads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.api.Api.post_unique_input">
+<span class="sig-name descname"><span class="pre">post_unique_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_unique_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_unique_input" title="Link to this definition">¶</a></dt>
+<dd><p>Post unique input data to the API and get the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="ersilia-serve-autoservice-module">
-<h2>ersilia.serve.autoservice module<a class="headerlink" href="#ersilia-serve-autoservice-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.serve.autoservice">
+<span id="ersilia-serve-autoservice-module"></span><h2>ersilia.serve.autoservice module<a class="headerlink" href="#module-ersilia.serve.autoservice" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.serve.autoservice.</span></span><span class="sig-name descname"><span class="pre">AutoService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxmemory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to automatically determine and manage the service for a given model.</p>
+<p>This class is responsible for selecting the appropriate service to run a model based on its configuration.
+A “service” in this context refers to the environment or platform where the model will be executed, such as
+a system bundle, virtual environment, Conda environment, Docker image, or a hosted service.</p>
+<p>The class can automatically decide which service to use based on the availability and configuration of the model.
+It also provides methods to start, stop, and manage the service, as well as to interact with the model’s APIs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>service_class</strong> (<em>str</em><em>, </em><em>optional</em>) – The class of the service.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration in JSON format.</p></li>
+<li><p><strong>preferred_port</strong> (<em>int</em><em>, </em><em>optional</em>) – The preferred port for the service.</p></li>
+<li><p><strong>url</strong> (<em>str</em><em>, </em><em>optional</em>) – The URL of the service.</p></li>
+<li><p><strong>cache</strong> (<em>bool</em>) – Whether to use redis cache or not</p></li>
+<li><p><strong>maxmemory</strong> (<em>float</em>) – Fraction of memory used by redis</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">AutoService</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">"model123"</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="p">{}</span>
+<span class="p">)</span>
+<span class="n">service</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.api">
+<span class="sig-name descname"><span class="pre">api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.api" title="Link to this definition">¶</a></dt>
+<dd><p>Call an API for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_name</strong> (<em>str</em>) – The name of the API.</p></li>
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_before_serving">
+<span class="sig-name descname"><span class="pre">clean_before_serving</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_before_serving"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_before_serving" title="Link to this definition">¶</a></dt>
+<dd><p>Clean processes before serving.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_temp_dir">
+<span class="sig-name descname"><span class="pre">clean_temp_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_temp_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_temp_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Clean the temporary directories created by this session.</p>
+<p>Each session tracks its temporary directories as symlinks in
+<code class="docutils literal notranslate"><span class="pre">&lt;session&gt;/logs/tmp</span></code> (see <code class="docutils literal notranslate"><span class="pre">make_temp_dir</span></code>). Only those are removed,
+so runs, fetches and servers of other sessions (terminals) keep theirs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.close" title="Link to this definition">¶</a></dt>
+<dd><p>Close the service.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.get_apis">
+<span class="sig-name descname"><span class="pre">get_apis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.get_apis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.get_apis" title="Link to this definition">¶</a></dt>
+<dd><p>Get the list of APIs available for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of API names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.is_available">
+<span class="sig-name descname"><span class="pre">is_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.is_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.is_available" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the service is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the service is available, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.is_served">
+<span class="sig-name descname"><span class="pre">is_served</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.is_served"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.is_served" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the service is currently being served.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the service is being served, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.serve">
+<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.serve" title="Link to this definition">¶</a></dt>
+<dd><p>Serve the application.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-ersilia.serve.schema">
 <span id="ersilia-serve-schema-module"></span><h2>ersilia.serve.schema module<a class="headerlink" href="#module-ersilia.serve.schema" title="Link to this heading">¶</a></h2>
@@ -1444,8 +1681,31 @@ Finally, create a CSV file with the combined results.</p>
 <li><a class="reference internal" href="#">ersilia.serve package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#ersilia-serve-api-module">ersilia.serve.api module</a></li>
-<li><a class="reference internal" href="#ersilia-serve-autoservice-module">ersilia.serve.autoservice module</a></li>
+<li><a class="reference internal" href="#module-ersilia.serve.api">ersilia.serve.api module</a><ul>
+<li><a class="reference internal" href="#ersilia.serve.api.Api"><code class="docutils literal notranslate"><span class="pre">Api</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.serve.api.Api.meta"><code class="docutils literal notranslate"><span class="pre">Api.meta()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.api.Api.post"><code class="docutils literal notranslate"><span class="pre">Api.post()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.api.Api.post_only_calculations"><code class="docutils literal notranslate"><span class="pre">Api.post_only_calculations()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.api.Api.post_only_reads"><code class="docutils literal notranslate"><span class="pre">Api.post_only_reads()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.api.Api.post_unique_input"><code class="docutils literal notranslate"><span class="pre">Api.post_unique_input()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.serve.autoservice">ersilia.serve.autoservice module</a><ul>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService"><code class="docutils literal notranslate"><span class="pre">AutoService</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.api"><code class="docutils literal notranslate"><span class="pre">AutoService.api()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.clean_before_serving"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_before_serving()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.clean_temp_dir"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_temp_dir()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.close"><code class="docutils literal notranslate"><span class="pre">AutoService.close()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.get_apis"><code class="docutils literal notranslate"><span class="pre">AutoService.get_apis()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.is_available"><code class="docutils literal notranslate"><span class="pre">AutoService.is_available()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.is_served"><code class="docutils literal notranslate"><span class="pre">AutoService.is_served()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.serve"><code class="docutils literal notranslate"><span class="pre">AutoService.serve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.serve.schema">ersilia.serve.schema module</a><ul>
 <li><a class="reference internal" href="#ersilia.serve.schema.ApiSchema"><code class="docutils literal notranslate"><span class="pre">ApiSchema</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.serve.schema.ApiSchema.empty"><code class="docutils literal notranslate"><span class="pre">ApiSchema.empty()</span></code></a></li>

@@ -315,8 +315,49 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="ersilia-store-api-module">
-<h2>ersilia.store.api module<a class="headerlink" href="#ersilia-store-api-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.store.api">
+<span id="ersilia-store-api-module"></span><h2>ersilia.store.api module<a class="headerlink" href="#module-ersilia.store.api" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.store.api.InferenceStoreApi">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.store.api.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreApi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cloud-cache-only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">click_iface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><span class="pre">ClickInterface</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.ApiClient" title="ersilia.store.utils.ApiClient"><span class="pre">ApiClient</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.FileManager" title="ersilia.store.utils.FileManager"><span class="pre">FileManager</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Synchronous client for the Inference Store API orchestrating end-to-end batch cloud precalculation fetcher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to query.</p></li>
+<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to save the merged CSV (default is “&lt;model_id&gt;_precalc.csv”).</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples to retrieve (default is -1 for all available).</p></li>
+<li><p><strong>output_source</strong> (<a class="reference internal" href="#ersilia.store.utils.OutputSource" title="ersilia.store.utils.OutputSource"><em>OutputSource</em></a><em>, </em><em>optional</em>) – Source of input data (default is OutputSource.CLOUD_ONLY).</p></li>
+<li><p><strong>click_iface</strong> (<a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><em>ClickInterface</em></a><em>, </em><em>optional</em>) – CLI helper instance for styled output (default creates new one).</p></li>
+<li><p><strong>api_client</strong> (<a class="reference internal" href="#ersilia.store.utils.ApiClient" title="ersilia.store.utils.ApiClient"><em>ApiClient</em></a><em>, </em><em>optional</em>) – HTTP client for API interactions (default creates new one).</p></li>
+<li><p><strong>file_manager</strong> (<a class="reference internal" href="#ersilia.store.utils.FileManager" title="ersilia.store.utils.FileManager"><em>FileManager</em></a><em>, </em><em>optional</em>) – File operations helper (default creates new one).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.api.InferenceStoreApi.get_precalculations">
+<span class="sig-name descname"><span class="pre">get_precalculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi.get_precalculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi.get_precalculations" title="Link to this definition">¶</a></dt>
+<dd><p>Execute full inference workflow: upload inputs, submit job, poll status,
+retrieve result shards, and merge them into a single CSV.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em>) – List of input records to process.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>File path to the merged CSV containing inference results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the job fails, no shards are returned, or polling times out.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-ersilia.store.dump">
 <span id="ersilia-store-dump-module"></span><h2>ersilia.store.dump module<a class="headerlink" href="#module-ersilia.store.dump" title="Link to this heading">¶</a></h2>
@@ -579,7 +620,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>records</strong> (<em>list</em>) – Iterable of input records to write.</p></li>
-<li><p><strong>input_adapter</strong> (<em>GenericInputAdapter</em>) – Adapter that yields dicts with ‘input’ key.</p></li>
+<li><p><strong>input_adapter</strong> (<a class="reference internal" href="ersilia.io.html#ersilia.io.input.GenericInputAdapter" title="ersilia.io.input.GenericInputAdapter"><em>GenericInputAdapter</em></a>) – Adapter that yields dicts with ‘input’ key.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1008,7 +1049,13 @@ otherwise, just merge them sequentially.</p>
             <ul>
 <li><a class="reference internal" href="#">ersilia.store package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#ersilia-store-api-module">ersilia.store.api module</a></li>
+<li><a class="reference internal" href="#module-ersilia.store.api">ersilia.store.api module</a><ul>
+<li><a class="reference internal" href="#ersilia.store.api.InferenceStoreApi"><code class="docutils literal notranslate"><span class="pre">InferenceStoreApi</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.store.api.InferenceStoreApi.get_precalculations"><code class="docutils literal notranslate"><span class="pre">InferenceStoreApi.get_precalculations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.store.dump">ersilia.store.dump module</a><ul>
 <li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.cache_missing_results"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.cache_missing_results()</span></code></a></li>

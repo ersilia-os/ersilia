@@ -315,8 +315,157 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="ersilia-publish-test-services-checks-module">
-<h2>ersilia.publish.test.services.checks module<a class="headerlink" href="#ersilia-publish-test-services-checks-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.publish.test.services.checks">
+<span id="ersilia-publish-test-services-checks-module"></span><h2>ersilia.publish.test.services.checks module<a class="headerlink" href="#module-ersilia.publish.test.services.checks" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.checks.</span></span><span class="sig-name descname"><span class="pre">CheckService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ios</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.io.IOService" title="ersilia.publish.test.services.io.IOService"><span class="pre">IOService</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Service for performing various checks on the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> (<a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger" title="ersilia.utils.logging.Logger"><em>logging.Logger</em></a>) – Logger for logging messages.</p></li>
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>dir</strong> (<em>str</em>) – Directory where the model repository is located.</p></li>
+<li><p><strong>from_github</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from GitHub.</p></li>
+<li><p><strong>from_dockerhub</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from DockerHub.</p></li>
+<li><p><strong>ios</strong> (<a class="reference internal" href="#ersilia.publish.test.services.io.IOService" title="ersilia.publish.test.services.io.IOService"><em>IOService</em></a>) – Instance of IOService for handling input/output operations.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">check_service</span> <span class="o">=</span> <span class="n">CheckService</span><span class="p">(</span>
+    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">"model_id"</span><span class="p">,</span>
+    <span class="nb">dir</span><span class="o">=</span><span class="s2">"/path/to/dir"</span><span class="p">,</span>
+    <span class="n">from_github</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">from_dockerhub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">ios</span><span class="o">=</span><span class="n">ios</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">check_service</span><span class="o">.</span><span class="n">check_files</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_consistent_output">
+<span class="sig-name descname"><span class="pre">check_consistent_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_consistent_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_consistent_output" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the model produces consistent output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_example</strong> (<em>callable</em>) – Function to generate example input.</p></li>
+<li><p><strong>run_model</strong> (<em>callable</em>) – Function to run the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_dim">
+<span class="sig-name descname"><span class="pre">check_dim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_dim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_dim" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_files">
+<span class="sig-name descname"><span class="pre">check_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_files" title="Link to this definition">¶</a></dt>
+<dd><p>Check the existence of required files for the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_information">
+<span class="sig-name descname"><span class="pre">check_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_information" title="Link to this definition">¶</a></dt>
+<dd><p>Perform various checks on the model information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output</strong> (<em>file-like object</em>) – The output file to write to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_model_columns_name">
+<span class="sig-name descname"><span class="pre">check_model_columns_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_model_columns_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_model_columns_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_model_output_content">
+<span class="sig-name descname"><span class="pre">check_model_output_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_model_output_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_model_output_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_robustness">
+<span class="sig-name descname"><span class="pre">check_robustness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_robustness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_robustness" title="Link to this definition">¶</a></dt>
+<dd><p>Robustness test for the Simple Run Model section.</p>
+<dl class="simple">
+<dt>For non-variable (Fixed) models:</dt><dd><ul class="simple">
+<li><p>Generate 3 example inputs using the example command.</p></li>
+<li><p>Run the model and check that the result is not all null.</p></li>
+</ul>
+</dd>
+<dt>For variable models:</dt><dd><ul class="simple">
+<li><p>Generate 3 example inputs, run the model, check if all null.</p></li>
+<li><p>If all null, generate 5, run again, check if all null.</p></li>
+<li><p>If all null, generate 10, run again, check if all null.</p></li>
+<li><p>If still all null after all attempts, mark as FAILED.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_example</strong> (<em>callable</em>) – Function to generate example inputs. Signature:
+run_example(n_samples, file_name, simple, mode) -&gt; examples</p></li>
+<li><p><strong>run_model</strong> (<em>callable</em>) – Function to run the model. Signature:
+run_model(inputs, output, batch) -&gt; result</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of (check_name, detail, status) tuples for table rendering.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output">
+<span class="sig-name descname"><span class="pre">check_simple_model_async_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serve_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_simple_model_async_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_simple_model_output">
+<span class="sig-name descname"><span class="pre">check_simple_model_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_simple_model_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.compare_csv_columns">
+<span class="sig-name descname"><span class="pre">compare_csv_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.compare_csv_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.compare_csv_columns" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col">
+<span class="sig-name descname"><span class="pre">find_missing_first_output_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.find_missing_first_output_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.get_inputs">
+<span class="sig-name descname"><span class="pre">get_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.get_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.get_inputs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.trim_string">
+<span class="sig-name descname"><span class="pre">trim_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.trim_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.trim_string" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.validate_file_content">
+<span class="sig-name descname"><span class="pre">validate_file_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.validate_file_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.validate_file_content" title="Link to this definition">¶</a></dt>
+<dd><p>Validate output file content and check input data match.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-ersilia.publish.test.services.constants">
 <span id="ersilia-publish-test-services-constants-module"></span><h2>ersilia.publish.test.services.constants module<a class="headerlink" href="#module-ersilia.publish.test.services.constants" title="Link to this heading">¶</a></h2>
@@ -681,11 +830,452 @@
 </dd></dl>
 
 </section>
-<section id="ersilia-publish-test-services-inspect-module">
-<h2>ersilia.publish.test.services.inspect module<a class="headerlink" href="#ersilia-publish-test-services-inspect-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.publish.test.services.inspect">
+<span id="ersilia-publish-test-services-inspect-module"></span><h2>ersilia.publish.test.services.inspect module<a class="headerlink" href="#module-ersilia.publish.test.services.inspect" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.CheckStrategy">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.inspect.</span></span><span class="sig-name descname"><span class="pre">CheckStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#CheckStrategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.CheckStrategy" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Execuetd a strategy for checking inspect commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>check_function</strong> (<em>callable</em>) – The function to check.</p></li>
+<li><p><strong>success_key</strong> (<em>str</em>) – The key for success.</p></li>
+<li><p><strong>details_key</strong> (<em>str</em>) – The key for details.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.CheckStrategy.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#CheckStrategy.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.CheckStrategy.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the check strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The results of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.InspectService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.inspect.</span></span><span class="sig-name descname"><span class="pre">InspectService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#InspectService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.InspectService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Service for inspecting models and their configurations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where the model is located.</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>optional</em>) – Model identifier.</p></li>
+<li><p><strong>remote</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether the model is remote.</p></li>
+<li><p><strong>config_json</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the configuration JSON file.</p></li>
+<li><p><strong>credentials_json</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the credentials JSON file.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inspector</span> <span class="o">=</span> <span class="n">InspectService</span><span class="p">(</span>
+    <span class="nb">dir</span><span class="o">=</span><span class="s2">"/path/to/model"</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"model_id"</span>
+<span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.InspectService.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#InspectService.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.InspectService.run" title="Link to this definition">¶</a></dt>
+<dd><p>Run the inspection checks on the specified model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>check_keys</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of check keys to execute. If None, all checks will be executed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the results of the inspection checks.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the model is not specified.</p></li>
+<li><p><strong>KeyError</strong> – If any of the specified keys do not exist.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.inspect.</span></span><span class="sig-name descname"><span class="pre">ModelInspector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for inspecting model repositories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – The ID of the model to be inspected.</p></li>
+<li><p><strong>dir</strong> (<em>str</em>) – The directory where the model repository is located.</p></li>
+<li><p><strong>config_json</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the configuration JSON file.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inspector</span> <span class="o">=</span> <span class="n">ModelInspector</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"model_id"</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="s2">"path/to/repo"</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">check_repo_exists</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">check_complete_metadata</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.ERSILIAPACK_FILES">
+<span class="sig-name descname"><span class="pre">ERSILIAPACK_FILES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE',</span> <span class="pre">'install.yml',</span> <span class="pre">'metadata.yml',</span> <span class="pre">'model/framework/examples/run_input.csv',</span> <span class="pre">'model/framework/examples/run_output.csv',</span> <span class="pre">'model/framework/columns/run_columns.csv',</span> <span class="pre">'model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE']</span></span><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.ERSILIAPACK_FILES" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.REQUIRED_FIELDS">
+<span class="sig-name descname"><span class="pre">REQUIRED_FIELDS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Publication',</span> <span class="pre">'Source</span> <span class="pre">Code',</span> <span class="pre">'S3',</span> <span class="pre">'DockerHub']</span></span><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.REQUIRED_FIELDS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_complete_folder_structure">
+<span class="sig-name descname"><span class="pre">check_complete_folder_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_complete_folder_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_complete_folder_structure" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the folder structure of the repository is complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing the success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result" title="ersilia.publish.test.services.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_complete_metadata">
+<span class="sig-name descname"><span class="pre">check_complete_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_complete_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_complete_metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the metadata file is complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing the success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result" title="ersilia.publish.test.services.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_computational_performance">
+<span class="sig-name descname"><span class="pre">check_computational_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_computational_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_computational_performance" title="Link to this definition">¶</a></dt>
+<dd><p>Check the computational performance of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing the success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result" title="ersilia.publish.test.services.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_dependencies_are_valid">
+<span class="sig-name descname"><span class="pre">check_dependencies_are_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_dependencies_are_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_dependencies_are_valid" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the dependencies in the Dockerfile or install.yml are valid.</p>
+<p>For , the Dockerfile is validated.
+For PACK_METHOD_FASTAPI, either file is acceptable. If one exists, it is validated;
+if both exist, both are validated. If neither is present, an error is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing the success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result" title="ersilia.publish.test.services.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_no_extra_files">
+<span class="sig-name descname"><span class="pre">check_no_extra_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_no_extra_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_no_extra_files" title="Link to this definition">¶</a></dt>
+<dd><p>Check if there are no extra files in the repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing the success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result" title="ersilia.publish.test.services.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_repo_exists">
+<span class="sig-name descname"><span class="pre">check_repo_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_repo_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_repo_exists" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the model repository exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing the success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result" title="ersilia.publish.test.services.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.validate_repo_structure">
+<span class="sig-name descname"><span class="pre">validate_repo_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.validate_repo_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.validate_repo_structure" title="Link to this definition">¶</a></dt>
+<dd><p>Validate the repository structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of missing items.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.Result">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.inspect.</span></span><span class="sig-name descname"><span class="pre">Result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">success</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.inspect.Result" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.Result.details">
+<span class="sig-name descname"><span class="pre">details</span></span><a class="headerlink" href="#ersilia.publish.test.services.inspect.Result.details" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.Result.success">
+<span class="sig-name descname"><span class="pre">success</span></span><a class="headerlink" href="#ersilia.publish.test.services.inspect.Result.success" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="ersilia-publish-test-services-io-module">
-<h2>ersilia.publish.test.services.io module<a class="headerlink" href="#ersilia-publish-test-services-io-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.publish.test.services.io">
+<span id="ersilia-publish-test-services-io-module"></span><h2>ersilia.publish.test.services.io module<a class="headerlink" href="#module-ersilia.publish.test.services.io" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.io.</span></span><span class="sig-name descname"><span class="pre">IOService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Service for handling input/output operations related to model testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> (<a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger" title="ersilia.utils.logging.Logger"><em>logging.Logger</em></a>) – Logger for logging messages.</p></li>
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>dir</strong> (<em>str</em>) – Directory where the model repository is located.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ios</span> <span class="o">=</span> <span class="n">IOService</span><span class="p">(</span>
+    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">"model_id"</span><span class="p">,</span>
+    <span class="nb">dir</span><span class="o">=</span><span class="s2">"/path/to/dir"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ios</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.calculate_directory_size">
+<span class="sig-name descname"><span class="pre">calculate_directory_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.calculate_directory_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.calculate_directory_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the size of a directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the directory.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The size of the directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.calculate_image_size">
+<span class="sig-name descname"><span class="pre">calculate_image_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.calculate_image_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.calculate_image_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the size of a Docker image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>str</em><em>, </em><em>optional</em>) – The tag of the Docker image (default is ‘latest’).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The size of the Docker image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.collect_and_save_json">
+<span class="sig-name descname"><span class="pre">collect_and_save_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.collect_and_save_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.collect_and_save_json" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to collect JSON results and save them to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_conda_env_size">
+<span class="sig-name descname"><span class="pre">get_conda_env_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_conda_env_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_conda_env_size" title="Link to this definition">¶</a></dt>
+<dd><p>Get the size of the Conda environment for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The size of the Conda environment in megabytes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If there is an error calculating the size.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_directories_sizes">
+<span class="sig-name descname"><span class="pre">get_directories_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_directories_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_directories_sizes" title="Link to this definition">¶</a></dt>
+<dd><p>Get the sizes of the model directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string of containing size of the model directory</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_env_sizes">
+<span class="sig-name descname"><span class="pre">get_env_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_env_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_env_sizes" title="Link to this definition">¶</a></dt>
+<dd><p>Get the sizes of the Conda environment directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string of containing size of the model environment</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_file_requirements">
+<span class="sig-name descname"><span class="pre">get_file_requirements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_file_requirements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_file_requirements" title="Link to this definition">¶</a></dt>
+<dd><p>Get the list of required files for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of required files.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the model type is unsupported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_model_dim">
+<span class="sig-name descname"><span class="pre">get_model_dim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_model_dim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_model_dim" title="Link to this definition">¶</a></dt>
+<dd><p>Get the model dimension from the metadata and the run column file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dimensions from the metadata and the run column file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_model_run_columns">
+<span class="sig-name descname"><span class="pre">get_model_run_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_model_run_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_model_run_columns" title="Link to this definition">¶</a></dt>
+<dd><p>Get the model run columns from run column file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A run columns name from the run column file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_model_type">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_model_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_model_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_model_type" title="Link to this definition">¶</a></dt>
+<dd><p>Get the type of the model based on the repository contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>repo_path</strong> (<em>str</em>) – Path to the model repository.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The type of the model (e.g., PACK_METHOD_FASTAPI).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.get_output_consistency">
+<span class="sig-name descname"><span class="pre">get_output_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.get_output_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.get_output_consistency" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.read_csv_values">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">read_csv_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.read_csv_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.read_csv_values" title="Link to this definition">¶</a></dt>
+<dd><p>Reads a CSV file and returns its values excluding the header row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – The path to the CSV file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of rows (each row is a list of values) from the CSV file without the header.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.IOService.submit_smiles_and_get_results">
+<span class="sig-name descname"><span class="pre">submit_smiles_and_get_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#IOService.submit_smiles_and_get_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.IOService.submit_smiles_and_get_results" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.PackageInstaller">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.io.</span></span><span class="sig-name descname"><span class="pre">PackageInstaller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#PackageInstaller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.PackageInstaller" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.io.PackageInstaller.install_packages_from_dir">
+<span class="sig-name descname"><span class="pre">install_packages_from_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/io.html#PackageInstaller.install_packages_from_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.io.PackageInstaller.install_packages_from_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-ersilia.publish.test.services.parser">
 <span id="ersilia-publish-test-services-parser-module"></span><h2>ersilia.publish.test.services.parser module<a class="headerlink" href="#module-ersilia.publish.test.services.parser" title="Link to this heading">¶</a></h2>
@@ -758,11 +1348,204 @@
 <dd></dd></dl>
 
 </section>
-<section id="ersilia-publish-test-services-runner-module">
-<h2>ersilia.publish.test.services.runner module<a class="headerlink" href="#ersilia-publish-test-services-runner-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.publish.test.services.runner">
+<span id="ersilia-publish-test-services-runner-module"></span><h2>ersilia.publish.test.services.runner module<a class="headerlink" href="#module-ersilia.publish.test.services.runner" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.runner.</span></span><span class="sig-name descname"><span class="pre">RunnerService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ios_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.io.IOService" title="ersilia.publish.test.services.io.IOService"><span class="pre">IOService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkup_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService" title="ersilia.publish.test.services.checks.CheckService"><span class="pre">CheckService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService" title="ersilia.publish.test.services.setup.SetupService"><span class="pre">SetupService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shallow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService" title="ersilia.publish.test.services.inspect.InspectService"><span class="pre">InspectService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permissive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Service for running model tests and checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger" title="ersilia.utils.logging.Logger"><em>logging.Logger</em></a>) – Logger for logging messages.</p></li>
+<li><p><strong>ios_service</strong> (<a class="reference internal" href="#ersilia.publish.test.services.io.IOService" title="ersilia.publish.test.services.io.IOService"><em>IOService</em></a>) – Instance of IOService for handling input/output operations.</p></li>
+<li><p><strong>checkup_service</strong> (<a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService" title="ersilia.publish.test.services.checks.CheckService"><em>CheckService</em></a>) – Instance of CheckService for performing various checks on the model.</p></li>
+<li><p><strong>setup_service</strong> (<a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService" title="ersilia.publish.test.services.setup.SetupService"><em>SetupService</em></a>) – Instance of SetupService for setting up the environment and fetching the model repository.</p></li>
+<li><p><strong>dir</strong> (<em>str</em>) – Directory where the model repository is located.</p></li>
+<li><p><strong>from_dir</strong> (<em>str</em>) – Directory where the model repository is located.</p></li>
+<li><p><strong>model_path</strong> (<em>Callable</em>) – Callable to get the model path.</p></li>
+<li><p><strong>from_github</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from GitHub.</p></li>
+<li><p><strong>from_s3</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from S3.</p></li>
+<li><p><strong>from_dockerhub</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from DockerHub.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – Version of the model.</p></li>
+<li><p><strong>shallow</strong> (<em>bool</em>) – Flag indicating whether to perform shallow checks.</p></li>
+<li><p><strong>deep</strong> (<em>bool</em>) – Flag indicating whether to perform deep checks.</p></li>
+<li><p><strong>report_path</strong> (<em>bool</em>) – Flag to specify the path for output as json.</p></li>
+<li><p><strong>inspector</strong> (<a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService" title="ersilia.publish.test.services.inspect.InspectService"><em>InspectService</em></a>) – Instance of InspectService for inspecting models and their configurations.</p></li>
+<li><p><strong>surface</strong> (<em>bool</em>) – Flag indicating whether to perform surface checks.</p></li>
+<li><p><strong>inspect</strong> (<em>bool</em>) – Flag indicating whether to perform inspect checks.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete model if existed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.fetch">
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the model repository from the specified directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run" title="Link to this definition">¶</a></dt>
+<dd><p>Run the model tests and checks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run_bash">
+<span class="sig-name descname"><span class="pre">run_bash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.run_bash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_bash" title="Link to this definition">¶</a></dt>
+<dd><p>Run the model using a bash script and compare the outputs for consistency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is an error during the subprocess execution or output comparison.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run_example">
+<span class="sig-name descname"><span class="pre">run_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'random'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.run_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_example" title="Link to this definition">¶</a></dt>
+<dd><p>Generate example input samples for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – Number of samples to generate.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the file to save the samples.</p></li>
+<li><p><strong>simple</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to generate simple samples.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for generating samples. Can be “predefined”, “deterministic”, or “random” (default = “random”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of generated input samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run_model">
+<span class="sig-name descname"><span class="pre">run_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.run_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_model" title="Link to this definition">¶</a></dt>
+<dd><p>Run the model with the given input and output parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – A path to input file</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – Path to the output file.</p></li>
+<li><p><strong>batch</strong> (<em>int</em>) – Batch size for running the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output of the command.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.serve_model">
+<span class="sig-name descname"><span class="pre">serve_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.serve_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.serve_model" title="Link to this definition">¶</a></dt>
+<dd><p>Serve the model and return the command output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The output of the command.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="ersilia-publish-test-services-setup-module">
-<h2>ersilia.publish.test.services.setup module<a class="headerlink" href="#ersilia-publish-test-services-setup-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.publish.test.services.setup">
+<span id="ersilia-publish-test-services-setup-module"></span><h2>ersilia.publish.test.services.setup module<a class="headerlink" href="#module-ersilia.publish.test.services.setup" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.setup.SetupService">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.setup.</span></span><span class="sig-name descname"><span class="pre">SetupService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/setup.html#SetupService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.setup.SetupService" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Service for setting up the environment and fetching the model repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>dir</strong> (<em>str</em>) – Directory where the model repository will be cloned.</p></li>
+<li><p><strong>from_github</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from GitHub.</p></li>
+<li><p><strong>from_s3</strong> (<em>bool</em>) – Flag indicating whether to fetch the repository from S3.</p></li>
+<li><p><strong>logger</strong> (<em>Any</em>) – Logger for logging messages.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.setup.SetupService.BASE_URL">
+<span class="sig-name descname"><span class="pre">BASE_URL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://github.com/ersilia-os/'</span></span><a class="headerlink" href="#ersilia.publish.test.services.setup.SetupService.BASE_URL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.setup.SetupService.get_conda_env_location">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_conda_env_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/setup.html#SetupService.get_conda_env_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.setup.SetupService.get_conda_env_location" title="Link to this definition">¶</a></dt>
+<dd><p>Get the location of the Conda environment for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger" title="ersilia.utils.logging.Logger"><em>logging.Logger</em></a>) – Logger for logging messages.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The location of the Conda environment.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>subprocess.CalledProcessError</strong> – If the command to list Conda environments returns a non-zero exit code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.setup.SetupService.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/setup.html#SetupService.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.setup.SetupService.get_model" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.setup.SetupService.run_command">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capture_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/setup.html#SetupService.run_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.setup.SetupService.run_command" title="Link to this definition">¶</a></dt>
+<dd><p>Run a shell command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>command</strong> (<em>str</em><em> | </em><em>list</em><em> | </em><em>tuple</em>) – The command to run.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger" title="ersilia.utils.logging.Logger"><em>logging.Logger</em></a>) – Logger for logging messages.</p></li>
+<li><p><strong>capture_output</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to capture the command output.</p></li>
+<li><p><strong>shell</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to run the command in the shell.</p></li>
+<li><p><strong>env</strong> (<em>dict</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Environment variables to use (defaults to os.environ).</p></li>
+<li><p><strong>check</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, raise CalledProcessError on non-zero exit codes (capture_output=True only).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If capture_output=True returns stdout as string.
+Otherwise returns process.stdout (a stream).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | io.TextIOBase</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-ersilia.publish.test.services">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.publish.test.services" title="Link to this heading">¶</a></h2>
@@ -826,7 +1609,26 @@
             <ul>
 <li><a class="reference internal" href="#">ersilia.publish.test.services package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#ersilia-publish-test-services-checks-module">ersilia.publish.test.services.checks module</a></li>
+<li><a class="reference internal" href="#module-ersilia.publish.test.services.checks">ersilia.publish.test.services.checks module</a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService"><code class="docutils literal notranslate"><span class="pre">CheckService</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_consistent_output"><code class="docutils literal notranslate"><span class="pre">CheckService.check_consistent_output()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_dim"><code class="docutils literal notranslate"><span class="pre">CheckService.check_dim()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_files"><code class="docutils literal notranslate"><span class="pre">CheckService.check_files()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_information"><code class="docutils literal notranslate"><span class="pre">CheckService.check_information()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_model_columns_name"><code class="docutils literal notranslate"><span class="pre">CheckService.check_model_columns_name()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_model_output_content"><code class="docutils literal notranslate"><span class="pre">CheckService.check_model_output_content()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_robustness"><code class="docutils literal notranslate"><span class="pre">CheckService.check_robustness()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output"><code class="docutils literal notranslate"><span class="pre">CheckService.check_simple_model_async_output()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_output"><code class="docutils literal notranslate"><span class="pre">CheckService.check_simple_model_output()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.compare_csv_columns"><code class="docutils literal notranslate"><span class="pre">CheckService.compare_csv_columns()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col"><code class="docutils literal notranslate"><span class="pre">CheckService.find_missing_first_output_col()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.get_inputs"><code class="docutils literal notranslate"><span class="pre">CheckService.get_inputs()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.trim_string"><code class="docutils literal notranslate"><span class="pre">CheckService.trim_string()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.validate_file_content"><code class="docutils literal notranslate"><span class="pre">CheckService.validate_file_content()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.publish.test.services.constants">ersilia.publish.test.services.constants module</a><ul>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks"><code class="docutils literal notranslate"><span class="pre">Checks</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.COLUMN_CHECK_FAILURE"><code class="docutils literal notranslate"><span class="pre">Checks.COLUMN_CHECK_FAILURE</span></code></a></li>
@@ -910,8 +1712,57 @@
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#ersilia-publish-test-services-inspect-module">ersilia.publish.test.services.inspect module</a></li>
-<li><a class="reference internal" href="#ersilia-publish-test-services-io-module">ersilia.publish.test.services.io module</a></li>
+<li><a class="reference internal" href="#module-ersilia.publish.test.services.inspect">ersilia.publish.test.services.inspect module</a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.CheckStrategy"><code class="docutils literal notranslate"><span class="pre">CheckStrategy</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.CheckStrategy.execute"><code class="docutils literal notranslate"><span class="pre">CheckStrategy.execute()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService"><code class="docutils literal notranslate"><span class="pre">InspectService</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService.run"><code class="docutils literal notranslate"><span class="pre">InspectService.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector"><code class="docutils literal notranslate"><span class="pre">ModelInspector</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.ERSILIAPACK_FILES"><code class="docutils literal notranslate"><span class="pre">ModelInspector.ERSILIAPACK_FILES</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.REQUIRED_FIELDS"><code class="docutils literal notranslate"><span class="pre">ModelInspector.REQUIRED_FIELDS</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_complete_folder_structure"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_complete_folder_structure()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_complete_metadata"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_complete_metadata()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_computational_performance"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_computational_performance()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_dependencies_are_valid"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_dependencies_are_valid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_no_extra_files"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_no_extra_files()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_repo_exists"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_repo_exists()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.validate_repo_structure"><code class="docutils literal notranslate"><span class="pre">ModelInspector.validate_repo_structure()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result.details"><code class="docutils literal notranslate"><span class="pre">Result.details</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.Result.success"><code class="docutils literal notranslate"><span class="pre">Result.success</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.publish.test.services.io">ersilia.publish.test.services.io module</a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService"><code class="docutils literal notranslate"><span class="pre">IOService</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.calculate_directory_size"><code class="docutils literal notranslate"><span class="pre">IOService.calculate_directory_size()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.calculate_image_size"><code class="docutils literal notranslate"><span class="pre">IOService.calculate_image_size()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.collect_and_save_json"><code class="docutils literal notranslate"><span class="pre">IOService.collect_and_save_json()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_conda_env_size"><code class="docutils literal notranslate"><span class="pre">IOService.get_conda_env_size()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_directories_sizes"><code class="docutils literal notranslate"><span class="pre">IOService.get_directories_sizes()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_env_sizes"><code class="docutils literal notranslate"><span class="pre">IOService.get_env_sizes()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_file_requirements"><code class="docutils literal notranslate"><span class="pre">IOService.get_file_requirements()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_model_dim"><code class="docutils literal notranslate"><span class="pre">IOService.get_model_dim()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_model_run_columns"><code class="docutils literal notranslate"><span class="pre">IOService.get_model_run_columns()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_model_type"><code class="docutils literal notranslate"><span class="pre">IOService.get_model_type()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.get_output_consistency"><code class="docutils literal notranslate"><span class="pre">IOService.get_output_consistency()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.read_csv_values"><code class="docutils literal notranslate"><span class="pre">IOService.read_csv_values()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.IOService.submit_smiles_and_get_results"><code class="docutils literal notranslate"><span class="pre">IOService.submit_smiles_and_get_results()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.PackageInstaller"><code class="docutils literal notranslate"><span class="pre">PackageInstaller</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.io.PackageInstaller.install_packages_from_dir"><code class="docutils literal notranslate"><span class="pre">PackageInstaller.install_packages_from_dir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.publish.test.services.parser">ersilia.publish.test.services.parser module</a><ul>
 <li><a class="reference internal" href="#ersilia.publish.test.services.parser.DockerfileInstallParser"><code class="docutils literal notranslate"><span class="pre">DockerfileInstallParser</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.parser.InstallParser"><code class="docutils literal notranslate"><span class="pre">InstallParser</span></code></a><ul>
@@ -930,8 +1781,29 @@
 <li><a class="reference internal" href="#ersilia.publish.test.services.parser.run_bash"><code class="docutils literal notranslate"><span class="pre">run_bash()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#ersilia-publish-test-services-runner-module">ersilia.publish.test.services.runner module</a></li>
-<li><a class="reference internal" href="#ersilia-publish-test-services-setup-module">ersilia.publish.test.services.setup module</a></li>
+<li><a class="reference internal" href="#module-ersilia.publish.test.services.runner">ersilia.publish.test.services.runner module</a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService"><code class="docutils literal notranslate"><span class="pre">RunnerService</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.delete"><code class="docutils literal notranslate"><span class="pre">RunnerService.delete()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.fetch"><code class="docutils literal notranslate"><span class="pre">RunnerService.fetch()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.run"><code class="docutils literal notranslate"><span class="pre">RunnerService.run()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.run_bash"><code class="docutils literal notranslate"><span class="pre">RunnerService.run_bash()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.run_example"><code class="docutils literal notranslate"><span class="pre">RunnerService.run_example()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.run_model"><code class="docutils literal notranslate"><span class="pre">RunnerService.run_model()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.runner.RunnerService.serve_model"><code class="docutils literal notranslate"><span class="pre">RunnerService.serve_model()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.publish.test.services.setup">ersilia.publish.test.services.setup module</a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService"><code class="docutils literal notranslate"><span class="pre">SetupService</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService.BASE_URL"><code class="docutils literal notranslate"><span class="pre">SetupService.BASE_URL</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService.get_conda_env_location"><code class="docutils literal notranslate"><span class="pre">SetupService.get_conda_env_location()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService.get_model"><code class="docutils literal notranslate"><span class="pre">SetupService.get_model()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService.run_command"><code class="docutils literal notranslate"><span class="pre">SetupService.run_command()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.publish.test.services">Module contents</a></li>
 </ul>
 </li>
