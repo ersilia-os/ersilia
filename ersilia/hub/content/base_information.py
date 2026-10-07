@@ -10,7 +10,6 @@ except ImportError:
 
 from ... import ErsiliaBase
 from ...utils.exceptions_utils.base_information_exceptions import (
-    ApptainerBaseInformationError,
     BiomedicalAreaBaseInformationError,
     BothIdentifiersBaseInformationError,
     ComputationalPerformanceBaseInformationError,
@@ -128,8 +127,6 @@ class BaseInformation(ErsiliaBase):
             Placeholder for Docker image architecture details.
         _s3 : None
             Placeholder for related AWS S3 information.
-        _apptainer : None
-            Placeholder for the URL of the model's Apptainer (.sif) image.
         _source : None
             Placeholder for the source of the model, one of 'Local', or 'Online'
         _source_type: None
@@ -187,7 +184,6 @@ class BaseInformation(ErsiliaBase):
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
-        self._apptainer = None
         self._source = None
         self._source_type = None
         self._model_size = None
@@ -1206,47 +1202,6 @@ class BaseInformation(ErsiliaBase):
             self._s3 = new_s3_url
 
     @property
-    def apptainer(self):
-        """
-        Get the model Apptainer image URL.
-
-        Returns
-        -------
-        str
-            The model Apptainer image URL.
-        """
-        return self._apptainer
-
-    @apptainer.setter
-    def apptainer(self, new_apptainer_url):
-        """
-        Set the model Apptainer image URL.
-
-        Parameters
-        ----------
-        new_apptainer_url : str
-            The new model Apptainer image URL.
-
-        Raises
-        ------
-        ApptainerBaseInformationError
-            If the Apptainer image URL is not valid.
-        """
-        if new_apptainer_url is None:
-            self._apptainer = None
-        elif (
-            str(new_apptainer_url).lower() == "none"
-            or str(new_apptainer_url).lower() == "null"
-        ):
-            self._apptainer = None
-        else:
-            if not new_apptainer_url.startswith(
-                "https://models-sif.s3.eu-north-1.amazonaws.com/"
-            ) or not new_apptainer_url.endswith(".sif"):
-                raise ApptainerBaseInformationError
-            self._apptainer = new_apptainer_url
-
-    @property
     def both_identifiers(self):
         """
         Get both the model identifier and slug.
@@ -1746,7 +1701,6 @@ class BaseInformation(ErsiliaBase):
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            "Apptainer": self.apptainer,
             "Model Size": self.model_size,
             "Environment Size": self.environment_size,
             "Image Size": self.image_size,
@@ -1802,7 +1756,6 @@ class BaseInformation(ErsiliaBase):
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        self._assign("apptainer", "Apptainer", data)
         self._assign("model_size", "Model Size", data)
         self._assign("environment_size", "Environment Size", data)
         self._assign("image_size", "Image Size", data)
