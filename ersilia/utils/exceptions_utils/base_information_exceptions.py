@@ -214,6 +214,11 @@ class BothIdentifiersBaseInformationError(ErsiliaError):
         self.hints = "Ersilia model identifier and/or slug have not been set yet"
         ErsiliaError.__init__(self, self.message, self.hints)
 
+class ApptainerBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Ersilia Apptainer URL"
+        self.hints = "The Apptainer image does not seem to be publicly available in Ersilia's AWS S3 bucket for Apptainer images (models-sif). The URL should point to a .sif file."
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 class PublicationBaseInformationError(ErsiliaError):
     def __init__(self):
