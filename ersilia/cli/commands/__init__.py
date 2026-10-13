@@ -91,6 +91,37 @@ def _normalize_option(name):
     return name.replace("-", "_")
 
 
+def _end_with_error(error):
+    # Any error that reaches the CLI ends with one clean message and exit 1.
+    import logging
+    import sys
+
+    from ...utils.exceptions_utils.exceptions import ErsiliaError
+    from ...utils.exceptions_utils.throw_ersilia_exception import (
+        ErsiliaErrorReported,
+        show_error,
+    )
+
+    if isinstance(error, ErsiliaErrorReported):
+        sys.exit(error.code)
+    if isinstance(error, ErsiliaError):
+        show_error(error)
+        sys.exit(1)
+    if logging.getLogger("ersilia").level == logging.DEBUG:
+        raise error  # verbose mode: the full traceback helps
+    from ..echo import echo
+
+    echo(
+        "Unexpected error: {0}".format(str(error).strip() or type(error).__name__),
+        fg="red",
+    )
+    echo(
+        "Run the command again with 'ersilia -v' to see the details, and please "
+        "report it at https://github.com/ersilia-os/ersilia/issues"
+    )
+    sys.exit(1)
+
+
 class ErsiliaCommandGroup(RichGroup):
     def command(self, *args, **kwargs):
         kwargs.setdefault("cls", RichCommand)
@@ -129,6 +160,10 @@ class ErsiliaCommandGroup(RichGroup):
             if note:
                 echo(note)
             sys.exit(130)
+        except (click.exceptions.ClickException, click.exceptions.Exit):
+            raise
+        except Exception as e:
+            _end_with_error(e)
 
     def resolve_command(self, ctx, args):
         # Suggest the closest command for a typo, e.g. 'ersilia server'.

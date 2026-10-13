@@ -21,6 +21,7 @@ from ..utils.session import (
 )
 from .api import Api
 from .services import (
+    ApptainerImageService,
     CondaEnvironmentService,
     DockerImageService,
     DummyService,
@@ -135,6 +136,10 @@ class AutoService(ErsiliaBase):
                     self.service = HostedService(
                         model_id, config_json=config_json, url=url
                     )
+                elif s == "apptainer":
+                    self.service = ApptainerImageService(
+                        model_id, config_json=config_json, preferred_port=preferred_port
+                    )
                 else:
                     self.service = None
                 self._service_class = s
@@ -152,6 +157,9 @@ class AutoService(ErsiliaBase):
                 )
                 port = {"preferred_port": preferred_port}
                 candidates = [
+                    # Checked first: cheap, and only true for models fetched
+                    # with --from_apptainer.
+                    ("apptainer", ApptainerImageService, port),
                     ("system", SystemBundleService, port),
                     ("venv", VenvEnvironmentService, port),
                     ("conda", CondaEnvironmentService, port),
@@ -177,7 +185,7 @@ class AutoService(ErsiliaBase):
                         )
                         self._service_class = "dummy"
                         echo(
-                            f"No way to run model {model_id} was found on this machine (Docker, conda or a hosted URL).",
+                            f"No way to run model {model_id} was found on this machine (Docker, Apptainer, conda or a hosted URL).",
                             fg="yellow",
                         )
         else:
@@ -261,6 +269,9 @@ class AutoService(ErsiliaBase):
         elif type(service_class) is HostedService:
             self._service_class = "hosted"
             return service_class
+        elif type(service_class) is ApptainerImageService:
+            self._service_class = "apptainer"
+            return service_class
         else:
             self._service_class = service_class
             if service_class == "system":
@@ -275,6 +286,8 @@ class AutoService(ErsiliaBase):
                 return PulledDockerImageService
             elif service_class == "hosted":
                 return HostedService
+            elif service_class == "apptainer":
+                return ApptainerImageService
             raise Exception()
 
     def get_apis(self):

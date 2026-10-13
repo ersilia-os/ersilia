@@ -3,11 +3,8 @@ import functools
 import logging
 import sys
 
-from ... import EOS
 from ...default import (
-    CURRENT_LOGGING_FILE,
     DEFAULT_ERSILIA_ERROR_EXIT_CODE,
-    ERSILIA_CATALOG_URL,
 )
 
 
@@ -69,34 +66,57 @@ def _is_verbose():
     return logging.getLogger("ersilia").level == logging.DEBUG
 
 
-def _report(error, exit):
-    if _is_verbose():
-        text = ":police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:\n"
-        echo(text, blink=False, bold=True, fg="red")
-        echo("Error message:\n", fg="red", bold=True)
-        echo(str(error), fg="red")
-    else:
-        message, hints = user_message_and_hints(error)
-        echo(message, fg="red")
-        if hints:
-            echo(hints)
-    if _is_verbose():
-        text = "If this error message is not helpful, open an issue at:\n"
-        text += " - https://github.com/ersilia-os/ersilia\n"
-        text += "Or feel free to reach out to us at:\n"
-        text += " - hello[at]ersilia.io\n\n"
-        text += f"Browse the full model catalog at: {ERSILIA_CATALOG_URL}\n\n"
-        text += (
-            "If you haven't, try to run your command in verbose mode (-v in the CLI)\n"
+class ErsiliaErrorReported(Exception):
+    """
+    An error that was already shown to the user.
+
+    Raised instead of ``sys.exit`` inside coroutines: a ``SystemExit`` raised
+    in an asyncio task is also kept on the task, and asyncio later prints it
+    with a traceback ("Task exception was never retrieved"). Whoever runs the
+    coroutine turns this into the exit code, without printing anything more.
+
+    Parameters
+    ----------
+    code : int
+        The exit code.
+    """
+
+    def __init__(self, code=DEFAULT_ERSILIA_ERROR_EXIT_CODE):
+        self.code = code
+        Exception.__init__(
+            self, "Ersilia error already reported (exit {0})".format(code)
         )
-        text += " - You will find the console log file in: {0}/{1}".format(
-            EOS, CURRENT_LOGGING_FILE
+
+
+def show_error(error):
+    """
+    Show an error the standard way: the message, then its hints.
+
+    Always shown, also in verbose mode (where it follows the log lines).
+
+    Parameters
+    ----------
+    error : Exception
+        The error.
+    """
+    message, hints = user_message_and_hints(error)
+    echo(message, fg="red", force=True)
+    if hints:
+        echo(hints, force=True)
+    if _is_verbose():
+        echo(
+            "If this does not help, please open an issue at https://github.com/ersilia-os/ersilia/issues",
+            force=True,
         )
-        echo(text, fg="green")
+
+
+def _report(error, exit, in_coroutine=False):
+    show_error(error)
     if exit:
+        if in_coroutine:
+            raise ErsiliaErrorReported() from None
         sys.exit(DEFAULT_ERSILIA_ERROR_EXIT_CODE)
-    else:
-        raise error
+    raise error
 
 
 def throw_ersilia_exception(exit=True):
@@ -109,10 +129,12 @@ def throw_ersilia_exception(exit=True):
             async def async_inner_function(*args, **kwargs):
                 try:
                     return await func(*args, **kwargs)
+                except ErsiliaErrorReported:
+                    raise
                 except Exception as error:
                     if _library_mode:
                         raise
-                    _report(error, exit)
+                    _report(error, exit, in_coroutine=True)
 
             return async_inner_function
 
@@ -120,6 +142,11 @@ def throw_ersilia_exception(exit=True):
         def inner_function(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
+            except ErsiliaErrorReported as reported:
+                # Shown by a coroutine this function ran.
+                if exit:
+                    sys.exit(reported.code)
+                raise
             except Exception as error:
                 if _library_mode:
                     raise

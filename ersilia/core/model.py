@@ -142,6 +142,7 @@ class ErsiliaModel(ErsiliaBase):
             "docker",
             "pulled_docker",
             "hosted",
+            "apptainer",
         ], "Wrong service class"
         self.url = None
         self.pid = None

@@ -50,7 +50,10 @@ class ErsiliaError(Exception):
             text += hints
             text += "\n"
         eb = ErsiliaBase(config_json=config_json, credentials_json=None)
-        eb.logger.error(text)
+        # One line in the log; the user sees the message and hints separately.
+        eb.logger.error(
+            "{0}: {1}".format(type(self).__name__, " ".join(str(message).split()))
+        )
         Exception.__init__(self, text)
 
 

@@ -25,13 +25,27 @@ def fetch_cmd():
         Fetch a model by its ID:
         $ ersilia fetch <model_id> [auto model source decider] or ersilia fetch <model_id> --from_github/--from_dockerhub
 
+        Fetch a model as an Apptainer image (Linux, no Docker needed):
+        $ ersilia fetch <model_id> --from_apptainer
+
         Fetch a model from a local directory:
         $ ersilia fetch <model_id> --from_dir <path>
     """
 
     def _fetch(mf, model_id):
-        res = asyncio.run(mf.fetch(model_id))
-        return res
+        from ...utils.exceptions_utils.exceptions import ErsiliaError
+        from ...utils.exceptions_utils.throw_ersilia_exception import (
+            ErsiliaErrorReported,
+            show_error,
+        )
+
+        try:
+            return asyncio.run(mf.fetch(model_id))
+        except ErsiliaErrorReported as reported:
+            sys.exit(reported.code)
+        except ErsiliaError as error:
+            show_error(error)
+            sys.exit(1)
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
@@ -64,6 +78,12 @@ def fetch_cmd():
         help="Fetch from DockerHub (the default when no other source is given).",
     )
     @click.option(
+        "--from_apptainer",
+        is_flag=True,
+        default=False,
+        help="Fetch the model as an Apptainer image, for Linux machines without Docker (e.g. HPC clusters).",
+    )
+    @click.option(
         "--from_hosted",
         default=None,
         type=click.STRING,
@@ -73,13 +93,14 @@ def fetch_cmd():
         "--version",
         default=None,
         type=click.STRING,
-        help="Specific Docker image version to fetch from DockerHub.",
+        help="Specific image version to fetch: a Docker tag for DockerHub, or e.g. v1 for Apptainer.",
     )
     def fetch(
         model,
         from_dir,
         from_github,
         from_dockerhub,
+        from_apptainer,
         version,
         from_s3,
         from_hosted,
@@ -98,6 +119,7 @@ def fetch_cmd():
                 ("--from_github", from_github),
                 ("--from_s3", from_s3),
                 ("--from_dockerhub", from_dockerhub),
+                ("--from_apptainer", from_apptainer),
                 ("--from_hosted", from_hosted),
             )
             if on
@@ -107,8 +129,11 @@ def fetch_cmd():
                 "Choose only one source; got {0}.".format(", ".join(chosen))
             )
         from_dockerhub = not chosen or from_dockerhub
-        if version is not None and not from_dockerhub:
-            echo("--version only applies to DockerHub, so it is ignored.", fg="yellow")
+        if version is not None and not (from_dockerhub or from_apptainer):
+            echo(
+                "--version only applies to DockerHub and Apptainer, so it is ignored.",
+                fg="yellow",
+            )
 
         if from_dir is not None:
             from ...utils.checks import check_fetch_folder
@@ -123,6 +148,7 @@ def fetch_cmd():
             force_from_github=from_github,
             force_from_s3=from_s3,
             force_from_dockerhub=from_dockerhub,
+            force_from_apptainer=from_apptainer,
             img_version=version,
             force_from_hosted=from_hosted is not None,
             hosted_url=from_hosted,

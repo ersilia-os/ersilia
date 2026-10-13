@@ -325,6 +325,40 @@ class ModelDockerDeleter(ErsiliaBase):
             dm.delete_images(model_id)
 
 
+class ModelApptainerDeleter(ErsiliaBase):
+    """
+    Deletes the Apptainer images (SIFs) of a model.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+    """
+
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+
+    def delete(self, model_id: str):
+        """
+        Deletes every version of the model's Apptainer image from ``SIF_DIR``.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
+        import glob
+
+        from ...default import SIF_DIR
+
+        for path in glob.glob(os.path.join(SIF_DIR, "{0}_*.sif".format(model_id))):
+            self.logger.info("Removing Apptainer image {0}".format(path))
+            try:
+                os.remove(path)
+            except OSError as e:
+                self.logger.warning("Could not remove {0}: {1}".format(path, e))
+
+
 class ModelFetchedEntryDeleter(ErsiliaBase):
     """
     Deletes fetched model entries from the database.
@@ -573,6 +607,7 @@ class ModelFullDeleter(ErsiliaBase):
             ModelTmpDeleter(self.config_json).delete(model_id)
             ModelPipDeleter(self.config_json).delete(model_id)
             ModelDockerDeleter(self.config_json).delete(model_id)
+            ModelApptainerDeleter(self.config_json).delete(model_id)
             ModelFetchedEntryDeleter(self.config_json).delete(model_id)
             BruteDeleter(self.config_json).delete(model_id)
 

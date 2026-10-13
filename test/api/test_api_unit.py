@@ -83,6 +83,7 @@ PARITY = [
             "from_github": "from_github",
             "from_s3": "from_s3",
             "from_hosted": "from_hosted",
+            "from_apptainer": "from_apptainer",
             "version": "version",
         },
     ),

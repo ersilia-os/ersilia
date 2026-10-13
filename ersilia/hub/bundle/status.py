@@ -4,7 +4,7 @@ import os
 
 from ... import ErsiliaBase
 from ...db.environments.localdb import EnvironmentDb
-from ...default import DOCKER_INFO_FILE
+from ...default import APPTAINER_INFO_FILE, DOCKER_INFO_FILE
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
 
@@ -96,6 +96,29 @@ class ModelStatus(ErsiliaBase):
             data = json.load(f)
         return data["docker_hub"]
 
+    def is_apptainer(self, model_id: str) -> bool:
+        """
+        Check if the model was fetched as an Apptainer image.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model.
+
+        Returns
+        -------
+        bool
+            True if the model was fetched with --from_apptainer.
+        """
+        json_file = os.path.join(
+            self._model_path(model_id=model_id), APPTAINER_INFO_FILE
+        )
+        if not os.path.exists(json_file):
+            return False
+        with open(json_file, "r") as f:
+            data = json.load(f)
+        return bool(data.get("apptainer"))
+
     def is_conda(self, model_id: str) -> bool:
         """
         Check if the model is available in a Conda environment.
@@ -175,6 +198,7 @@ class ModelStatus(ErsiliaBase):
             "bundle": self.is_bundle(model_id),
             "docker": self.is_docker(model_id),
             "pulled_docker": self.is_pulled_docker(model_id),
+            "apptainer": self.is_apptainer(model_id),
             "conda": self.is_conda(model_id),
             "pip": self.is_pip(model_id),
         }

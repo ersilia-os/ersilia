@@ -110,6 +110,9 @@ class PackMethodResolver(ErsiliaBase):
         else:
             with open(os.path.join(model_path, "service_class.txt"), "r") as f:
                 service_class = f.read().strip()
+        if service_class == "apptainer":
+            # Apptainer images are ersilia-pack builds.
+            return PACK_METHOD_FASTAPI
         if service_class == "pulled_docker":
             self.logger.debug(
                 "Service class is pulled_docker, resolving pack method from GitHub metadata..."
