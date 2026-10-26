@@ -25,7 +25,12 @@ from ..default import (
 from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..utils.conda import SimpleConda, StandaloneConda
-from ..utils.docker import SimpleDocker, model_image_version_reader, set_docker_host
+from ..utils.docker import (
+    SimpleDocker,
+    is_gpu_image_tag,
+    model_image_version_reader,
+    set_docker_host,
+)
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
@@ -981,6 +986,8 @@ class PulledDockerImageService(BaseServing):
         self.simple_docker = SimpleDocker()
         self.pid = -1
         self._mem_gb = self._get_memory()
+        if is_gpu_image_tag(self.docker_tag):
+            self.logger.debug("Using the GPU image {0}".format(self.image_name))
 
     def __enter__(self):
         """
@@ -1245,10 +1252,33 @@ class PulledDockerImageService(BaseServing):
                 )
                 if self._mem_gb is not None:
                     run_kwargs["mem_limit"] = f"{self._mem_gb}g"
+                if is_gpu_image_tag(self.docker_tag):
+                    # Same as 'docker run --gpus all'.
+                    run_kwargs["device_requests"] = [
+                        docker.types.DeviceRequest(count=-1, capabilities=[["gpu"]])
+                    ]
                 try:
                     self.container = self.client.containers.run(**run_kwargs)
                     break
                 except docker.errors.APIError as e:
+                    # Docker without the NVIDIA runtime fails with the first
+                    # message, newer Docker (CDI) with the second.
+                    no_gpu = (
+                        "could not select device driver",
+                        "failed to discover GPU vendor",
+                    )
+                    if any(m in str(e) for m in no_gpu):
+                        from ..utils.exceptions_utils.cli_exceptions import (
+                            ModelStartError,
+                        )
+
+                        raise ModelStartError(
+                            self.model_id,
+                            "needs a GPU, but Docker cannot use one",
+                            "Install the NVIDIA Container Toolkit, or use the CPU image: 'ersilia delete {0}' and then 'ersilia fetch {0}'.".format(
+                                self.model_id
+                            ),
+                        )
                     port_taken = "port is already allocated" in str(e) or (
                         "address already in use" in str(e)
                     )

@@ -52,6 +52,7 @@ def test_a_port_given_by_the_user_must_be_free():
     svc = PulledDockerImageService.__new__(PulledDockerImageService)
     svc.model_id, svc.port, svc._port_given = "eos3b5e", 8080, True
     svc.image_name, svc._mem_gb = "ersiliaos/eos3b5e:latest", None
+    svc.docker_tag = "latest"
     svc.logger, svc.client = MagicMock(), MagicMock()
     svc._create_docker_network = lambda: None
     with (
@@ -66,6 +67,7 @@ def test_a_failed_start_removes_its_container():
     svc = PulledDockerImageService.__new__(PulledDockerImageService)
     svc.model_id, svc.port, svc._port_given = "eos3b5e", 8080, False
     svc.image_name, svc._mem_gb = "ersiliaos/eos3b5e:latest", None
+    svc.docker_tag = "latest"
     svc.logger, svc.client = MagicMock(), MagicMock()
     svc._create_docker_network = lambda: None
     svc._wait_until_container_is_running = MagicMock(side_effect=KeyboardInterrupt)
@@ -97,6 +99,7 @@ def test_a_missing_image_is_reported_not_pulled_again():
     svc = PulledDockerImageService.__new__(PulledDockerImageService)
     svc.model_id, svc.port, svc._port_given = "eos3b5e", 8080, False
     svc.image_name, svc._mem_gb = "ersiliaos/eos3b5e:latest", None
+    svc.docker_tag = "latest"
     svc.logger, svc.client = MagicMock(), MagicMock()
     svc._create_docker_network = lambda: None
     svc.client.images.get.side_effect = docker.errors.ImageNotFound("gone")

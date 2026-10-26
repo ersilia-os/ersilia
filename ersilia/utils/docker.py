@@ -11,6 +11,7 @@ from .. import logger
 from ..default import (
     DEFAULT_DOCKER_PLATFORM,
     DOCKER_INFO_FILE,
+    DOCKERHUB_GPU_TAG_SUFFIX,
     DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
 )
@@ -78,6 +79,23 @@ def model_image_version_reader(dir):
         if "tag" in data:
             return data["tag"]
     return DOCKERHUB_LATEST_TAG
+
+
+def gpu_image_tag(tag=None):
+    """
+    The tag of the GPU image for a given image tag, e.g. "latest-gpu".
+    """
+    tag = tag or DOCKERHUB_LATEST_TAG
+    if is_gpu_image_tag(tag):
+        return tag
+    return tag + DOCKERHUB_GPU_TAG_SUFFIX
+
+
+def is_gpu_image_tag(tag):
+    """
+    Whether an image tag points to a GPU image.
+    """
+    return bool(tag) and tag.endswith(DOCKERHUB_GPU_TAG_SUFFIX)
 
 
 ERSILIA_USER_LABEL = "ersilia.user.id"
