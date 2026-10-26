@@ -15,6 +15,7 @@ from ....default import (
     NO_INPUT_PROCESSED_EXIT_CODE,
     PACK_METHOD_FASTAPI,
     DOCKERFILE_FILE,
+    RUN_FILE,
 )
 from .io import IOService
 from .constants import STATUS_CONFIGS, Options
@@ -34,6 +35,12 @@ from ....hub.content.card import RepoMetadataFile
 from ....utils.logging import logger
 
 Result = namedtuple("Result", ["success", "details"])
+
+# install commands allowed to differ between `commands` and `gpu:` (CUDA builds of frameworks)
+GPU_SPECIFIC_RE = re.compile(
+    r"torch|cuda|cu\d{3}|nvidia|cupy|jax|tensorflow|onnxruntime|dgl|paddle|-gpu\b",
+    re.IGNORECASE,
+)
 
 
 class ModelInspector:
@@ -186,6 +193,73 @@ class ModelInspector:
                 valid_files.append(INSTALL_YAML_FILE)
 
             return Result(True, f"{', '.join(valid_files)} dependencies are valid.")
+
+    def check_gpu_build(self):
+        """
+        Check that the optional GPU build declared in install.yml is complete.
+
+        A model with a `gpu:` command list in install.yml needs a
+        `code/main_gpu.py` and a `run.sh` that picks it when
+        `ERSILIA_DEVICE=gpu`. The metadata `Device` field may only list GPU
+        when install.yml has a `gpu:` block. Differences between `commands`
+        and `gpu:` other than GPU-specific packages raise a warning.
+
+        Returns
+        -------
+        Result
+            Success is True, False, or a warning/skipped status string.
+        """
+        yml_content, _ = self._get_file_content(INSTALL_YAML_FILE)
+        try:
+            yml_data = yaml.safe_load(yml_content) if yml_content else {}
+        except yaml.YAMLError:
+            yml_data = {}
+        gpu_commands = yml_data.get("gpu") if isinstance(yml_data, dict) else None
+
+        metadata_content, _ = self._get_file_content(METADATA_YAML_FILE)
+        try:
+            metadata = yaml.safe_load(metadata_content) if metadata_content else {}
+        except yaml.YAMLError:
+            metadata = {}
+        device = metadata.get("Device") if isinstance(metadata, dict) else None
+        device = [device] if isinstance(device, str) else (device or [])
+
+        if not gpu_commands:
+            if "GPU" in device:
+                return Result(
+                    False,
+                    "Metadata Device lists GPU but install.yml has no 'gpu' block.",
+                )
+            return Result(str(STATUS_CONFIGS.SKIPPED), "No GPU build declared.")
+
+        errors = []
+        framework_dir = os.path.join("model", "framework")
+        main_gpu = os.path.join(framework_dir, "code", "main_gpu.py")
+        if self._get_file_content(main_gpu)[0] is None:
+            errors.append(f"{main_gpu} is missing.")
+        run_sh, _ = self._get_file_content(os.path.join(framework_dir, RUN_FILE))
+        if run_sh is None or "main_gpu.py" not in run_sh or "ERSILIA_DEVICE" not in run_sh:
+            errors.append(
+                f"{RUN_FILE} must run main_gpu.py when ERSILIA_DEVICE=gpu."
+            )
+        if errors:
+            return Result(False, " ".join(errors))
+
+        cpu_only = self._non_gpu_commands(yml_data.get("commands", []))
+        gpu_only = self._non_gpu_commands(gpu_commands)
+        drift = sorted(cpu_only - gpu_only) + sorted(gpu_only - cpu_only)
+        if drift:
+            return Result(
+                str(STATUS_CONFIGS.WARNING),
+                "commands and gpu differ beyond GPU packages: " + "; ".join(drift),
+            )
+        return Result(True, "GPU build is complete.")
+
+    @staticmethod
+    def _non_gpu_commands(commands):
+        # commands as plain strings, leaving out the ones expected to differ on GPU
+        commands = [" ".join(map(str, c)) if isinstance(c, list) else str(c) for c in commands]
+        return {c for c in commands if not GPU_SPECIFIC_RE.search(c)}
 
     def _get_file_content(self, file):
         if self.dir is not None:
@@ -458,7 +532,24 @@ class ModelInspector:
         elif not re.match(r"^\d+(?:\.\d+){0,2}$", str(python_version)):
             errors.append(f"Invalid Python version format: {python_version}")
 
-        commands = yml_data.get("commands", [])
+        errors.extend(self._validate_yml_commands(yml_data.get("commands", [])))
+
+        # optional gpu: block, a full command list used instead of commands in GPU images
+        if "gpu" in yml_data:
+            gpu_commands = yml_data["gpu"]
+            if not isinstance(gpu_commands, list) or not gpu_commands:
+                errors.append("'gpu' in install.yml must be a non-empty list of commands.")
+            else:
+                errors.extend(
+                    f"gpu: {e}" for e in self._validate_yml_commands(gpu_commands)
+                )
+
+        if errors:
+            logger.debug(f"Errors in Install YML file install command: {errors}")
+        return errors
+
+    def _validate_yml_commands(self, commands):
+        errors = []
         semver_re = re.compile(r"^[0-9]+(?:\.[0-9A-Za-z]+)*$")
 
         for cmd in commands:
@@ -519,8 +610,6 @@ class ModelInspector:
             else:
                 errors.append(f"Unsupported package manager: {tool}")
 
-        if errors:
-            logger.debug(f"Errors in Install YML file install command: {errors}")
         return errors
 
     def _run_performance_check(self, n, timeout):
@@ -726,6 +815,11 @@ class InspectService(ErsiliaBase):
                 inspector.check_dependencies_are_valid,
                 f"{dependency_check}_check",
                 "check_details",
+            ),
+            "gpu_check": create_check(
+                inspector.check_gpu_build,
+                "gpu_build",
+                "gpu_build_details",
             ),
             "computational_performance_tracking": create_check(
                 inspector.check_computational_performance,
