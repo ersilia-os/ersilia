@@ -27,6 +27,9 @@ def fetch_cmd():
 
         Fetch a model from a local directory:
         $ ersilia fetch <model_id> --from_dir <path>
+
+        Fetch the GPU image of a model:
+        $ ersilia fetch <model_id> --gpu
     """
 
     def _fetch(mf, model_id):
@@ -75,12 +78,19 @@ def fetch_cmd():
         type=click.STRING,
         help="Specific Docker image version to fetch from DockerHub.",
     )
+    @click.option(
+        "--gpu",
+        is_flag=True,
+        default=False,
+        help="Fetch the GPU image from DockerHub. Serving it needs an NVIDIA GPU available to Docker.",
+    )
     def fetch(
         model,
         from_dir,
         from_github,
         from_dockerhub,
         version,
+        gpu,
         from_s3,
         from_hosted,
     ):
@@ -109,6 +119,12 @@ def fetch_cmd():
         from_dockerhub = not chosen or from_dockerhub
         if version is not None and not from_dockerhub:
             echo("--version only applies to DockerHub, so it is ignored.", fg="yellow")
+        if gpu and not from_dockerhub:
+            raise click.UsageError("--gpu only applies to DockerHub.")
+        if gpu:
+            from ...utils.docker import gpu_image_tag
+
+            version = gpu_image_tag(version)
 
         if from_dir is not None:
             from ...utils.checks import check_fetch_folder

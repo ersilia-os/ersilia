@@ -231,6 +231,12 @@ class BaseInformationValidator:
         )
 
     @classmethod
+    def validate_device(cls, device) -> bool:
+        return all(
+            v in cls._read_default_fields("Device") for v in cls.to_list(device or [])
+        )
+
+    @classmethod
     def validate_s3(cls, url) -> bool:
         return not url or url.startswith(
             "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/"

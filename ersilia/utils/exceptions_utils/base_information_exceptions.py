@@ -201,6 +201,15 @@ class DockerArchitectureBaseInformationError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
+class DeviceBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong device"
+        self.hints = "Listed devices are: {}. Devices must be in list format".format(
+            ", ".join(_read_default_fields("Device"))
+        )
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
 class S3BaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia AWS S3 URL"

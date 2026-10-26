@@ -161,11 +161,12 @@ def version_label(docker_tag, card):
     Returns
     -------
     str or None
-        The tag, with the release in parentheses when the tag is "latest".
+        The tag, with the release in parentheses when the tag is "latest" or
+        "latest-gpu".
     """
     release = (card or {}).get("Release")
-    if docker_tag == "latest" and release:
-        return f"latest ({release})"
+    if docker_tag in ("latest", "latest-gpu") and release:
+        return f"{docker_tag} ({release})"
     return docker_tag
 
 
@@ -251,6 +252,8 @@ class InformationDisplayer(ErsiliaBase):
             table.add_row("  Version", fmt(version_label(docker_tag, card)))
         if "Docker Architecture" in card:
             table.add_row("  Architecture", fmt_arch(card["Docker Architecture"]))
+        if "Device" in card:
+            table.add_row("  Device", fmt(card["Device"]))
         identifier = card.get("Identifier", "")
         if identifier:
             table.add_row("  GitHub", f"https://github.com/ersilia-os/{identifier}")

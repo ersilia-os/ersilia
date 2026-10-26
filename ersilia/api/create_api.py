@@ -190,6 +190,7 @@ class Model:
         from_s3=False,
         from_hosted=None,
         version=None,
+        gpu=False,
     ):
         """
         Fetch the model, like ``ersilia fetch``.
@@ -209,6 +210,8 @@ class Model:
             URL of a hosted model to connect to.
         version : str, optional
             Docker image tag to fetch from DockerHub (default: the latest).
+        gpu : bool, optional
+            Fetch the GPU image from DockerHub.
 
         Returns
         -------
@@ -248,6 +251,12 @@ class Model:
                 echo(
                     "version only applies to DockerHub, so it is ignored.", fg="yellow"
                 )
+            if gpu and not from_dockerhub:
+                raise InvalidOptionError("gpu only applies to DockerHub.")
+            if gpu:
+                from ..utils.docker import gpu_image_tag
+
+                version = gpu_image_tag(version)
             if from_dir is not None:
                 from ..utils.checks import check_fetch_folder
 

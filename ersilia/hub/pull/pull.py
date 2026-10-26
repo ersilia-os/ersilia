@@ -7,7 +7,7 @@ import requests
 
 from ... import ErsiliaBase, throw_ersilia_exception
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
-from ...utils.docker import SimpleDocker
+from ...utils.docker import SimpleDocker, is_gpu_image_tag
 from ...utils.echo import echo, is_quiet
 from ...utils.exceptions_utils.pull_exceptions import (
     DockerConventionalPullError,
@@ -378,6 +378,14 @@ class ModelPuller(ErsiliaBase):
             ) from e
         if response.status_code == 429:
             raise pull_error(self.model_id, self.docker_tag, "toomanyrequests")
+        if response.status_code == 404 and is_gpu_image_tag(self.docker_tag):
+            raise ImagePullError(
+                self.model_id,
+                "there is no GPU image '{0}'".format(self.docker_tag),
+                "Fetch it without --gpu to use the CPU image. See the available versions at https://hub.docker.com/r/{0}/{1}/tags".format(
+                    DOCKERHUB_ORG, self.model_id
+                ),
+            )
         if response.status_code == 404 and self.docker_tag != DOCKERHUB_LATEST_TAG:
             raise pull_error(self.model_id, self.docker_tag, "manifest unknown")
         if response.status_code == 200:

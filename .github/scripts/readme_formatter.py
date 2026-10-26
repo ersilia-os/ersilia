@@ -167,6 +167,8 @@ class ReadmeFormatter():
             text += "- **DockerHub**: [{0}]({0})\n".format(d.get("DockerHub"))
         if d.get("Docker Architecture"):
             text += "- **Docker Architecture:** {0}\n".format(", ".join(["`{0}`".format(x) for x in d.get("Docker Architecture")]))
+        if d.get("Device"):
+            text += "- **Device:** {0}\n".format(", ".join(["`{0}`".format(x) for x in d.get("Device")]))
         if d.get("S3"):
             text += "- **S3 Storage**: [{0}]({0})\n".format(d.get("S3"))
         text += "\n"
