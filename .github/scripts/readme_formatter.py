@@ -69,13 +69,11 @@ class ReadmeFormatter():
         """
         text = "# {0}\n\n".format(d.get("Title", "Model Title"))
         
-        # Description and incorporation date
+        # Description and dates; the dates share one paragraph, so keep each on its own line
         text += "{0}\n\n".format(d.get("Description", "No description provided").rstrip("\n"))
         if "Incorporation Date" in d:
             text += "This model was incorporated on {0}.\n".format(d.get("Incorporation Date"))
-        text += "\n"
         if "Last Packaging Date" in d:
-            text = text.rstrip("\n")
             text += "Last packaged on {0}.\n".format(d.get("Last Packaging Date"))
         text += "\n"
 
