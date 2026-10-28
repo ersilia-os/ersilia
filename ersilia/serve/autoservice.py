@@ -13,6 +13,7 @@ from ..default import (
 )
 from ..utils import tmp_pid_file
 from ..utils.echo import echo, spinner
+from ..utils.logging import is_kept_temp_dir
 from ..utils.session import (
     get_session_dir,
     kill_process_tree,
@@ -365,6 +366,8 @@ class AutoService(ErsiliaBase):
         Each session tracks its temporary directories as symlinks in
         ``<session>/logs/tmp`` (see ``make_temp_dir``). Only those are removed,
         so runs, fetches and servers of other sessions (terminals) keep theirs.
+        Directories marked with ``keep_temp_dir`` hold the logs of a failed
+        command and are kept, so the failure can still be debugged.
         """
         self.logger.debug("Cleaning temp dirs of this session")
         logs_tmp_dir = os.path.join(get_session_dir(), "logs", "tmp")
@@ -373,6 +376,13 @@ class AutoService(ErsiliaBase):
         for name in os.listdir(logs_tmp_dir):
             link = os.path.join(logs_tmp_dir, name)
             target = os.path.realpath(link)
+            if is_kept_temp_dir(target):
+                self.logger.debug(
+                    "Keeping temporary directory {0} (logs of a failed command)".format(
+                        target
+                    )
+                )
+                continue
             if os.path.basename(target).startswith("ersilia-") and os.path.isdir(
                 target
             ):

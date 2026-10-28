@@ -74,8 +74,9 @@ class CondaEnvironmentExistsError(ErsiliaError):
 
 
 class ModelPackageInstallError(ErsiliaError):
-    def __init__(self, package_name):
+    def __init__(self, package_name, log_file=None):
         self.package_name = package_name
+        self.log_file = log_file
         self.message = self._get_message()
         self.hints = self._get_hints()
         ErsiliaError.__init__(self, self.message, self.hints)
@@ -89,7 +90,12 @@ class ModelPackageInstallError(ErsiliaError):
         return text
 
     def _get_hints(self):
-        text = "Try to manually activate the model environment and install package manually.\n"
+        text = ""
+        if self.log_file:
+            text += "The full log of the failed command was kept at:\n - {0}\n".format(
+                self.log_file
+            )
+        text += "Try to manually activate the model environment and install package manually.\n"
         text += "If this does not work, please report the error at:\n - https://github.com/ersilia-os/ersilia\n\n"
         return text
 

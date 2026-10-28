@@ -6,7 +6,7 @@ from ..utils.exceptions_utils.fetch_exceptions import (
     ModelPackageInstallError,
     VirtualEnvironmentSetupError,
 )
-from ..utils.logging import make_temp_dir
+from ..utils.logging import keep_temp_dir, make_temp_dir
 from .terminal import run_command
 
 
@@ -141,5 +141,6 @@ class SimpleVenv(ErsiliaBase):
         logger.debug(log_file)
         if "ERROR" in log_file:
             logger.debug("venv ModelPackageInstallError")
-            raise ModelPackageInstallError(tmp_script)
+            keep_temp_dir(tmp_folder)
+            raise ModelPackageInstallError(tmp_script, log_file=tmp_log)
         logger.debug("Activation done")

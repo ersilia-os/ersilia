@@ -9,7 +9,7 @@ from pathlib import Path
 from .. import logger, throw_ersilia_exception
 from ..default import _CONDA_BOOTSTRAP, CONDA_ENV_YML_FILE
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
-from ..utils.logging import make_temp_dir
+from ..utils.logging import keep_temp_dir, make_temp_dir
 from .docker import SimpleDockerfileParser
 from .echo import echo
 from .supp.conda_env_resolve import CHECKSUM_FILE, CHECKSUM_NCHAR
@@ -734,7 +734,8 @@ class SimpleConda(CondaUtils):
         logger.debug("Activating base environment")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
         self.create_executable_bash_script(environment, commandlines, tmp_script)
-        tmp_folder = make_temp_dir(prefix="ersilia-")
+        # Write the log next to the script, so keeping this folder on failure
+        # keeps both of them.
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
@@ -747,7 +748,8 @@ class SimpleConda(CondaUtils):
                 logger.debug("Error occurred while running: {0}".format(cmd))
                 critical_errors = self._catch_critical_errors_in_conda(log_file)
                 if len(critical_errors) > 0:
-                    raise ModelPackageInstallError(cmd)
+                    keep_temp_dir(tmp_folder)
+                    raise ModelPackageInstallError(cmd, log_file=tmp_log)
         logger.debug("Conda environment activated!")
 
 

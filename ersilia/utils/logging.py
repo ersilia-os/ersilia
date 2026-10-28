@@ -64,6 +64,44 @@ def make_temp_dir(prefix):
     return tmp_dir
 
 
+KEEP_TEMP_DIR_MARKER = ".ersilia-keep"
+
+
+def keep_temp_dir(tmp_dir):
+    """
+    Mark a temporary directory so that session cleanup does not remove it.
+
+    Use it when a command fails, so that its logs stay on disk for debugging.
+
+    Parameters
+    ----------
+    tmp_dir : str
+        A directory created with ``make_temp_dir``.
+    """
+    try:
+        Path(tmp_dir, KEEP_TEMP_DIR_MARKER).touch()
+    except OSError:
+        # Keeping the logs must never hide the original error.
+        pass
+
+
+def is_kept_temp_dir(tmp_dir):
+    """
+    Check whether a temporary directory was marked with ``keep_temp_dir``.
+
+    Parameters
+    ----------
+    tmp_dir : str
+        The directory to check.
+
+    Returns
+    -------
+    bool
+        True if the directory must not be removed.
+    """
+    return os.path.exists(os.path.join(tmp_dir, KEEP_TEMP_DIR_MARKER))
+
+
 class Logger(object):
     """
     A singleton class to manage logging in Ersilia.
