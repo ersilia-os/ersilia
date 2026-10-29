@@ -531,11 +531,14 @@ class ModelInspector:
     def _run_performance_check(self, n, timeout):
         # Close the model even when a step fails, so the next round can serve it.
         # It must happen in this shell: commands share a session per parent process.
+        # Reserve status 1 for run; setup/close failures must not be tolerated.
         cmd = (
+            "rc=2; "
             f"ersilia serve {self.model} --disable-cache && "
             f"ersilia example -n {n} -f {Options.DEEP_INPUT.value} -m deterministic && "
+            "{ "
             f"ersilia run -i {Options.DEEP_INPUT.value} -o {Options.DEEP_OUTPUT.value}; "
-            "rc=$?; ersilia close; exit $rc"
+            "rc=$?; }; ersilia close || exit 2; exit $rc"
         )
         if timeout:
             return Result(
@@ -559,7 +562,7 @@ class ModelInspector:
             # A model may legitimately return nothing for the example inputs (e.g. a
             # generator that cannot fragment them). It still ran, so keep the timing.
             output = f"{process.stdout or ''}\n{process.stderr or ''}"
-            if not NO_INPUT_PROCESSED_PATTERN.search(output):
+            if process.returncode != 1 or not NO_INPUT_PROCESSED_PATTERN.search(output):
                 return Result(
                     False, "Something happened when running the deep check!"
                 ), False

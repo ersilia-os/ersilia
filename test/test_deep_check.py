@@ -16,9 +16,13 @@ PERFORMANCE_PATTERN = r"(\d+) predictions executed in (-?\d+\.\d+) seconds. \n"
 # Stands in for the ersilia CLI: logs each call, and fails one subcommand on request.
 FAKE_ERSILIA = """#!/bin/sh
 echo "$1" >> "$FAKE_ERSILIA_LOG"
+if [ "$1" = "close" ] && [ "$FAKE_CLOSE_FAIL" = "1" ]; then
+    echo "Model eos0abc could not be closed." >&2
+    exit 1
+fi
 if [ "$1" = "$FAKE_FAIL_CMD" ]; then
     echo "$FAKE_FAIL_STDERR" >&2
-    exit 1
+    exit "${FAKE_FAIL_CODE:-1}"
 fi
 exit 0
 """
@@ -35,11 +39,13 @@ def fake_ersilia(tmp_path, monkeypatch):
     monkeypatch.setenv("PATH", f"{bin_dir}{os.pathsep}{os.environ['PATH']}")
     monkeypatch.setenv("FAKE_ERSILIA_LOG", str(log))
     monkeypatch.delenv("FAKE_FAIL_CMD", raising=False)
+    monkeypatch.delenv("FAKE_CLOSE_FAIL", raising=False)
     monkeypatch.chdir(tmp_path)
 
-    def fail(cmd, stderr):
+    def fail(cmd, stderr, returncode=1):
         monkeypatch.setenv("FAKE_FAIL_CMD", cmd)
         monkeypatch.setenv("FAKE_FAIL_STDERR", stderr)
+        monkeypatch.setenv("FAKE_FAIL_CODE", str(returncode))
 
     def calls():
         return log.read_text().split() if log.exists() else []
@@ -81,7 +87,7 @@ def test_no_input_processed_is_not_fatal(fake_ersilia, inspector, message):
     assert calls() == ["serve", "example", "run", "close"]
 
 
-@pytest.mark.parametrize("step", ["serve", "example", "run"])
+@pytest.mark.parametrize("step", ["serve", "example", "run", "close"])
 def test_other_failures_still_fail_and_close(fake_ersilia, inspector, step):
     fail, calls = fake_ersilia
     fail(step, "  ✖  Model eos0abc could not be served.")
@@ -90,6 +96,38 @@ def test_other_failures_still_fail_and_close(fake_ersilia, inspector, step):
     assert not timeout
     assert result.details == "Something happened when running the deep check!"
     assert calls()[-1] == "close"
+
+
+@pytest.mark.parametrize("step", ["serve", "example", "close"])
+def test_empty_input_message_outside_run_still_fails(fake_ersilia, inspector, step):
+    fail, calls = fake_ersilia
+    fail(step, "The input could not be processed.")
+    result, timeout = inspector._run_performance_check(1, False)
+    assert not result.success
+    assert not timeout
+    assert result.details == "Something happened when running the deep check!"
+    assert calls()[-1] == "close"
+
+
+def test_close_failure_after_empty_run_still_fails(fake_ersilia, inspector, monkeypatch):
+    fail, calls = fake_ersilia
+    fail("run", "The input could not be processed.")
+    monkeypatch.setenv("FAKE_CLOSE_FAIL", "1")
+    result, timeout = inspector._run_performance_check(1, False)
+    assert not result.success
+    assert not timeout
+    assert result.details == "Something happened when running the deep check!"
+    assert calls() == ["serve", "example", "run", "close"]
+
+
+def test_other_exit_code_with_empty_input_message_still_fails(fake_ersilia, inspector):
+    fail, calls = fake_ersilia
+    fail("run", "The input could not be processed.", returncode=2)
+    result, timeout = inspector._run_performance_check(1, False)
+    assert not result.success
+    assert not timeout
+    assert result.details == "Something happened when running the deep check!"
+    assert calls() == ["serve", "example", "run", "close"]
 
 
 def test_deep_check_passes_when_example_inputs_return_nothing(fake_ersilia, inspector):
