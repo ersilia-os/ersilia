@@ -34,6 +34,12 @@ from ....utils.logging import logger
 
 Result = namedtuple("Result", ["success", "details"])
 
+# Printed by `ersilia run` when it raises NoInputProcessedError, i.e. the model
+# ran but returned an empty row for every input.
+NO_INPUT_PROCESSED_PATTERN = re.compile(
+    r"The input could not be processed\.|None of the [\d,]+ inputs could be processed\."
+)
+
 
 class ModelInspector:
     """
@@ -523,10 +529,13 @@ class ModelInspector:
         return errors
 
     def _run_performance_check(self, n, timeout):
+        # Close the model even when a step fails, so the next round can serve it.
+        # It must happen in this shell: commands share a session per parent process.
         cmd = (
             f"ersilia serve {self.model} --disable-cache && "
             f"ersilia example -n {n} -f {Options.DEEP_INPUT.value} -m deterministic && "
-            f"ersilia run -i {Options.DEEP_INPUT.value} -o {Options.DEEP_OUTPUT.value}&& ersilia close"
+            f"ersilia run -i {Options.DEEP_INPUT.value} -o {Options.DEEP_OUTPUT.value}; "
+            "rc=$?; ersilia close; exit $rc"
         )
         if timeout:
             return Result(
@@ -547,7 +556,17 @@ class ModelInspector:
                 False, f"{n} predictions executed in {-1.00} seconds. \n"
             ), True
         if process.returncode != 0:
-            return Result(False, "Something happened when running the deep check!"), False
+            # A model may legitimately return nothing for the example inputs (e.g. a
+            # generator that cannot fragment them). It still ran, so keep the timing.
+            output = f"{process.stdout or ''}\n{process.stderr or ''}"
+            if not NO_INPUT_PROCESSED_PATTERN.search(output):
+                return Result(
+                    False, "Something happened when running the deep check!"
+                ), False
+            logger.warning(
+                f"{self.model} returned no output for the {n} example input(s); "
+                "recording the time anyway."
+            )
         execution_time = time.time() - start_time
         return Result(
             True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
