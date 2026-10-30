@@ -37,9 +37,16 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
+    "sphinx_click",
 ]
 
 autosummary_generate = True
+
+# Document only what each module defines, so classes re-exported by packages
+# (e.g. ersilia.api.Model) are not duplicated in the package reference.
+autodoc_default_options = {"ignore-module-all": True}
+# Optional dependencies of a few modules, not needed to document them.
+autodoc_mock_imports = ["bioservices", "nox", "streamlit"]
 
 templates_path = ["_templates"]
 
@@ -49,7 +56,6 @@ master_doc = "index"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
-html_theme_options = {"collapse_navigation": True, "navigation_depth": 4}
 
 html_static_path = []
 htmlhelp_basename = "ersilia_doc"

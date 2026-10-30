@@ -129,7 +129,40 @@ Below is a list of the most important commands of the Ersilia CLI:
 | `test`     | Test a model                                    |
 
 
+Each terminal has its own session, so a model served in one terminal is used by the commands you run in that terminal. When commands do not share a terminal, for example in scripts run through `conda run`, make or CI steps, give them one session with `ERSILIA_SESSION`:
+
+```bash
+export ERSILIA_SESSION=myproject
+conda run -n ersilia ersilia serve eos3b5e
+conda run -n ersilia ersilia run -i input.csv -o output.csv
+conda run -n ersilia ersilia close
+```
+
+Errors are printed to stderr, so they can be told apart from normal output.
+
 Please see the a full reference of all commands available [here](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/command-line-interface).
+
+### Python API
+
+The same commands are available from Python, with the same options and defaults:
+
+```python
+from ersilia.api import Model, Catalog
+
+model = Model("eos3b5e")        # identifier or slug
+model.fetch()                   # True if fetched now, False if already fetched
+model.serve()                   # URL, service, container...; nothing new if already served
+df = model.run(["CCO", "c1ccccc1"])            # a pandas DataFrame
+model.run("input.csv", output="output.h5")    # or write a .csv / .h5 file
+model.close()
+
+with Model("eos3b5e") as model:  # serve, then close automatically
+    df = model.run("input.csv")
+
+Catalog().hub(task="Annotation")  # a pandas DataFrame
+```
+
+The API prints nothing unless you pass `verbose=True`, and it raises an `ersilia.api.ErsiliaError` subclass when something goes wrong. It applies the same checks as the CLI (for example on input files, fetch sources and batch sizes), and follows the same session rules: a model that stopped is no longer taken as served.
 
 ## Contribute
 

@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 import rich_click as click
 
@@ -59,8 +60,8 @@ def fetch_cmd():
     @click.option(
         "--from_dockerhub",
         is_flag=True,
-        default=True,
-        help="Fetch from DockerHub (default).",
+        default=False,
+        help="Fetch from DockerHub (the default when no other source is given).",
     )
     @click.option(
         "--from_hosted",
@@ -86,18 +87,36 @@ def fetch_cmd():
         import nest_asyncio
 
         from ... import ModelBase
-        from ...hub.fetch.fetch import ModelFetcher
+        from ...hub.fetch.fetch import ALREADY_FETCHED, ModelFetcher
 
         nest_asyncio.apply()
 
+        chosen = [
+            name
+            for name, on in (
+                ("--from_dir", from_dir),
+                ("--from_github", from_github),
+                ("--from_s3", from_s3),
+                ("--from_dockerhub", from_dockerhub),
+                ("--from_hosted", from_hosted),
+            )
+            if on
+        ]
+        if len(chosen) > 1:
+            raise click.UsageError(
+                "Choose only one source; got {0}.".format(", ".join(chosen))
+            )
+        from_dockerhub = not chosen or from_dockerhub
+        if version is not None and not from_dockerhub:
+            echo("--version only applies to DockerHub, so it is ignored.", fg="yellow")
+
         if from_dir is not None:
-            mdl = ModelBase(repo_path=from_dir)
+            from ...utils.checks import check_fetch_folder
+
+            mdl = check_fetch_folder(model, from_dir)
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
-
-        if any([from_dir, from_github, from_s3, from_hosted]):
-            from_dockerhub = False
 
         mf = ModelFetcher(
             repo_path=from_dir,
@@ -114,12 +133,16 @@ def fetch_cmd():
 
         if fetch_result.fetch_success:
             if fetch_result.reason == "Model fetched successfully":
-                echo(f"Model {model_id} fetched successfully.", fg="green")
-        else:
+                echo(f"Model {model_id} fetched.", fg="green")
+                echo(f"Serve it with 'ersilia serve {model_id}'.")
+        elif fetch_result.reason == ALREADY_FETCHED:
+            echo(f"Model {model_id} is already fetched.", fg="yellow")
             echo(
-                f"Model {model_id} failed to fetch: {fetch_result.reason}",
-                fg="red",
-                bold=True,
+                f"To fetch it again, delete it first with 'ersilia delete {model_id}'."
             )
+        else:
+            echo(f"Model {model_id} could not be fetched.", fg="red")
+            echo(fetch_result.reason)
+            sys.exit(1)
 
     return fetch

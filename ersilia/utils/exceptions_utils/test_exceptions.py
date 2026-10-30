@@ -56,12 +56,14 @@ class EmptyKey(ErsiliaError):
 
 
 class InvalidEntry(ErsiliaError):
-    def __init__(self, invalid_field):
+    def __init__(self, invalid_field, reason=None):
         self.message = (
             "The {0} field of this model is not recognized as a valid format.".format(
                 invalid_field
             )
         )
+        if reason:
+            self.message += "  {0}".format(reason)
         self.hints = (
             "Check the model information, usually available in a metadata.json file."
         )

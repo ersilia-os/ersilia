@@ -1,8 +1,6 @@
 import time
 from datetime import datetime, timezone
 
-import pandas as pd
-
 from ..core.session import Session
 from ..default import DEFAULT_PRIVATE_BUCKET, DEFAULT_PUBLIC_BUCKET, ERSILIA_BUCKET
 from ..utils.logging import logger as log
@@ -155,6 +153,8 @@ class IsauraStore:
         log.debug(f"IsauraStore.write done dt_total={(time.perf_counter() - t0):.6f}s")
 
     def read(self, vs):
+        import pandas as pd
+
         if not self.reader:
             log.debug("IsauraStore.read no_reader returning_empty_df")
             return pd.DataFrame(columns=["input"])

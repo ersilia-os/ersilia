@@ -34,7 +34,7 @@ class Hdf5Data:
                 self._force_dtype = False
                 self._np_dtype = None
             else:
-                self.logger.warning("Forced data type infering enabled!")
+                self.logger.debug("Forced data type infering enabled!")
                 self._force_dtype = True
                 if dtype is float:
                     self._np_dtype = np.float32
@@ -71,6 +71,9 @@ class Hdf5Data:
         try:
             if not self._force_dtype:
                 return self._infer_values(values, dim)
+
+            if isinstance(values, np.ndarray):
+                return values.astype(self._np_dtype, copy=False)
 
             if not values:
                 fill = self._default_fill()
@@ -165,14 +168,44 @@ class Hdf5Data:
             self.logger.error(f"Error converting 1D (infer) values: {e}")
             raise ValueError(f"Error converting 1D (infer) values: {e}")
 
-    def save(self, filename):
-        """Save the data to an HDF5 file."""
+    def save(self, filename, append=False):
+        """
+        Save the data to an HDF5 file.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the HDF5 file.
+        append : bool, optional
+            If True, append Values, Keys and Inputs to the datasets of an
+            existing file (Features are written only once). Datasets are
+            always created resizable so that later appends are possible.
+        """
         try:
-            with h5py.File(filename, "w") as f:
-                f.create_dataset("Values", data=self.values)
-                f.create_dataset("Keys", data=self.keys)
-                f.create_dataset("Inputs", data=self.inputs)
-                f.create_dataset("Features", data=self.features)
+            if append:
+                with h5py.File(filename, "a") as f:
+                    for name, data in (
+                        ("Values", self.values),
+                        ("Keys", self.keys),
+                        ("Inputs", self.inputs),
+                    ):
+                        n = data.shape[0]
+                        f[name].resize(f[name].shape[0] + n, axis=0)
+                        f[name][-n:] = data
+            else:
+                with h5py.File(filename, "w") as f:
+                    for name, data in (
+                        ("Values", self.values),
+                        ("Keys", self.keys),
+                        ("Inputs", self.inputs),
+                    ):
+                        f.create_dataset(
+                            name,
+                            data=data,
+                            maxshape=(None,) + data.shape[1:],
+                            chunks=True,
+                        )
+                    f.create_dataset("Features", data=self.features)
         except OSError as e:
             raise IOError(f"Could not write to file '{filename}': {e}")
 

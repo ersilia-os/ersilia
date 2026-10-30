@@ -15,7 +15,11 @@ def create_ersilia_cli():
     ersilia_cli : module
         The configured Ersilia CLI module.
     """
-    is_contributor = Auth().is_contributor()
+    try:
+        is_contributor = Auth().is_contributor()
+    except Exception:
+        # Checking contributor status (a GitHub call) must never break the CLI.
+        is_contributor = False
 
     cmd = Command()
 
@@ -33,10 +37,5 @@ def create_ersilia_cli():
 
     cmd.serve()
     cmd.run()
-
-    # TODO: functions only for contributors
-    # Functions only for contributors
-    if is_contributor:
-        cmd.setup()
 
     return ersilia_cli

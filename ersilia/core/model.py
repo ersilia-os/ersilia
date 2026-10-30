@@ -1,4 +1,3 @@
-import asyncio
 import collections
 import csv
 import json
@@ -17,7 +16,6 @@ from ..default import (
     INFORMATION_FILE,
     MODEL_SIZE_FILE,
 )
-from ..hub.fetch.fetch import ModelFetcher
 from ..io.input import BaseIOGetter, ExampleGenerator
 from ..io.output import TabularOutputStacker
 from ..io.readers.file import FileTyper, TabularFileReader
@@ -25,26 +23,19 @@ from ..serve.api import Api
 from ..serve.autoservice import AutoService, PulledDockerImageService
 from ..serve.schema import ApiSchema
 from ..serve.standard_api import StandardCSVRunApi
-from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
+from ..utils.asyncio_utils import run_coroutine
 from ..utils.csvfile import CsvDataLoader
-from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+from ..utils.exceptions_utils.exceptions import ModelNotAvailableLocallyError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
-from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.logging import make_temp_dir
 from ..utils.terminal import yes_no_input
 from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session
-from .tracking import RunTracker
-
-try:
-    import pandas as pd
-except ModuleNotFoundError:
-    pd = None
 
 
 class ErsiliaModel(ErsiliaBase):
@@ -178,23 +169,25 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.info("Model is not available locally")
             try:
                 do_fetch = yes_no_input(
-                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
+                    "Model {0} is not available locally. Fetch it now?".format(
                         self.model_id
                     ),
                     default_answer="n",
                 )
-            except:
-                self.logger.debug("Unable to capture user input. Fetching anyway.")
-                do_fetch = True
+            except (EOFError, OSError):
+                # No way to ask (e.g. no terminal): do not start a download
+                # the user did not agree to. Ctrl+C is not caught here.
+                self.logger.debug("Unable to capture user input. Not fetching.")
+                do_fetch = False
             if do_fetch:
+                from ..hub.fetch.fetch import ModelFetcher
+
                 mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
-                asyncio.run(mf.fetch(self.model_id))
+                run_coroutine(mf.fetch(self.model_id))
             else:
-                raise Exception(
-                    "Model is not fetched, please fetch the model before serving it."
-                )
+                raise ModelNotAvailableLocallyError(self.model_id)
 
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
@@ -215,10 +208,12 @@ class ErsiliaModel(ErsiliaBase):
         """
         This method fetches the model from the Ersilia Model Hub.
         """
+        from ..hub.fetch.fetch import ModelFetcher
+
         mf = ModelFetcher(
             config_json=self.config_json, credentials_json=self.credentials_json
         )
-        asyncio.run(mf.fetch(self.model_id))
+        run_coroutine(mf.fetch(self.model_id))
 
     def __enter__(self):
         """
@@ -378,8 +373,11 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the API run in the specified output format.
         """
-        if output == "pandas" and pd is None:
-            raise Exception
+        if output == "pandas":
+            try:
+                import pandas as pd
+            except ModuleNotFoundError:
+                raise Exception
         if output == "json":
             R = []
             for r in self._api_runner_iter(
@@ -408,6 +406,8 @@ class ErsiliaModel(ErsiliaBase):
             ):
                 continue
             if is_h5_serializable:
+                from ..utils.hdf5 import Hdf5DataLoader
+
                 data = Hdf5DataLoader()
             else:
                 data = CsvDataLoader()
@@ -448,7 +448,14 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.debug(
                 "Standard CSV Api runner is not amenable for this model, input and output"
             )
-            return None
+            from ..utils.exceptions_utils.cli_exceptions import RunNotSupportedError
+
+            if not scra.is_input_type_standardizable():
+                inputs = ", ".join(scra.input_type or []) or "unknown"
+                reason = f"it takes {inputs} inputs, which are not supported yet"
+            else:
+                reason = "its output columns are not described"
+            raise RunNotSupportedError(self.model_id, reason)
         self.logger.debug("Starting standard runner")
         result = scra.post(
             input=input,
@@ -564,6 +571,8 @@ class ErsiliaModel(ErsiliaBase):
             The result of the API run.
         """
         if OutputSource.is_precalculation_enabled(self.output_source):
+            from ..store.api import InferenceStoreApi
+
             store = InferenceStoreApi(model_id=self.model_id, output=output)
             return store.get_precalculations(input)
         elif self._do_cache_splits(input=input, output=output):
@@ -687,15 +696,27 @@ class ErsiliaModel(ErsiliaBase):
                 raise TrackingNotSupportedError()
             else:
                 self.track = True
+                from .tracking import RunTracker
+
                 self.run_tracker = RunTracker(
                     model_id=self.model_id,
                     config_json=self.config_json,
                     use_case=track_runs,
                 )
         self.setup()
-        spinner("Closing existing sessions of a model", self.close)
+        self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track)
-        self.autoservice.serve()
+        try:
+            self.autoservice.serve()
+        except BaseException:
+            # Serving failed or was interrupted (e.g. Ctrl+C): undo the session
+            # record, so the terminal does not claim a model that is not running.
+            self.logger.info("Serving did not complete; closing the session")
+            try:
+                self.autoservice.close()
+            finally:
+                self.session.close()
+            raise
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
         self.session.register_store_status(
@@ -808,6 +829,8 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.debug(
                 "Initializing the run trackers (use case {0})".format(use_case)
             )
+            from .tracking import RunTracker
+
             self.run_tracker = RunTracker(
                 model_id=self.model_id, config_json=self.config_json, use_case=use_case
             )

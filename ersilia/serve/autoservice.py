@@ -2,10 +2,8 @@ import io
 import json
 import os
 import shutil
-import tempfile
 
 from .. import ErsiliaBase
-from ..db.environments.managers import DockerManager
 from ..default import (
     APIS_LIST_FILE,
     DEFAULT_BATCH_SIZE,
@@ -14,9 +12,13 @@ from ..default import (
     SERVICE_CLASS_FILE,
 )
 from ..utils import tmp_pid_file
-from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
-from ..utils.session import stop_containers_by_name
+from ..utils.session import (
+    get_session_dir,
+    kill_process_tree,
+    read_pid_file,
+    stop_containers_by_name,
+)
 from .api import Api
 from .services import (
     CondaEnvironmentService,
@@ -81,7 +83,10 @@ class AutoService(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting autoservice for {0}".format(model_id))
         self.config_json = config_json
-        self.setup_redis = SetupRedis(cache=cache, maxmemory=maxmemory)
+        # Redis is only set up when serving; run and close never need it, and
+        # constructing SetupRedis runs several docker probes.
+        self._cache = cache
+        self._maxmemory = maxmemory
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
@@ -145,71 +150,24 @@ class AutoService(ErsiliaBase):
                     if service_class_file is not None
                     else io.StringIO()
                 )
+                port = {"preferred_port": preferred_port}
+                candidates = [
+                    ("system", SystemBundleService, port),
+                    ("venv", VenvEnvironmentService, port),
+                    ("conda", CondaEnvironmentService, port),
+                    ("docker", DockerImageService, port),
+                    ("pulled_docker", PulledDockerImageService, port),
+                    ("hosted", HostedService, {"url": url}),
+                ]
                 with _ctx as f:
-                    if SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = SystemBundleService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        self.logger.debug("Service class: system")
-                        f.write("system")
-                        self._service_class = "system"
-                    elif VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = VenvEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("venv")
-                        self.logger.debug("Service class: venv")
-                        self._service_class = "venv"
-                    elif CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = CondaEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("conda")
-                        self.logger.debug("Service class: conda")
-                        self._service_class = "conda"
-                    elif DockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = DockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("docker")
-                        self.logger.debug("Service class: docker")
-                        self._service_class = "docker"
-                    elif PulledDockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = PulledDockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("pulled_docker")
-                        self.logger.debug("Service class: pulled_docker")
-                        self._service_class = "pulled_docker"
-                    elif HostedService(
-                        model_id, config_json=config_json, url=url
-                    ).is_available():
-                        self.service = HostedService(
-                            model_id, config_json=config_json, url=url
-                        )
-                        f.write("hosted")
-                        self.logger.debug("Service class: hosted")
-                        self._service_class = "hosted"
+                    for name, cls, kwargs in candidates:
+                        svc = cls(model_id, config_json=config_json, **kwargs)
+                        if svc.is_available():
+                            self.service = svc
+                            f.write(name)
+                            self.logger.debug("Service class: {0}".format(name))
+                            self._service_class = name
+                            break
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(
@@ -219,24 +177,20 @@ class AutoService(ErsiliaBase):
                         )
                         self._service_class = "dummy"
                         echo(
-                            f"No concrete backend available, using 'dummy' service for model {model_id}",
+                            f"No way to run model {model_id} was found on this machine (Docker, conda or a hosted URL).",
                             fg="yellow",
                         )
         else:
             self.logger.info("Service class provided")
             service_class = self._service_class_loader(service_class)
-            if service_class(
+            svc = service_class(
                 model_id,
                 config_json=config_json,
                 preferred_port=preferred_port,
                 url=url,
-            ).is_available():
-                self.service = service_class(
-                    model_id,
-                    config_json=config_json,
-                    preferred_port=preferred_port,
-                    url=url,
-                )
+            )
+            if svc.is_available():
+                self.service = svc
                 self.logger.info(
                     f"Resolved service backend '{self._service_class}' for model {model_id}"
                 )
@@ -368,19 +322,15 @@ class AutoService(ErsiliaBase):
         else:
             return False
 
-    def _pids_from_file(self, fn):
-        pids = []
-        with open(fn, "r") as f:
-            for l in f:
-                pids += [int(l.split(" ")[0])]
-        return pids
+    def _read_pid_file(self, fn):
+        return read_pid_file(fn)
 
     def _kill_pids(self, pids):
         for pid in pids:
             if pid == -1:
                 continue
             try:
-                os.kill(pid, 9)
+                kill_process_tree(pid)
             except:
                 self.logger.info("PID {0} is unassigned".format(pid))
 
@@ -392,56 +342,69 @@ class AutoService(ErsiliaBase):
         tmp_file = tmp_pid_file(self.model_id)
         dir_name = os.path.dirname(tmp_file)
         pids = []
+        container_names = []
         for proc_file in os.listdir(dir_name):
             if proc_file[-3:] != "pid":
                 continue
             proc_file = os.path.join(dir_name, proc_file)
             self.logger.debug(proc_file)
-            pids += self._pids_from_file(proc_file)
+            file_pids, file_containers = self._read_pid_file(proc_file)
+            pids += file_pids
+            container_names += file_containers
             os.remove(proc_file)
         self.logger.debug("Cleaning {0} processes".format(pids))
         self._kill_pids(pids)
+        # The pid files are removed here, so their containers must be stopped
+        # now; otherwise they would keep running with no session tracking them.
+        self._stop_session_containers(container_names)
 
     def clean_temp_dir(self):
         """
-        Clean the temporary directory.
-        """
-        self.logger.debug("Cleaning temp dir")
-        tmp_folder = tempfile.gettempdir()
-        for d in os.listdir(tmp_folder):
-            if "ersilia-" in d:
-                d = os.path.join(tmp_folder, d)
-                self.logger.debug("Flushing temporary directory {0}".format(d))
-                try:
-                    shutil.rmtree(d)
-                except:
-                    self.logger.warning(
-                        "Could not remove temporary directory {0}".format(d)
-                    )
+        Clean the temporary directories created by this session.
 
-    def clean_docker_containers(self):
+        Each session tracks its temporary directories as symlinks in
+        ``<session>/logs/tmp`` (see ``make_temp_dir``). Only those are removed,
+        so runs, fetches and servers of other sessions (terminals) keep theirs.
         """
-        Clean Docker containers if necessary.
-        """
-        self.logger.debug("Silencing docker containers if necessary")
-        dm = DockerManager(config_json=self.config_json)
-        if dm.is_inside_docker():
-            self.logger.debug("It is inside docker")
+        self.logger.debug("Cleaning temp dirs of this session")
+        logs_tmp_dir = os.path.join(get_session_dir(), "logs", "tmp")
+        if not os.path.isdir(logs_tmp_dir):
             return
-        if dm.is_installed():
-            self.logger.debug("It is not inside docker")
-            dm.stop_containers(self.model_id)
+        for name in os.listdir(logs_tmp_dir):
+            link = os.path.join(logs_tmp_dir, name)
+            target = os.path.realpath(link)
+            if os.path.basename(target).startswith("ersilia-") and os.path.isdir(
+                target
+            ):
+                self.logger.debug("Flushing temporary directory {0}".format(target))
+                try:
+                    shutil.rmtree(target)
+                except Exception:
+                    self.logger.warning(
+                        "Could not remove temporary directory {0}".format(target)
+                    )
+                    continue
+            try:
+                os.unlink(link)
+            except OSError:
+                pass
 
     def serve(self):
         """
         Serve the application.
         """
-        spinner("Cleaning existing api processes", self.clean_before_serving)
-        spinner("Cleaning existing temporary directories", self.clean_temp_dir)
-        spinner("Closing existing session for the model", self.close)
-        spinner(f"Starting service for model {self.model_id}", self.service.serve)
+        self.clean_before_serving()
+        self.clean_temp_dir()
+        self.close()
+        spinner(
+            f"Starting model {self.model_id}",
+            self.service.serve,
+            done=f"Model {self.model_id} started.",
+        )
         self.logger.info("Setting up Redis")
-        self.setup_redis.ensure_redis_running()
+        from ..utils.cache import SetupRedis
+
+        SetupRedis(cache=self._cache, maxmemory=self._maxmemory).ensure_redis_running()
         tmp_file = tmp_pid_file(self.model_id)
         container_name = getattr(self.service, "container_name", None) or "-"
         with open(tmp_file, "a+") as f:
@@ -458,18 +421,7 @@ class AutoService(ErsiliaBase):
         tmp_file = tmp_pid_file(self.model_id)
         container_names = []
         if os.path.isfile(tmp_file):
-            pids = []
-            with open(tmp_file, "r") as f:
-                for line in f:
-                    parts = line.strip().split()
-                    if not parts:
-                        continue
-                    try:
-                        pids.append(int(parts[0]))
-                    except ValueError:
-                        pass
-                    if len(parts) >= 3 and parts[2] != "-":
-                        container_names.append(parts[2])
+            pids, container_names = self._read_pid_file(tmp_file)
             self._kill_pids(pids)
             os.remove(tmp_file)
         self.clean_temp_dir()

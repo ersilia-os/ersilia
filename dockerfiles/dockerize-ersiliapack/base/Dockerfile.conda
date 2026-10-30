@@ -1,4 +1,4 @@
-FROM debian:12.7-slim
+FROM debian:12-slim
 ARG VERSION=version
 ENV VERSION=$VERSION
 ENV PATH=$PATH:/usr/bin/conda/bin
@@ -59,4 +59,4 @@ RUN set -x && \
     chmod +x /root/docker-entrypoint.sh
     
 EXPOSE 80
-ENTRYPOINT [ "sh", "/root/docker-entrypoint.sh"]
+ENTRYPOINT [ "bash", "/root/docker-entrypoint.sh"]

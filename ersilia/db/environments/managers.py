@@ -1,6 +1,5 @@
 import os
 import re
-import shutil
 import subprocess
 import sys
 from collections import OrderedDict
@@ -466,101 +465,6 @@ class DockerManager(ErsiliaBase):
         """
         self.remove(model_id)
 
-    def remove_stopped_containers(self):
-        """
-        Removes all stopped Docker containers.
-        """
-        if self.is_inside_docker():
-            return
-        if not self.is_installed():
-            return
-        cmd = "docker container prune -f"
-        self.logger.debug("Removing stopped containers")
-        run_command(cmd)
-
-    def _stop_containers_with_model_id(self, model_id):
-        if self.is_inside_docker():
-            return
-        if not self.is_installed():
-            return
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
-        cmd = "docker ps > {0}".format(tmp_file)
-        self.logger.debug("Running {0}".format(cmd))
-        run_command(cmd)
-        cids = []
-        with open(tmp_file, "r") as f:
-            h = next(f)
-            col_idx = len(h.split("IMAGE")[0])
-            for l in f:
-                img_str = l[col_idx:].split(" ")[0]
-                if model_id in img_str:
-                    cid = l.split(" ")[0]
-                    cids += [cid]
-        for cid in cids:
-            cmd = "docker container kill {0}".format(cid)
-            run_command(cmd)
-        shutil.rmtree(tmp_folder)
-
-    def _stop_containers_with_entrypoint_sh(self):
-        if self.is_inside_docker:
-            return
-        if not self.is_installed():
-            return
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
-        cmd = "docker ps > {0}".format(tmp_file)
-        self.logger.debug("Running {0}".format(cmd))
-        run_command(cmd)
-        cids = []
-        with open(tmp_file, "r") as f:
-            h = next(f)
-            col_idx = len(h.split("COMMAND")[0])
-            for l in f:
-                cmd_str = l[col_idx:].split(" ")[0]
-                if "entrypoint.sh bash" in cmd_str:
-                    cid = l.split(" ")[0]
-                    cids += [cid]
-        for cid in cids:
-            cmd = "docker container kill {0}".format(cid)
-            run_command(cmd)
-        shutil.rmtree(tmp_folder)
-
-    def stop_containers(self, model_id):
-        """
-        Stops all running Docker containers associated with a model.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model.
-        """
-        if self.is_inside_docker:
-            return
-        if not self.is_installed():
-            return
-        self._stop_containers_with_model_id(model_id)
-        self._stop_containers_with_entrypoint_sh()
-        self.remove_stopped_containers()
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
-        cmd = "docker ps > {0}".format(tmp_file)
-        self.logger.debug("Running {0}".format(cmd))
-        run_command(cmd)
-        cids = []
-        with open(tmp_file, "r") as f:
-            next(f)
-            for l in f:
-                mid = l.rstrip().split(" ")[-1].split("_")[0]
-                if mid == model_id:
-                    cid = l.split(" ")[0]
-                    cids += [cid]
-        for cid in cids:
-            cmd = "docker container kill {0}".format(cid)
-            run_command(cmd)
-        shutil.rmtree(tmp_folder)
-        self.remove_stopped_containers()
-
     def prune(self):
         """
         Prunes unused Docker objects to free up space.
@@ -595,7 +499,6 @@ class DockerManager(ErsiliaBase):
         if self.is_inside_docker() or not self.is_installed():
             return
 
-        self.stop_containers(model_id)
         self.prune()
 
         cmd = (

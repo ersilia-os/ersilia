@@ -146,8 +146,13 @@ class _Field(object):
 
 
 def _eval_obj(json_file):
-    with open(json_file) as fh:
-        obj_dict = json.load(fh)
+    try:
+        with open(json_file) as fh:
+            obj_dict = json.load(fh)
+    except ValueError as e:
+        from .exceptions_utils.cli_exceptions import ConfigFileError
+
+        raise ConfigFileError(json_file) from e
 
     eval_obj_dict = dict()
     for k, v in obj_dict.items():

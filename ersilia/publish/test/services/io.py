@@ -199,7 +199,17 @@ class IOService:
         except texc.EmptyField as ef:
             self.logger.error(f"EmptyField exception caught for key '{ef}'")
             details = (
-                f"Field {check_name} has invalid value"
+                f"Field {check_name} is empty"
+                if data
+                else f"File {check_name} does not exist"
+            )
+            self.check_results.append((check_name, details, str(STATUS_CONFIGS.FAILED)))
+            return False
+
+        except texc.InvalidEntry as ie:
+            self.logger.error(f"InvalidEntry exception caught for key '{ie}'")
+            details = (
+                f"Field {check_name} value does not meet the expected format"
                 if data
                 else f"File {check_name} does not exist"
             )
@@ -497,7 +507,20 @@ class IOService:
         odc = len(IOService.read_csv_values(path))
         return odm, odc
 
+    def get_model_run_columns(self):
+        """
+        Get the model run columns from run column file
 
+        Returns
+        -------
+        list
+          A run columns name from the run column file
+        """
+        path = os.path.join(self.dir, PREDEFINED_COLUMN_FILE)
+        data = IOService.read_csv_values(path)
+        column_names = [row[0] for row in data if row]
+        return column_names
+    
     @throw_ersilia_exception()
     def get_directories_sizes(self) -> str:
         """

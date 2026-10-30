@@ -49,6 +49,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     TitleBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
+from .base_information_validator import BaseInformationValidator
 
 
 class BaseInformation(ErsiliaBase):
@@ -307,11 +308,7 @@ class BaseInformation(ErsiliaBase):
         SlugBaseInformationError
             If the slug is not valid.
         """
-        if new_slug.lower() != new_slug:
-            raise SlugBaseInformationError
-        if len(new_slug) > 60:
-            raise SlugBaseInformationError
-        if len(new_slug) < 5:
+        if not BaseInformationValidator.validate_slug(new_slug):
             raise SlugBaseInformationError
         self._slug = new_slug
 
@@ -373,9 +370,7 @@ class BaseInformation(ErsiliaBase):
         TitleBaseInformationError
             If the title is not valid.
         """
-        if len(new_title) > 300:
-            raise TitleBaseInformationError
-        if len(new_title) < 10:
+        if not BaseInformationValidator.validate_title(new_title):
             raise TitleBaseInformationError
         self._title = new_title
 

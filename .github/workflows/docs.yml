@@ -1,0 +1,42 @@
+# Build the API documentation and publish it to the gh-pages branch.
+
+name: Docs
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    paths:
+      - "ersilia/**"
+      - "docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Ersilia with docs extras
+        run: pip install -e ".[docs]"
+
+      - name: Build documentation
+        run: |
+          sphinx-apidoc -q -o docs/source/autodoc ersilia
+          sphinx-build -b html docs docs/_build/html
+
+      - name: Publish to gh-pages
+        if: github.event_name != 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build/html
+          commit_message: "[skip ci] Update docs"

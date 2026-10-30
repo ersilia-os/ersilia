@@ -1,3 +1,6 @@
+import json
+import os
+
 import validators
 
 from ... import ErsiliaBase
@@ -9,6 +12,31 @@ ENVIRONMENT_YML = "environment.yml"
 REQUIREMENTS_TXT = "requirements.txt"
 STATUS_FILE = "status.json"
 DONE_TAG = "done"
+
+
+def is_fetched(model_dir):
+    """
+    Tell whether the model in a folder finished fetching.
+
+    A model counts as fetched only when its status file says it is done, so a
+    half-finished fetch is never mistaken for a working model.
+
+    Parameters
+    ----------
+    model_dir : str
+        The model's folder in the dest directory.
+
+    Returns
+    -------
+    bool
+        True if the fetch finished.
+    """
+    try:
+        with open(os.path.join(model_dir, STATUS_FILE), "r") as f:
+            return bool(json.load(f).get(DONE_TAG))
+    except (OSError, ValueError, AttributeError):
+        return False
+
 
 HOST_URL = "Host URL"
 IDENTIFIER = "Identifier"

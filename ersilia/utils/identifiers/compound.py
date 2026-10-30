@@ -2,11 +2,7 @@ import asyncio
 import hashlib
 import re
 
-import nest_asyncio
-
 from ...default import UNPROCESSABLE_INPUT
-
-nest_asyncio.apply()
 
 
 class CompoundIdentifier(object):

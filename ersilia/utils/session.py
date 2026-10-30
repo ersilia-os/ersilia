@@ -1,7 +1,14 @@
+import contextlib
 import json
 import os
+import re
 import shutil
 import stat
+
+try:
+    import fcntl
+except ImportError:  # not available on Windows
+    fcntl = None
 
 import psutil
 
@@ -13,7 +20,86 @@ from ..default import (
     SESSIONS_DIR,
 )
 
-os.umask(0)
+# Set ERSILIA_SESSION to a name to use one session across commands whose
+# parent process differs, e.g. under 'conda run', make or CI steps. By
+# default each terminal (parent process) has its own session.
+SESSION_ENV = "ERSILIA_SESSION"
+_SESSION_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
+
+
+def _valid_session_name(name):
+    # An all-digit name would look like a process ID, and its session would
+    # be removed once no process with that ID exists.
+    return bool(_SESSION_NAME.fullmatch(name)) and not name.isdigit()
+
+
+def session_name_from_env():
+    """
+    Get the session name given in the ERSILIA_SESSION environment variable.
+
+    An invalid name is ignored here (the terminal's session is used), since
+    this runs while Ersilia is being imported; ``check_session_env`` reports
+    it.
+
+    Returns
+    -------
+    str or None
+        The name, or None when the variable is not set or not valid.
+    """
+    name = os.environ.get(SESSION_ENV, "").strip()
+    if not name or not _valid_session_name(name):
+        return None
+    return name
+
+
+def invalid_session_name():
+    """
+    Get the value of ERSILIA_SESSION if it cannot name a session.
+
+    Returns
+    -------
+    str or None
+        The invalid name, or None when the variable is unset or valid.
+    """
+    name = os.environ.get(SESSION_ENV, "").strip()
+    if name and not _valid_session_name(name):
+        return name
+    return None
+
+
+def check_session_env():
+    """
+    Check the session name given in ERSILIA_SESSION, if any.
+
+    Raises
+    ------
+    SessionNameError
+        If the variable is set to a name that cannot name a session.
+    """
+    name = invalid_session_name()
+    if name is not None:
+        from .exceptions_utils.exceptions import SessionNameError
+
+        raise SessionNameError(name)
+
+
+def is_named_session(session_name):
+    """
+    Tell whether a session was named with ERSILIA_SESSION.
+
+    Parameters
+    ----------
+    session_name : str
+        A session name such as ``session_myproject``, or a path ending in one.
+
+    Returns
+    -------
+    bool
+        True for a named session, False for a terminal's session.
+    """
+    name = os.path.basename(os.path.normpath(session_name))
+    prefix, _, rest = name.partition("_")
+    return prefix == "session" and bool(rest) and not rest.isdigit()
 
 
 def get_current_pid():
@@ -67,7 +153,7 @@ def create_session_dir():
     Create a session directory.
     """
     remove_orphaned_sessions()
-    session_name = f"session_{get_parent_pid()}"
+    session_name = get_session_id()
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     os.makedirs(session_dir, mode=0o777, exist_ok=True)
     create_session_files(session_name)
@@ -124,10 +210,15 @@ def remove_session_dir(session_name):
                     os.unlink(item_path)
                 elif os.path.isdir(item_path):
                     shutil.rmtree(item_path)
+            except FileNotFoundError:
+                # Another terminal may be cleaning the same session.
+                continue
             except Exception as e:
                 raise ValueError(f"Error deleting {item_path}: {e}")
         try:
             shutil.rmtree(session_dir)
+        except FileNotFoundError:
+            pass
         except Exception as e:
             raise ValueError(f"Error deleting {session_dir}: {e}")
 
@@ -138,8 +229,12 @@ def prune_empty_session_dirs():
     """
     for session_name in os.listdir(SESSIONS_DIR):
         session_dir = os.path.join(SESSIONS_DIR, session_name)
+        try:
+            files = os.listdir(session_dir)
+        except (FileNotFoundError, NotADirectoryError):
+            continue
         do_prune = True
-        for fn in os.listdir(session_dir):
+        for fn in files:
             if fn.endswith(".pid"):
                 do_prune = False
                 break
@@ -148,6 +243,48 @@ def prune_empty_session_dirs():
                 break
         if do_prune:
             remove_session_dir(session_name)
+
+
+def session_pid_from_name(session_name):
+    """
+    Get the parent process ID encoded in a session name.
+
+    Parameters
+    ----------
+    session_name : str
+        A session name such as ``session_12345``, or a path ending in one.
+
+    Returns
+    -------
+    int or None
+        The process ID, or None if the name is not a session name.
+    """
+    name = os.path.basename(os.path.normpath(session_name))
+    prefix, _, pid = name.partition("_")
+    if prefix != "session" or not pid.isdigit():
+        return None
+    return int(pid)
+
+
+def is_session_alive(session_name):
+    """
+    Check whether the process that owns a session is still running.
+
+    Parameters
+    ----------
+    session_name : str
+        A session name such as ``session_12345``, or a path ending in one.
+
+    Returns
+    -------
+    bool
+        True if the session's process exists.
+    """
+    if is_named_session(session_name):
+        # A named session is not tied to a process: it lasts until closed.
+        return True
+    pid = session_pid_from_name(session_name)
+    return pid is not None and psutil.pid_exists(pid)
 
 
 def determine_orphaned_session():
@@ -166,10 +303,73 @@ def determine_orphaned_session():
     )
     if sessions:
         for session in sessions:
-            session_pid = int(session.split("_")[1])
+            session_pid = session_pid_from_name(session)
+            if session_pid is None:
+                continue
             if not psutil.pid_exists(session_pid):
                 _sessions.append(session)
     return _sessions
+
+
+def read_pid_file(path):
+    """
+    Read a model's .pid file.
+
+    Each line is "<pid> <url> <container_name|->", written when the model is
+    served (``AutoService.serve``).
+
+    Parameters
+    ----------
+    path : str
+        The .pid file.
+
+    Returns
+    -------
+    tuple of (list of int, list of str)
+        The process IDs and the container names it lists.
+    """
+    pids, container_names = [], []
+    with open(path, "r") as f:
+        for line in f:
+            parts = line.strip().split()
+            if not parts:
+                continue
+            try:
+                pids.append(int(parts[0]))
+            except ValueError:
+                pass
+            if len(parts) >= 3 and parts[2] != "-":
+                container_names.append(parts[2])
+    return pids, container_names
+
+
+def container_is_running(name):
+    """
+    Tell whether a Docker container is running.
+
+    Parameters
+    ----------
+    name : str
+        The container name.
+
+    Returns
+    -------
+    bool or None
+        True if it is running, False if it is stopped or does not exist, and
+        None if Docker cannot be reached (so the answer is unknown).
+    """
+    try:
+        import docker
+
+        client = docker.from_env()
+    except Exception:
+        return None
+    try:
+        return client.containers.get(name).status == "running"
+    except docker.errors.NotFound:
+        return False
+    except Exception:
+        return None
 
 
 def stop_containers_by_name(names):
@@ -201,6 +401,48 @@ def stop_containers_by_name(names):
             pass
 
 
+def kill_process_tree(pid, timeout=5):
+    """
+    Terminate a process and all of its descendants.
+
+    The model server is launched as ``ersilia_model_serve``, which in turn
+    spawns ``run_uvicorn.py`` as a child. Killing only the recorded PID
+    orphans the uvicorn server, so the whole tree is terminated instead:
+    SIGTERM first, then SIGKILL for anything still alive after ``timeout``.
+
+    Parameters
+    ----------
+    pid : int
+        The root process ID.
+    timeout : float, optional
+        Seconds to wait for graceful termination before force-killing.
+    """
+    if pid is None or pid == -1:
+        return
+    try:
+        parent = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        return
+    try:
+        procs = parent.children(recursive=True)
+    except psutil.NoSuchProcess:
+        procs = []
+    procs.append(parent)
+    for p in procs:
+        try:
+            p.terminate()
+        except psutil.NoSuchProcess:
+            pass
+    _, alive = psutil.wait_procs(procs, timeout=timeout)
+    for p in alive:
+        try:
+            p.kill()
+        except psutil.NoSuchProcess:
+            pass
+    if alive:
+        psutil.wait_procs(alive, timeout=timeout)
+
+
 def purge_session_processes(session_name):
     """
     Stop any leftover processes and Docker containers tracked by a session's
@@ -211,47 +453,105 @@ def purge_session_processes(session_name):
         return
     pids = []
     container_names = []
-    for fn in os.listdir(session_dir):
+    try:
+        files = os.listdir(session_dir)
+    except FileNotFoundError:
+        return
+    for fn in files:
         if not fn.endswith(".pid"):
             continue
         path = os.path.join(session_dir, fn)
         try:
+            written_at = os.path.getmtime(path)
             with open(path, "r") as f:
                 for line in f:
                     parts = line.strip().split()
                     if not parts:
                         continue
                     try:
-                        pids.append(int(parts[0]))
+                        pids.append((int(parts[0]), written_at))
                     except ValueError:
                         pass
                     if len(parts) >= 3 and parts[2] != "-":
                         container_names.append(parts[2])
         except Exception:
             continue
-    for pid in pids:
-        if pid == -1:
+    for pid, written_at in pids:
+        if _pid_was_recycled(pid, written_at):
             continue
         try:
-            os.kill(pid, 9)
+            kill_process_tree(pid)
         except Exception:
             pass
     stop_containers_by_name(container_names)
+
+
+def _pid_was_recycled(pid, written_at):
+    # The recorded server started before its pid file was written. A process
+    # with the same pid that started later is an unrelated process (possibly
+    # another terminal's model server) and must not be killed.
+    if pid is None or pid < 0:
+        return False
+    try:
+        return psutil.Process(pid).create_time() > written_at + 1
+    except (psutil.NoSuchProcess, psutil.AccessDenied, ValueError):
+        return False
+
+
+# Models whose server this process stopped because their session's process
+# had ended (see models_stopped_by_cleanup).
+_stopped_by_cleanup = []
+
+
+def models_stopped_by_cleanup():
+    """
+    List the models stopped by this process's cleanup of orphaned sessions.
+
+    A session is orphaned when its parent process has ended. That happens
+    after every command run through a wrapper such as ``conda run``, so a
+    model served that way is stopped by the next command.
+
+    Returns
+    -------
+    list of str
+        The model IDs.
+    """
+    return list(_stopped_by_cleanup)
 
 
 def remove_orphaned_sessions():
     """
     Remove orphaned sessions.
     """
-    orphaned_sessions = determine_orphaned_session()
+    try:
+        orphaned_sessions = determine_orphaned_session()
+    except FileNotFoundError:
+        return
     for session in orphaned_sessions:
         try:
+            served = [
+                fn[: -len(".pid")]
+                for fn in os.listdir(os.path.join(SESSIONS_DIR, session))
+                if fn.endswith(".pid")
+            ]
+        except OSError:
+            served = []
+        try:
             purge_session_processes(session)
+            _stopped_by_cleanup.extend(
+                m for m in served if m not in _stopped_by_cleanup
+            )
         except Exception:
             pass
         try:
             remove_session_dir(session)
-        except PermissionError:
+        except Exception:
+            # Cleanup must never stop the CLI, e.g. when another terminal
+            # removes the same orphaned session at the same time.
+            pass
+        try:
+            deregister_session(os.path.join(SESSIONS_DIR, session))
+        except Exception:
             pass
 
 
@@ -259,17 +559,62 @@ def get_session_id():
     """
     Get the session ID.
 
+    The session is ``session_<name>`` when ERSILIA_SESSION is set, and
+    ``session_<parent process ID>`` (one per terminal) otherwise.
+
     Returns
     -------
     str
         The session ID.
     """
+    name = session_name_from_env()
+    if name:
+        return f"session_{name}"
     return f"session_{get_parent_pid()}"
+
+
+@contextlib.contextmanager
+def _models_json():
+    # Yields the {model_id: [session_dir, ...]} mapping and writes it back.
+    # A lock serializes the read-modify-write across terminals.
+    file_path = os.path.join(EOS, MODELS_JSON)
+    lock_path = file_path + ".lock"
+    with open(lock_path, "a") as lock:
+        if fcntl is not None:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            models = _read_models_json(file_path)
+            before = json.dumps(models, sort_keys=True)
+            yield models
+            models = {k: v for k, v in models.items() if v}
+            if json.dumps(models, sort_keys=True) != before:
+                tmp_path = file_path + ".tmp"
+                with open(tmp_path, "w") as f:
+                    json.dump(models, f, indent=4)
+                os.replace(tmp_path, file_path)
+        finally:
+            if fcntl is not None:
+                fcntl.flock(lock, fcntl.LOCK_UN)
+
+
+def _read_models_json(file_path):
+    if not os.path.exists(file_path):
+        return {}
+    try:
+        with open(file_path, "r") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+    # Older versions stored a single session directory per model.
+    return {k: ([v] if isinstance(v, str) else list(v)) for k, v in data.items() if v}
 
 
 def register_model_session(model_id, session_dir):
     """
-    Register a model with a session.
+    Register that a session is serving a model.
+
+    Several sessions (terminals) can serve the same model at the same time,
+    so each model maps to a list of session directories.
 
     Parameters
     ----------
@@ -278,25 +623,15 @@ def register_model_session(model_id, session_dir):
     session_dir : str
         The session directory.
     """
-    file_path = os.path.join(EOS, MODELS_JSON)
-    if not os.path.exists(file_path):
-        with open(file_path, "w") as f:
-            json.dump({}, f, indent=4)
-
-    with open(file_path, "r") as f:
-        models = json.load(f)
-
-    if (
-        model_id not in models
-    ):  # TODO This would have implications when we try to run the same model across multiple sessions
-        models[model_id] = session_dir
-        with open(file_path, "w") as f:
-            json.dump(models, f, indent=4)
+    with _models_json() as models:
+        sessions = models.setdefault(model_id, [])
+        if session_dir not in sessions:
+            sessions.append(session_dir)
 
 
-def get_model_session(model_id):
+def get_model_sessions(model_id):
     """
-    Get the model session.
+    Get the sessions registered as serving a model.
 
     Parameters
     ----------
@@ -305,32 +640,115 @@ def get_model_session(model_id):
 
     Returns
     -------
-    str
-        The session ID.
+    list
+        The session directories, possibly including stale ones.
     """
     file_path = os.path.join(EOS, MODELS_JSON)
-    if not os.path.exists(file_path):
-        return None
-    with open(file_path, "r") as f:
-        models = json.load(f)
-    return models.get(model_id, None)
+    return _read_models_json(file_path).get(model_id, [])
 
 
-def deregister_model_session(model_id):
+def get_live_model_sessions(model_id):
     """
-    Remove a model from a session.
+    Get the sessions that are currently serving a model.
+
+    A session counts as live when its process is running and it still
+    holds the model's pid file.
 
     Parameters
     ----------
     model_id : str
         The model ID.
+
+    Returns
+    -------
+    list
+        The live session directories.
     """
-    file_path = os.path.join(EOS, MODELS_JSON)
-    if not os.path.exists(file_path):
+    return [
+        session_dir
+        for session_dir in get_model_sessions(model_id)
+        if is_session_alive(session_dir)
+        and os.path.exists(os.path.join(session_dir, f"{model_id}.pid"))
+    ]
+
+
+def deregister_model_session(model_id, session_dir=None):
+    """
+    Deregister a session from a model, leaving other sessions untouched.
+
+    Parameters
+    ----------
+    model_id : str
+        The model ID.
+    session_dir : str, optional
+        The session directory to deregister. Defaults to the current session.
+    """
+    if session_dir is None:
+        session_dir = get_session_dir()
+    with _models_json() as models:
+        sessions = models.get(model_id, [])
+        if session_dir in sessions:
+            sessions.remove(session_dir)
+
+
+def deregister_session(session_dir):
+    """
+    Deregister a session from every model it was registered for.
+
+    Parameters
+    ----------
+    session_dir : str
+        The session directory.
+    """
+    if not os.path.exists(os.path.join(EOS, MODELS_JSON)):
         return
-    with open(file_path, "r") as f:
-        models = json.load(f)
-    if model_id in models:
-        del models[model_id]
-        with open(file_path, "w") as f:
-            json.dump(models, f, indent=4)
+    with _models_json() as models:
+        for sessions in models.values():
+            if session_dir in sessions:
+                sessions.remove(session_dir)
+
+
+def models_served_elsewhere():
+    """
+    List the models served in other live sessions.
+
+    Returns
+    -------
+    list of tuple of (str, str)
+        ``(model_id, session_dir)`` for each model served in a live session
+        other than this one.
+    """
+    here = os.path.normpath(get_session_dir())
+    file_path = os.path.join(EOS, MODELS_JSON)
+    served = []
+    for model_id in _read_models_json(file_path):
+        for session_dir in get_live_model_sessions(model_id):
+            if os.path.normpath(session_dir) != here:
+                served.append((model_id, session_dir))
+    return served
+
+
+def end_named_session():
+    """
+    Remove the current session's folder if it was named with ERSILIA_SESSION.
+
+    A named session is not tied to a process, so it is never cleaned up
+    automatically; closing it removes it. A terminal's session is left alone
+    (it is removed when the terminal ends).
+
+    Returns
+    -------
+    bool
+        True if a named session was removed.
+    """
+    session_id = get_session_id()
+    if not is_named_session(session_id):
+        return False
+    session_dir = os.path.join(SESSIONS_DIR, session_id)
+    try:
+        deregister_session(session_dir)
+        remove_session_dir(session_id)
+    except Exception:
+        # Cleanup must never stop the command.
+        return False
+    return True

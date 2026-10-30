@@ -10,11 +10,11 @@ CONDA_VERSIONS = [
 ]
 
 PIP_VERSIONS = [
-    "3.8-slim-bullseye",
-    "3.9-slim-bullseye",
-    "3.10-slim-bullseye",
-    "3.11-slim-bullseye",
-    "3.12-slim-bullseye",
+    "3.8-slim-bookworm",
+    "3.9-slim-bookworm",
+    "3.10-slim-bookworm",
+    "3.11-slim-bookworm",
+    "3.12-slim-bookworm",
 ]
 
 # By default, we generate all versions

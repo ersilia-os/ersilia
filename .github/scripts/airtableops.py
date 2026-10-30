@@ -220,23 +220,14 @@ class MetadataFileUpdater(FileUpdater):
 
     def _select_correct_metadata_file(self):
         if self.repo_path is None:
-            if os.path.exists(os.path.join(self.tmp_folder, self.model_id, "metadata.json")):
-                return os.path.join(self.tmp_folder, self.model_id, "metadata.json")
-            elif os.path.exists(os.path.join(self.tmp_folder, self.model_id, "metadata.yaml")):
-                return os.path.join(self.tmp_folder, self.model_id, "metadata.yaml")
-            elif os.path.exists(os.path.join(self.repo_path, "metadata.yml")):
-                return os.path.join(self.repo_path, "metadata.yml")
-            else:
-                print("Metadata file not found")
+            base_path = os.path.join(self.tmp_folder, self.model_id)
         else:
-            if os.path.exists(os.path.join(self.repo_path, "metadata.json")):
-                return os.path.join(self.repo_path, "metadata.json")
-            elif os.path.exists(os.path.join(self.repo_path, "metadata.yaml")):
-                return os.path.join(self.repo_path, "metadata.yaml")
-            elif os.path.exists(os.path.join(self.repo_path, "metadata.yml")):
-                return os.path.join(self.repo_path, "metadata.yml")
-            else:
-                print("Metadata file not found")
+            base_path = self.repo_path
+        for metadata_file in ("metadata.json", "metadata.yaml", "metadata.yml"):
+            candidate = os.path.join(base_path, metadata_file)
+            if os.path.exists(candidate):
+                return candidate
+        print("Metadata file not found")
     
     def update_remote_from_airtable(self):
         self._git_clone()
