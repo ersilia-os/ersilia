@@ -136,13 +136,7 @@ class RunnerService:
         """
 
         cmd = f"ersilia serve {self.model_id} --disable-cache"
-        self.logger.info(f"[ARM64-DEBUG serve_model] CMD: {cmd}")
-        out = run_command(cmd, quiet=True)
-        self.logger.info(
-            f"[ARM64-DEBUG serve_model] returncode={getattr(out, 'returncode', None)}\n"
-            f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
-            f"--- STDERR ---\n{getattr(out, 'stderr', '')}"
-        )
+        out = run_command(cmd)
         return out
 
     def run_model(self, inputs: str, output: str, batch: int):
@@ -164,28 +158,8 @@ class RunnerService:
             The output of the command.
         """
 
-        cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i '{inputs}' -o {output} -b {str(batch)}"
-        self.logger.info(f"[ARM64-DEBUG run_model] CMD: {cmd}")
-        out = run_command(cmd, quiet=True)
-        self.logger.info(
-            f"[ARM64-DEBUG run_model] returncode={getattr(out, 'returncode', None)}\n"
-            f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
-            f"--- STDERR ---\n{getattr(out, 'stderr', '')}"
-        )
-        try:
-            if output and os.path.exists(output):
-                with open(output) as _f:
-                    self.logger.info(
-                        f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}':\n{_f.read()}"
-                    )
-            else:
-                self.logger.error(
-                    f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}' DOES NOT EXIST (empty run!)"
-                )
-        except Exception as _e:
-            self.logger.error(
-                f"[ARM64-DEBUG run_model] could not read output '{output}': {_e}"
-            )
+        cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
+        out = run_command(cmd)
         return out
 
     def delete(self):
@@ -729,7 +703,6 @@ class RunnerService:
 
         except Exception as error:
             tb = traceback.format_exc()
-            self.logger.error(f"[ARM64-DEBUG run() EXCEPTION] {error!r}\n{tb}")
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.ios_service.collect_and_save_json(
