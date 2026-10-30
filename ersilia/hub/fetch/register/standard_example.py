@@ -162,6 +162,7 @@ class ModelStandardExample(ErsiliaBase):
         self._check_file_exists(output_csv=self.output_csv)
         is_fetched_successfully = self._validate_csv(self.output_csv)
         if not is_fetched_successfully:
+            note = " Full logs saved to ersilia_serve.log, ersilia_command_outputs.log and ersilia_install.log in the current directory."
             echo(f"Model {self.model_id} did not work, so it will be removed.")
             self.logger.error(
                 "Model produced all empty values. Removing the model and exiting."
