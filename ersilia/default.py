@@ -78,6 +78,9 @@ PREDEFINED_EXAMPLE_FILES = (
     PREDEFINED_EXAMPLE_INPUT_FILES + PREDEFINED_EXAMPLE_OUTPUT_FILES
 )
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
+# The model ran but returned empty values for every input. A separate code lets
+# callers (e.g. the deep test) tell this apart from a failure. 2 is click's.
+NO_INPUT_PROCESSED_EXIT_CODE = 3
 METADATA_JSON_FILE = "metadata.json"
 METADATA_YAML_FILE = "metadata.yml"
 INSTALL_YAML_FILE = "install.yml"

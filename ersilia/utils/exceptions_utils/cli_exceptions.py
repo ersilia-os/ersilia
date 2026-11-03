@@ -1,3 +1,4 @@
+from ...default import NO_INPUT_PROCESSED_EXIT_CODE
 from .exceptions import ErsiliaError
 
 # ruff: noqa: D101, D102
@@ -50,6 +51,7 @@ class NoInputProcessedError(ErsiliaError):
         else:
             self.message = "None of the {0:,} inputs could be processed.".format(total)
         self.hints = "No output was written. Check that the inputs are valid for this model (e.g. valid SMILES)."
+        self.exit_code = NO_INPUT_PROCESSED_EXIT_CODE
         ErsiliaError.__init__(self, self.message, self.hints)
 
 

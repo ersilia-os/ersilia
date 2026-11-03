@@ -310,3 +310,16 @@ def test_commands_accept_dashes_when_invoked_directly():
     text = " ".join(re.sub(r"\x1b\[[0-9;]*m|[│╭╮╰╯─]", " ", result.output).split())
     assert "No such option" not in text
     assert "--max_cache_memory_frac" in text and "0<x<=1" in text
+
+
+def test_no_input_processed_has_its_own_exit_code():
+    from ersilia.default import NO_INPUT_PROCESSED_EXIT_CODE
+    from ersilia.utils.exceptions_utils.cli_exceptions import NoInputProcessedError
+
+    @throw_ersilia_exception()
+    def run():
+        raise NoInputProcessedError(1)
+
+    with pytest.raises(SystemExit) as exit_info:
+        run()
+    assert exit_info.value.code == NO_INPUT_PROCESSED_EXIT_CODE

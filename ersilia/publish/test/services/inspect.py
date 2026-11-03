@@ -12,6 +12,7 @@ from ....default import (
     INSTALL_YAML_FILE,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
+    NO_INPUT_PROCESSED_EXIT_CODE,
     PACK_METHOD_FASTAPI,
     DOCKERFILE_FILE,
 )
@@ -546,7 +547,18 @@ class ModelInspector:
             return Result(
                 False, f"{n} predictions executed in {-1.00} seconds. \n"
             ), True
-        if process.returncode != 0:
+        if process.returncode == NO_INPUT_PROCESSED_EXIT_CODE:
+            # The model ran but returned empty values for every input, which
+            # generative models may do (e.g. for a single example). The time
+            # is still valid; the chain stopped before 'ersilia close'.
+            subprocess.run(
+                "ersilia close",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+        elif process.returncode != 0:
             return Result(False, "Something happened when running the deep check!"), False
         execution_time = time.time() - start_time
         return Result(

@@ -94,7 +94,7 @@ def _report(error, exit):
         )
         echo(text, fg="green")
     if exit:
-        sys.exit(DEFAULT_ERSILIA_ERROR_EXIT_CODE)
+        sys.exit(getattr(error, "exit_code", DEFAULT_ERSILIA_ERROR_EXIT_CODE))
     else:
         raise error
 
