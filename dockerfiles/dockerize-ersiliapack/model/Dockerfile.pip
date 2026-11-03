@@ -2,32 +2,26 @@ FROM ersiliaos/ersiliapack-VERSION:latest
 ARG MODEL=eos_identifier
 ENV MODEL=$MODEL
 WORKDIR /root
-COPY ./$MODEL /root/$MODEL
 
-# Update package lists
-RUN apt-get update
+# System libraries some models need (libxrender1: rdkit drawing).
+# One layer, and the package lists are deleted in the same step so they never ship.
+RUN apt-get update && \
+    apt-get install -y libfontconfig1 libxrender1 && \
+    (apt-get install -y libxtst6 || echo "Warning: libxtst6 not found, skipping.") && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install libfontconfig1
-RUN apt-get install -y libfontconfig1
-
-# Install libxrender1
-RUN apt-get install -y libxrender1
-
-# Try installing libxtst6 (if available)
-RUN apt-get install -y libxtst6 || echo "Warning: libxtst6 not found, skipping."
-
-# Clean up package lists
-RUN apt-get clean
-
-# Remove unnecessary files
-RUN rm -rf /var/lib/apt/lists/*
-
-
-RUN apt-get update && \ 
+# Prune test suites, C headers and static libs from site-packages.
+# Keep numpy/_core/tests: numpy.testing imports numpy._core.tests._natype (numpy >= 2.x).
+RUN --mount=type=bind,source=./$MODEL,target=/root/$MODEL,rw \
+    apt-get update && \
     apt-get install -y git build-essential && \
     mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles && \
     apt-get remove --purge -y git build-essential && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    rm -rf /root/$MODEL && rm -rf /root/.cache && \
+    rm -rf /root/.cache && \
+    SP=$(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])") && \
+    find "$SP" -type d -name tests -not -path "*/numpy/_core/tests" -prune -exec rm -rf {} + && \
+    find "$SP" -type d -name include -prune -exec rm -rf {} + && \
+    find "$SP" -name "*.a" -delete && \
     cp /root/bundles/$MODEL/*/information.json /root/information.json && \
     cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
     cp /root/bundles/$MODEL/*/status.json /root/status.json && \
