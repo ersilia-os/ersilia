@@ -412,7 +412,7 @@
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">exit</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">DEFAULT_ERSILIA_ERROR_EXIT_CODE</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s2">"exit_code"</span><span class="p">,</span> <span class="n">DEFAULT_ERSILIA_ERROR_EXIT_CODE</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">error</span>
 

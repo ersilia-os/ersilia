@@ -304,7 +304,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.exceptions_utils.cli_exceptions</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">NO_INPUT_PROCESSED_EXIT_CODE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
 
 <span class="c1"># ruff: noqa: D101, D102</span>
 
@@ -367,6 +368,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"None of the </span><span class="si">{0:,}</span><span class="s2"> inputs could be processed."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"No output was written. Check that the inputs are valid for this model (e.g. valid SMILES)."</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exit_code</span> <span class="o">=</span> <span class="n">NO_INPUT_PROCESSED_EXIT_CODE</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 

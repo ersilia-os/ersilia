@@ -318,6 +318,7 @@
     <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span>
     <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
+    <span class="n">NO_INPUT_PROCESSED_EXIT_CODE</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
     <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
 <span class="p">)</span>
@@ -875,7 +876,18 @@
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
                 <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">"</span>
             <span class="p">),</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="n">NO_INPUT_PROCESSED_EXIT_CODE</span><span class="p">:</span>
+            <span class="c1"># The model ran but returned empty values for every input, which</span>
+            <span class="c1"># generative models may do (e.g. for a single example). The time</span>
+            <span class="c1"># is still valid; the chain stopped before 'ersilia close'.</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="s2">"ersilia close"</span><span class="p">,</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">"Something happened when running the deep check!"</span><span class="p">),</span> <span class="kc">False</span>
         <span class="n">execution_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
