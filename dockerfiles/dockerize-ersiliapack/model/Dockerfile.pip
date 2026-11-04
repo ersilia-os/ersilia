@@ -12,6 +12,7 @@ RUN apt-get update && \
 
 # Prune test suites, C headers and static libs from site-packages.
 # Keep numpy/_core/tests: numpy.testing imports numpy._core.tests._natype (numpy >= 2.x).
+# Keep tables/tests: tables/__init__.py imports tables.tests (PyTables, used by FPSim2).
 RUN --mount=type=bind,source=./$MODEL,target=/root/$MODEL,rw \
     apt-get update && \
     apt-get install -y git build-essential && \
@@ -19,7 +20,7 @@ RUN --mount=type=bind,source=./$MODEL,target=/root/$MODEL,rw \
     apt-get remove --purge -y git build-essential && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -rf /root/.cache && \
     SP=$(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])") && \
-    find "$SP" -type d -name tests -not -path "*/numpy/_core/tests" -prune -exec rm -rf {} + && \
+    find "$SP" -type d -name tests -not -path "*/numpy/_core/tests" -not -path "*/tables/tests" -prune -exec rm -rf {} + && \
     find "$SP" -type d -name include -prune -exec rm -rf {} + && \
     find "$SP" -name "*.a" -delete && \
     cp /root/bundles/$MODEL/*/information.json /root/information.json && \
