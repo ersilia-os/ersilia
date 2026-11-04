@@ -280,7 +280,10 @@ class InformationDisplayer(ErsiliaBase):
                     "Output Consistency",
                 ],
             ),
-            ("Deployment", ["Deployment", "Source", "Source Type", "S3"]),
+            (
+                "Deployment",
+                ["Deployment", "Source", "Source Type", "S3", "Apptainer"],
+            ),
             (
                 "Publication",
                 [
