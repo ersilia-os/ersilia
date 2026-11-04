@@ -316,6 +316,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.base_information_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ApptainerBaseInformationError</span><span class="p">,</span>
     <span class="n">BiomedicalAreaBaseInformationError</span><span class="p">,</span>
     <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceBaseInformationError</span><span class="p">,</span>
@@ -435,6 +436,8 @@
 <span class="sd">            Placeholder for Docker image architecture details.</span>
 <span class="sd">        _s3 : None</span>
 <span class="sd">            Placeholder for related AWS S3 information.</span>
+<span class="sd">        _apptainer : None</span>
+<span class="sd">            Placeholder for the URL of the model's Apptainer (.sif) image.</span>
 <span class="sd">        _source : None</span>
 <span class="sd">            Placeholder for the source of the model, one of 'Local', or 'Online'</span>
 <span class="sd">        _source_type: None</span>
@@ -492,6 +495,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apptainer</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1510,6 +1514,47 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="n">new_s3_url</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apptainer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the model Apptainer image URL.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model Apptainer image URL.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apptainer</span>
+
+    <span class="nd">@apptainer</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apptainer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_apptainer_url</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Set the model Apptainer image URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_apptainer_url : str</span>
+<span class="sd">            The new model Apptainer image URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ApptainerBaseInformationError</span>
+<span class="sd">            If the Apptainer image URL is not valid.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">new_apptainer_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apptainer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">new_apptainer_url</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"none"</span>
+            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_apptainer_url</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"null"</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apptainer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_apptainer_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="s2">"https://models-sif.s3.eu-north-1.amazonaws.com/"</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_apptainer_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".sif"</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">ApptainerBaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apptainer</span> <span class="o">=</span> <span class="n">new_apptainer_url</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get both the model identifier and slug.</span>
@@ -2011,6 +2056,7 @@
             <span class="s2">"DockerHub"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
             <span class="s2">"Docker Architecture"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
             <span class="s2">"S3"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
+            <span class="s2">"Apptainer"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">apptainer</span><span class="p">,</span>
             <span class="s2">"Model Size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_size</span><span class="p">,</span>
             <span class="s2">"Environment Size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment_size</span><span class="p">,</span>
             <span class="s2">"Image Size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">,</span>
@@ -2069,6 +2115,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"dockerhub"</span><span class="p">,</span> <span class="s2">"DockerHub"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"docker_architecture"</span><span class="p">,</span> <span class="s2">"Docker Architecture"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"s3"</span><span class="p">,</span> <span class="s2">"S3"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"apptainer"</span><span class="p">,</span> <span class="s2">"Apptainer"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"model_size"</span><span class="p">,</span> <span class="s2">"Model Size"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"environment_size"</span><span class="p">,</span> <span class="s2">"Environment Size"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">"image_size"</span><span class="p">,</span> <span class="s2">"Image Size"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
