@@ -140,6 +140,21 @@ conda run -n ersilia ersilia close
 
 Errors are printed to stderr, so they can be told apart from normal output.
 
+### GPU Models
+
+Some models also have a GPU image on DockerHub (`latest-gpu`, or `<version>-gpu` for a release). The `Device` field shown by `ersilia info` lists `GPU` when that image exists. Fetch it with `--gpu`:
+
+```bash
+ersilia fetch eos3wac --gpu                    # ersiliaos/eos3wac:latest-gpu
+ersilia fetch eos3wac --gpu --version v1.0.0   # ersiliaos/eos3wac:v1.0.0-gpu
+ersilia serve eos3wac                          # gives the container the GPU, no flag needed
+```
+
+- The device is chosen at fetch time. To switch between CPU and GPU, `ersilia delete` the model and fetch it again with or without `--gpu`.
+- `--gpu` only works when fetching from DockerHub, and serving needs an NVIDIA GPU that Docker can use (NVIDIA Container Toolkit). Otherwise Ersilia stops with a clear error.
+- If the model has no GPU image, the fetch fails instead of falling back to the CPU image.
+- From Python: `Model("eos3wac").fetch(gpu=True)`.
+
 Please see the a full reference of all commands available [here](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/command-line-interface).
 
 ### Python API
