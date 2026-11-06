@@ -122,6 +122,7 @@ class Checks(Enum):
     SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
     ROBUSTNESS_TEST = "Robustness Test"
     DEPENDENCY_PINNED = "Checking package versions and file structure"
+    GPU_BUILD = "GPU Build"
 
 
 class TableType(Enum):

@@ -170,6 +170,8 @@ class Metadata:
         The DockerHub repository for the model. Default is None.
     DockerArchitecture : Optional[List[str]], optional
         The Docker architectures supported by the model. Default is None.
+    Device : Optional[List[str]], optional
+        The devices (CPU, GPU) the model has images for. Default is None.
     S3 : Optional[str], optional
         The S3 bucket for the model. Default is None.
     Status : Optional[str], optional
@@ -196,6 +198,7 @@ class Metadata:
     License: str
     DockerHub: Optional[str] = None
     DockerArchitecture: Optional[List[str]] = None
+    Device: Optional[List[str]] = None
     S3: Optional[str] = None
     Status: Optional[str] = None
     Contributor: Optional[str] = None

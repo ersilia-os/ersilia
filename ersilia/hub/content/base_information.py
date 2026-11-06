@@ -17,6 +17,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
+    DeviceBaseInformationError,
     DockerArchitectureBaseInformationError,
     DockerhubBaseInformationError,
     EnvironmentSizeMbBaseInformationError,
@@ -126,6 +127,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for Docker Hub repository details.
         _docker_architecture : None
             Placeholder for Docker image architecture details.
+        _device : None
+            Placeholder for the devices (CPU, GPU) the model has images for.
         _s3 : None
             Placeholder for related AWS S3 information.
         _apptainer : None
@@ -186,6 +189,7 @@ class BaseInformation(ErsiliaBase):
         self._incorporation_date = None
         self._dockerhub = None
         self._docker_architecture = None
+        self._device = None
         self._s3 = None
         self._apptainer = None
         self._source = None
@@ -1168,6 +1172,44 @@ class BaseInformation(ErsiliaBase):
             self._docker_architecture = new_docker_architecture
 
     @property
+    def device(self):
+        """
+        Get the devices the model can run on.
+
+        Returns
+        -------
+        list
+            The model devices (CPU, GPU).
+        """
+        return self._device
+
+    @device.setter
+    def device(self, new_device):
+        """
+        Set the devices the model can run on.
+
+        Parameters
+        ----------
+        new_device : list or str
+            The new model devices.
+
+        Raises
+        ------
+        DeviceBaseInformationError
+            If a device is not valid.
+        """
+        if new_device is None:
+            self._device = None
+        elif str(new_device).lower() == "none" or str(new_device).lower() == "null":
+            self._device = None
+        else:
+            new_device = self._serialize_to_list_if_necessary(new_device)
+            for d in new_device:
+                if d not in self._read_default_fields("Device"):
+                    raise DeviceBaseInformationError
+            self._device = new_device
+
+    @property
     def s3(self):
         """
         Get the model S3 URL.
@@ -1745,6 +1787,7 @@ class BaseInformation(ErsiliaBase):
             "Incorporation Date": self.incorporation_date,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
+            "Device": self.device,
             "S3": self.s3,
             "Apptainer": self.apptainer,
             "Model Size": self.model_size,
@@ -1801,6 +1844,7 @@ class BaseInformation(ErsiliaBase):
         self._assign("incorporation_date", "Incorporation Date", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
+        self._assign("device", "Device", data)
         self._assign("s3", "S3", data)
         self._assign("apptainer", "Apptainer", data)
         self._assign("model_size", "Model Size", data)

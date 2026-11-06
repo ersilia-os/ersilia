@@ -743,12 +743,9 @@ class RunnerService:
 
         docker_check = self._docker_yml_column_name_check()
         if isinstance(docker_check, tuple):
-            docker_check = docker_check[0]
+            docker_check, message = docker_check
             results.append(docker_check)
-            echo_exceptions(
-                "Dependencies are not pinned properly. System is exiting!",
-                ClickInterface(),
-            )
+            echo_exceptions(message, ClickInterface())
             return results, 1
         else:
             results.append(docker_check)
@@ -904,11 +901,15 @@ class RunnerService:
             (docker_check_data[0], Checks.DEPENDENCY_PINNED.value, docker_check_data[1])
         ]
         data.extend(docker_check_data)
+        (_, gpu_status), (_, gpu_details) = self.inspector.run(["gpu_check"])
+        data.append((Checks.GPU_BUILD.value, gpu_details, gpu_status))
         results = self._generate_table_from_check(
             TableType.DEPENDECY_COLUMN_CHECK, data
         )
         if docker_check_data[0][-1] == str(STATUS_CONFIGS.FAILED):
-            return results, 1
+            return results, "Dependencies are not pinned properly. System is exiting!"
+        if gpu_status == str(STATUS_CONFIGS.FAILED):
+            return results, f"GPU build is incomplete: {gpu_details} System is exiting!"
         return results
 
     def _log_env_sizes(self):

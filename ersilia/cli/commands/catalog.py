@@ -87,6 +87,7 @@ def _print_model_card(metadata_json: str):
                 "Source",
                 "Source Type",
                 "Docker Architecture",
+                "Device",
                 "DockerHub",
                 "S3",
             ],
