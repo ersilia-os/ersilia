@@ -407,6 +407,11 @@
 <li><p>If all null, generate 5, run again, check if all null.</p></li>
 <li><p>If all null, generate 10, run again, check if all null.</p></li>
 <li><p>If still all null after all attempts, mark as FAILED.</p></li>
+<li><p>A missing output file counts as all null only when the run
+exited with NO_INPUT_PROCESSED_EXIT_CODE (NoInputProcessedError:
+no input gave a result, which generative models do now and
+then). Any other missing output (a crash, a failed serve) fails
+the check at once, as for fixed models.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1443,10 +1448,12 @@ if both exist, both are validated. If neither is present, an error is returned.<
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The output of the command.</p>
+<dd class="field-even"><p>Named tuple (returncode, stdout, stderr) of the command. The return
+code is that of <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">run</span></code> when serving succeeded, e.g.
+NO_INPUT_PROCESSED_EXIT_CODE when no input gave a result.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>CommandResult</p>
 </dd>
 </dl>
 </dd></dl>
