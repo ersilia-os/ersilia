@@ -1301,6 +1301,10 @@ class CheckService:
             - If all null, generate 5, run again, check if all null.
             - If all null, generate 10, run again, check if all null.
             - If still all null after all attempts, mark as FAILED.
+            - A missing output file counts as all null: when no input gives
+              a result, the run writes no file (exit code 3,
+              NoInputProcessedError), which is expected now and then for
+              generative models.
 
         Parameters
         ----------
@@ -1326,11 +1330,15 @@ class CheckService:
         else:
             sample_sizes = [3, 5, 10]
 
+        missing_output = False
         for n_samples in sample_sizes:
             self.logger.info(
                 f"Robustness test: generating {n_samples} example inputs "
                 f"(output_consistency={output_consistency})"
             )
+            # A file left by an earlier attempt must not be read as this one's output
+            if os.path.exists(output_path):
+                os.remove(output_path)
             try:
                 run_example(
                     n_samples=n_samples,
@@ -1343,13 +1351,20 @@ class CheckService:
                 self.logger.error(f"Exception: {e}")
 
             if not os.path.exists(output_path):
-                return [
-                    (
-                        Checks.ROBUSTNESS_TEST.value,
-                        f"Output file not generated with {n_samples} samples",
-                        str(STATUS_CONFIGS.FAILED),
-                    )
-                ]
+                if not is_variable:
+                    return [
+                        (
+                            Checks.ROBUSTNESS_TEST.value,
+                            f"Output file not generated with {n_samples} samples",
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    ]
+                missing_output = True
+                self.logger.warning(
+                    f"Robustness test: no output file with {n_samples} samples "
+                    "(no input processed); treating as all null"
+                )
+                continue
 
             null_check = self._check_all_columns_not_null(output_path)
             all_null = null_check[0][-1] == str(STATUS_CONFIGS.FAILED)
@@ -1375,6 +1390,8 @@ class CheckService:
                 "All outputs were null across 3, 5, and 10 sample attempts "
                 "for variable output consistency model"
             )
+            if missing_output:
+                detail += " (no output file in at least one attempt)"
         else:
             detail = "All outputs were null with 3 samples"
 
