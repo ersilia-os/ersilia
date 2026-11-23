@@ -11,6 +11,11 @@ permissions:
 jobs:
   approve-command-dispatch:
     runs-on: ubuntu-latest
+    # Login shell, so every step runs inside the conda base environment set up
+    # below (python3, pip and gh come from it, as before)
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.0
@@ -41,11 +46,14 @@ jobs:
           python-version: "3.12"
           # cache: 'pip' # caching pip dependencies
 
-      # setup conda
-      - name: add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-      - name: source conda
-        run: source $CONDA/etc/profile.d/conda.sh
+      # setup conda: ubuntu-latest (Ubuntu 26.04) no longer ships conda, so
+      # $CONDA is empty; install Miniconda and activate its base environment
+      - name: setup conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "3.12"
+          auto-activate-base: true
+          activate-environment: ""
       - name: install dependencies through conda
         run: |
           source activate
