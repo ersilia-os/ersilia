@@ -154,8 +154,10 @@ class RunnerService:
 
         Returns
         -------
-        str
-            The output of the command.
+        CommandResult
+            Named tuple (returncode, stdout, stderr) of the command. The return
+            code is that of ``ersilia run`` when serving succeeded, e.g.
+            NO_INPUT_PROCESSED_EXIT_CODE when no input gave a result.
         """
 
         cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
