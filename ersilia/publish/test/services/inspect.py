@@ -1,5 +1,6 @@
 import os
 import re
+import signal
 import subprocess
 import time
 from collections import namedtuple
@@ -34,6 +35,84 @@ from ....hub.content.card import RepoMetadataFile
 from ....utils.logging import logger
 
 Result = namedtuple("Result", ["success", "details"])
+
+KILL_GRACE_SECONDS = 10
+CLOSE_TIMEOUT_SECONDS = 5 * 60
+
+
+def _signal_group(pgid, sig):
+    try:
+        os.killpg(pgid, sig)
+        return True
+    except ProcessLookupError:
+        return False
+
+
+def _stop_process_group(proc, grace=KILL_GRACE_SECONDS):
+    # Ask every process in the group to stop, give them `grace` seconds,
+    # then kill whatever is left.
+    pgid = proc.pid
+    _signal_group(pgid, signal.SIGTERM)
+    deadline = time.monotonic() + grace
+    while time.monotonic() < deadline:
+        proc.poll()  # reap the shell so it does not keep the group alive
+        if not _signal_group(pgid, 0):
+            return
+        time.sleep(0.2)
+    _signal_group(pgid, signal.SIGKILL)
+    proc.wait()
+
+
+def _run_with_timeout(cmd, timeout, grace=KILL_GRACE_SECONDS):
+    """
+    Run a shell command, stopping it and everything it started on timeout.
+
+    Parameters
+    ----------
+    cmd : str
+        The shell command.
+    timeout : float
+        Seconds to wait for the command to finish.
+    grace : float, optional
+        Seconds the processes get to stop before they are killed.
+
+    Returns
+    -------
+    int or None
+        The exit code, or None if the command timed out.
+    """
+    # A new session puts the shell and every command it starts in one process
+    # group. Killing only the shell would leave 'ersilia run' and the model
+    # computing in the background after the timeout.
+    proc = subprocess.Popen(
+        cmd,
+        shell=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    try:
+        return proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        _stop_process_group(proc, grace)
+        return None
+
+
+def _close_model():
+    # Any new 'ersilia' command stops the containers of sessions whose owner
+    # process has died, and 'close' also closes a session named with
+    # ERSILIA_SESSION, so this cleans up after the chain was cut short.
+    try:
+        subprocess.run(
+            "ersilia close",
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=CLOSE_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning("'ersilia close' did not finish after the deep check")
 
 
 class ModelInspector:
@@ -534,31 +613,22 @@ class ModelInspector:
                 False, f"{n} predictions executed in {-1.00} seconds. \n"
             ), timeout
         start_time = time.time()
-        try:
-            process = subprocess.run(
-                cmd,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                timeout=TIMEOUT_SECONDS,
+        returncode = _run_with_timeout(cmd, TIMEOUT_SECONDS)
+        if returncode is None:
+            logger.warning(
+                f"Deep check with {n} inputs passed the {TIMEOUT_SECONDS // 60}-minute"
+                " limit; it was stopped and the model is being closed."
             )
-        except subprocess.TimeoutExpired as e:
+            _close_model()
             return Result(
                 False, f"{n} predictions executed in {-1.00} seconds. \n"
             ), True
-        if process.returncode == NO_INPUT_PROCESSED_EXIT_CODE:
+        if returncode == NO_INPUT_PROCESSED_EXIT_CODE:
             # The model ran but returned empty values for every input, which
             # generative models may do (e.g. for a single example). The time
             # is still valid; the chain stopped before 'ersilia close'.
-            subprocess.run(
-                "ersilia close",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-            )
-        elif process.returncode != 0:
+            _close_model()
+        elif returncode != 0:
             return Result(False, "Something happened when running the deep check!"), False
         execution_time = time.time() - start_time
         return Result(
