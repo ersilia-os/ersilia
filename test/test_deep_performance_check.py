@@ -3,7 +3,6 @@ import time
 from unittest.mock import patch
 
 import psutil
-import pytest
 
 from ersilia.default import NO_INPUT_PROCESSED_EXIT_CODE
 from ersilia.publish.test.services import inspect

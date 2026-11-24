@@ -48,19 +48,27 @@ def _signal_group(pgid, sig):
         return False
 
 
-def _stop_process_group(proc, grace=KILL_GRACE_SECONDS):
-    # Ask every process in the group to stop, give them `grace` seconds,
-    # then kill whatever is left.
-    pgid = proc.pid
-    _signal_group(pgid, signal.SIGTERM)
-    deadline = time.monotonic() + grace
+def _wait_for_group_exit(proc, pgid, timeout):
+    deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         proc.poll()  # reap the shell so it does not keep the group alive
         if not _signal_group(pgid, 0):
-            return
-        time.sleep(0.2)
+            return True
+        time.sleep(0.1)
+    return False
+
+
+def _stop_process_group(proc, grace=KILL_GRACE_SECONDS):
+    # Ask every process in the group to stop, give them `grace` seconds,
+    # then kill whatever is left. Signals are delivered asynchronously, so
+    # wait until the group is gone before returning.
+    pgid = proc.pid
+    _signal_group(pgid, signal.SIGTERM)
+    if _wait_for_group_exit(proc, pgid, grace):
+        return
     _signal_group(pgid, signal.SIGKILL)
     proc.wait()
+    _wait_for_group_exit(proc, pgid, grace)
 
 
 def _run_with_timeout(cmd, timeout, grace=KILL_GRACE_SECONDS):
