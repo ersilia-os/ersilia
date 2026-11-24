@@ -42,6 +42,33 @@ warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatche
 _NON_FINITE_STRINGS = ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf")
 
 
+def _write_ersilia_input(example_input, path):
+    """
+    Write the example inputs the way Ersilia passes them to ``run.sh``.
+
+    When a model is served, ersilia-pack gives ``run.sh`` a CSV with an
+    ``input`` header and one input per row, written with ``csv.writer``.
+    The bash run uses the same file so both runs see identical input, and
+    the model's own ``run_input.csv`` is only read, never changed.
+
+    Parameters
+    ----------
+    example_input : str
+        The model's ``run_input.csv`` (a header, then one input per row in
+        the first column).
+    path : str
+        Where to write the input file for ``run.sh``.
+    """
+    with open(example_input, "r", newline="") as f:
+        rows = list(csv.reader(f))
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["input"])
+        for row in rows[1:]:
+            if row:
+                writer.writerow([row[0]])
+
+
 def _fetched_example_output(model_path, test_input):
     """
     Find the output that 'ersilia fetch' produced for the example input.
@@ -548,20 +575,6 @@ class RunnerService:
             with open(path, "r") as file:
                 return file.readlines()
 
-        def rename_col(path, old_col_name="input", new_col_name="smiles"):
-            with open(path, "r", newline="") as infile:
-                reader = csv.reader(infile)
-                rows = list(reader)
-                self.logger.info(f"Rows before rename: {rows}")
-
-                if rows and old_col_name in rows[0]:
-                    col_index = rows[0].index(old_col_name)
-                    rows[0][col_index] = new_col_name
-
-                with open(path, "w", newline="") as outfile:
-                    writer = csv.writer(outfile)
-                    writer.writerows(rows)
-
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = os.path.join(self.dir)
             output_path = os.path.join(temp_dir, "ersilia_output.csv")
@@ -571,8 +584,9 @@ class RunnerService:
             temp_script_path = os.path.join(temp_dir, "script.sh")
             bash_output_path = os.path.join(temp_dir, "bash_output.csv")
 
-            input_file_path = IOService._get_input_file_path(self.dir)
-            rename_col(input_file_path)
+            _write_ersilia_input(
+                IOService._get_input_file_path(self.dir), input_file_path
+            )
 
             run_sh_path = os.path.abspath(
                 os.path.join(model_path, "model", "framework", RUN_FILE)
@@ -972,7 +986,7 @@ class RunnerService:
         metadata = self.ios_service._read_metadata()
         is_online = metadata.get("Source") == "Online"
         model_output = self.checkup_service.check_model_output_content(
-            self.run_example, self.run_model
+            self.run_example, self.run_model, reuse_output=self.fetch_output
         )
         results.append(
             self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)

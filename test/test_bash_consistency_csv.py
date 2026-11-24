@@ -3,7 +3,11 @@
 import pytest
 
 from ersilia.publish.test.services.constants import STATUS_CONFIGS
-from ersilia.publish.test.services.runner import _compare_outputs, _read_output_csv
+from ersilia.publish.test.services.runner import (
+    _compare_outputs,
+    _read_output_csv,
+    _write_ersilia_input,
+)
 
 PASSED = str(STATUS_CONFIGS.PASSED)
 FAILED = str(STATUS_CONFIGS.FAILED)
@@ -123,3 +127,27 @@ def test_no_shared_columns_fails():
     status = _compare_outputs([{"a": 1}], [{"b": 1}], _exact)
     assert status[0][2] == FAILED
     assert "share no column names" in status[0][1]
+
+
+def test_bash_input_mirrors_what_ersilia_passes_to_run_sh(tmp_path):
+    example = tmp_path / "run_input.csv"
+    example.write_bytes(f'smiles\nCCO\n"{CXSMILES}"\n\nc1ccccc1\n'.encode())
+    path = tmp_path / "example_file.csv"
+
+    _write_ersilia_input(str(example), str(path))
+
+    # ersilia-pack writes an 'input' header, one input per row, via csv.writer.
+    assert path.read_bytes() == (
+        f'input\r\nCCO\r\n"{CXSMILES}"\r\nc1ccccc1\r\n'.encode()
+    )
+
+
+@pytest.mark.parametrize("line_end", ["\n", "\r\n"])
+def test_bash_input_leaves_the_model_example_untouched(tmp_path, line_end):
+    example = tmp_path / "run_input.csv"
+    original = line_end.join(["input", "CCO", "CCN", ""]).encode()
+    example.write_bytes(original)
+
+    _write_ersilia_input(str(example), str(tmp_path / "example_file.csv"))
+
+    assert example.read_bytes() == original

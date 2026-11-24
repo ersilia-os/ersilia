@@ -146,3 +146,57 @@ def test_runner_finds_the_fetch_output_for_the_repository_input(repo, tmp_path):
     )
     runner.dir = None
     assert runner._reusable_fetch_output() is None
+
+
+def _content_service(repo):
+    service = _check_service(repo)
+    service.ios._read_metadata.return_value = {
+        "Output Consistency": "Fixed",
+        "Source": "Local",
+    }
+    return service
+
+
+def test_output_content_checks_the_fetch_output_without_running(repo, tmp_path):
+    fetch_output = tmp_path / "fetch_output.csv"
+    fetch_output.write_text(EXAMPLE_OUTPUT)
+    run_model = MagicMock()
+
+    status = _content_service(repo).check_model_output_content(
+        None, run_model, reuse_output=str(fetch_output)
+    )
+
+    run_model.assert_not_called()
+    with open(Options.OUTPUT_FILES_TEST.value[0]) as f:
+        assert f.read() == EXAMPLE_OUTPUT
+    assert status == [("CSV-CSV", "Valid Content and Input Match", PASSED)]
+
+
+def test_output_content_still_fails_a_fetch_output_in_the_wrong_order(repo, tmp_path):
+    fetch_output = tmp_path / "fetch_output.csv"
+    fetch_output.write_text(
+        "key,input,score\nk2,CCN,0.2\nk1,CCO,0.1\nk3,c1ccccc1,0.3\n"
+    )
+
+    status = _content_service(repo).check_model_output_content(
+        None, MagicMock(), reuse_output=str(fetch_output)
+    )
+
+    assert status[0][2] == FAILED
+    assert "Inputs and outputs order does not match!" in status[0][1]
+
+
+def test_output_content_runs_the_model_without_a_fetch_output(repo):
+    def run_model(inputs, output, batch):
+        with open(output, "w") as f:
+            f.write(EXAMPLE_OUTPUT)
+
+    run_model = MagicMock(side_effect=run_model)
+
+    status = _content_service(repo).check_model_output_content(None, run_model)
+
+    run_model.assert_called_once()
+    assert run_model.call_args.kwargs["inputs"] == str(
+        repo / PREDEFINED_EXAMPLE_INPUT_FILES[0]
+    )
+    assert status == [("CSV-CSV", "Valid Content and Input Match", PASSED)]
