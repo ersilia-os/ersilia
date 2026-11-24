@@ -40,7 +40,7 @@ ersilia catalog
 ```
 ersilia -v fetch eos2ta5 #fetch a model
 ersilia serve eos2ta5 #serve a model
-ersilia -v api run -i "CCCC" #run a model
+ersilia -v run -i input_file -o output_file #run a model
 ```
 
 Note: The usage -v (verbose) flag is of utmost importance for developers as it provides detailed logs which helps to debug and troubleshoot issues.

@@ -5,8 +5,8 @@
 <h2 align="center"> 💊 Welcome to the Ersilia Model Hub!</h2>
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/ersilia.svg)](https://anaconda.org/conda-forge/ersilia) [![Python 3.8](https://img.shields.io/pypi/pyversions/ersilia
-)](https://www.python.org/downloads/release/python-380/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black)
+[![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/ersilia.svg)](https://anaconda.org/conda-forge/ersilia) [![Python 3.10](https://img.shields.io/pypi/pyversions/ersilia
+)](https://www.python.org/downloads/release/python-380/)
 [![DOI](https://zenodo.org/badge/277068989.svg)](https://zenodo.org/badge/latestdoi/277068989)
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
@@ -30,7 +30,7 @@ In Ersilia, you can find models related to antibiotic activity prediction, ADMET
 - To find your models of interest, visit the [Ersilia Model Hub browser](https://catalog.ersilia.io/)
 - For high-level documentation, check the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 - For a low-level documentation for developers, see the [Ersilia API reference](https://ersilia-os.github.io/ersilia/)
-- To contribute with new models, visit the [Contribute App](https://contribute.ersilia.io)
+- To contribute with new models, check out the [Contribution workflow](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/model-contribution)
 
 ## Quick Start Guide
 
@@ -70,7 +70,7 @@ To **install each model**, you have two options. You can either package them fro
 
 ### Running a Model
 
-Once the Ersilia package is installed, you can use the CLI to run any model seamlessly. First, select a model from the [Ersilia Model Hub](https://ersilia.io/model-hub/) and fetch it. Each model in the Ersilia Model Hub has an associated identifier. For example, the broad spectrum activity prediction model from [_Stokes_ et al. (2020)]() has the identifier `eos4e40`. You can **fetch** it as follows:
+Once the Ersilia package is installed, you can use the CLI to run any model seamlessly. First, select a model from the [Ersilia Model Hub](https://catalog.ersilia.io) and fetch it. Each model in the Ersilia Model Hub has an associated identifier. For example, the broad spectrum activity prediction model from [_Stokes_ et al. (2020)]() has the identifier `eos4e40`. You can **fetch** it as follows:
 
 ```bash
 ersilia fetch eos4e40
@@ -140,7 +140,7 @@ conda run -n ersilia ersilia close
 
 Errors are printed to stderr, so they can be told apart from normal output.
 
-Please see the a full reference of all commands available [here](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/command-line-interface).
+Please see the a full reference of all commands available [here](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/interfaces/command-line-interface).
 
 ### Python API
 
@@ -170,11 +170,10 @@ The Ersilia Model Hub is a free, open source software and we highly value new co
 
 * A good place to start is checking open [GitHub Issues](https://github.com/ersilia-os/ersilia/issues)
 * If you have identified a bug in the code, please open a new issue using the [Bug Report template](https://github.com/ersilia-os/ersilia/issues/new?template=bug_report.yml)
-* Share any feedback with the community using [GitHub Discussions](https://github.com/ersilia-os/ersilia/discussions) for the project
-* If you wish to contribute to our main codebase, please make sure to follow our [guidelines for codebase quality and consistency](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/developer-guide-for-codebase-quality-and-consistency)
+* If you wish to contribute to our main codebase, please make sure to follow our [guidelines for codebase quality and consistency](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/testing-and-quality/developer-guide-for-codebase-quality-and-consistency)
 * Check our [Contributing Guide](https://github.com/ersilia-os/ersilia/blob/master/CONTRIBUTING.md) for more details
 
-The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) code of conduct.
+The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-book/about-us/values-and-commitment/code-of-conduct) code of conduct.
 
 ### Submit a New Model
 
@@ -198,6 +197,7 @@ GitHub: [https://github.com/ersilia-os/ersilia](https://github.com/ersilia-os/er
 
 Please note that Ersilia distinguises between software contributors and software authors. The Ersilia Model Hub Authorship guidelines can be found in the [Authorship file](https://github.com/ersilia-os/ersilia/blob/master/AUTHORSHIP.md) and current authors can be found in the [Citation file](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff). We acknowledge past authors of the software below:
 - Carolina Caballero
+- Abel Legese
 
 ### Cited By
 

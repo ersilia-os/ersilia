@@ -17,6 +17,7 @@ except ImportError:
     MISSING_PACKAGES = True
 # ruff: enable
 from .constants import Checks, Options, STATUS_CONFIGS, PREDEFINED_COLUMN_FILE
+from ....default import NO_INPUT_PROCESSED_EXIT_CODE
 from .io import IOService
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
@@ -1301,6 +1302,11 @@ class CheckService:
             - If all null, generate 5, run again, check if all null.
             - If all null, generate 10, run again, check if all null.
             - If still all null after all attempts, mark as FAILED.
+            - A missing output file counts as all null only when the run
+              exited with NO_INPUT_PROCESSED_EXIT_CODE (NoInputProcessedError:
+              no input gave a result, which generative models do now and
+              then). Any other missing output (a crash, a failed serve) fails
+              the check at once, as for fixed models.
 
         Parameters
         ----------
@@ -1326,11 +1332,16 @@ class CheckService:
         else:
             sample_sizes = [3, 5, 10]
 
+        missing_output = False
         for n_samples in sample_sizes:
             self.logger.info(
                 f"Robustness test: generating {n_samples} example inputs "
                 f"(output_consistency={output_consistency})"
             )
+            # A file left by an earlier attempt must not be read as this one's output
+            if os.path.exists(output_path):
+                os.remove(output_path)
+            result = None
             try:
                 run_example(
                     n_samples=n_samples,
@@ -1338,18 +1349,27 @@ class CheckService:
                     simple=True,
                     mode="random",
                 )
-                run_model(inputs=input_path, output=output_path, batch=100)
+                result = run_model(inputs=input_path, output=output_path, batch=100)
             except Exception as e:
                 self.logger.error(f"Exception: {e}")
 
             if not os.path.exists(output_path):
-                return [
-                    (
-                        Checks.ROBUSTNESS_TEST.value,
-                        f"Output file not generated with {n_samples} samples",
-                        str(STATUS_CONFIGS.FAILED),
-                    )
-                ]
+                returncode = getattr(result, "returncode", None)
+                if not (is_variable and returncode == NO_INPUT_PROCESSED_EXIT_CODE):
+                    return [
+                        (
+                            Checks.ROBUSTNESS_TEST.value,
+                            f"Output file not generated with {n_samples} samples "
+                            f"(exit code {returncode})",
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    ]
+                missing_output = True
+                self.logger.warning(
+                    f"Robustness test: no input processed with {n_samples} samples "
+                    f"(exit code {returncode}); treating as all null"
+                )
+                continue
 
             null_check = self._check_all_columns_not_null(output_path)
             all_null = null_check[0][-1] == str(STATUS_CONFIGS.FAILED)
@@ -1375,6 +1395,8 @@ class CheckService:
                 "All outputs were null across 3, 5, and 10 sample attempts "
                 "for variable output consistency model"
             )
+            if missing_output:
+                detail += " (no input processed in at least one attempt)"
         else:
             detail = "All outputs were null with 3 samples"
 
