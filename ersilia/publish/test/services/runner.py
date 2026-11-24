@@ -1,4 +1,5 @@
 import csv
+import filecmp
 import os
 import sys
 import warnings
@@ -25,7 +26,12 @@ from .setup import SetupService
 from .inspect import InspectService
 from .io import IOService, PackageInstaller
 from .checks import CheckService
-from ....default import PREDEFINED_COLUMN_FILE, _CONDA_BOOTSTRAP
+from ....default import (
+    EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
+    EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
+    PREDEFINED_COLUMN_FILE,
+    _CONDA_BOOTSTRAP,
+)
 from ....io.input import ExampleGenerator
 from ....utils.terminal import run_command_check_output, run_command
 from ....cli import echo
@@ -34,6 +40,41 @@ from ....store.utils import echo_exceptions, ClickInterface
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
 
 _NON_FINITE_STRINGS = ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf")
+
+
+def _fetched_example_output(model_path, test_input):
+    """
+    Find the output that 'ersilia fetch' produced for the example input.
+
+    Fetch runs the model on its copy of ``run_input.csv`` and keeps the
+    result. The test can reuse it instead of running the model again, but
+    only when fetch ran on exactly the input the test would use: the copy
+    inside a Docker image can differ from the repository's.
+
+    Parameters
+    ----------
+    model_path : str
+        The fetched model's folder (``~/eos/dest/<model_id>``).
+    test_input : str or None
+        The example input the test would run (the repository's
+        ``run_input.csv``).
+
+    Returns
+    -------
+    str or None
+        The path to fetch's output, or None if it cannot be reused.
+    """
+    fetch_input = os.path.join(model_path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
+    fetch_output = os.path.join(model_path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME)
+    if not test_input or not os.path.isfile(test_input):
+        return None
+    if not os.path.isfile(fetch_input) or not os.path.isfile(fetch_output):
+        return None
+    if os.path.getsize(fetch_output) == 0:
+        return None
+    if not filecmp.cmp(fetch_input, test_input, shallow=False):
+        return None
+    return fetch_output
 
 
 def _parse_cell(value: str):
@@ -343,6 +384,7 @@ class RunnerService:
         self.inspector = inspector
         self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
+        self.fetch_output = None
         self.surface = surface
         self.permissive = permissive
         self.installer = PackageInstaller(self.dir, self.model_id)
@@ -385,6 +427,23 @@ class RunnerService:
         cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
+
+    def _reusable_fetch_output(self):
+        """
+        Get the example output from fetch, if the test can reuse it.
+
+        Returns
+        -------
+        str or None
+            The path to the output, or None if the model must run again.
+        """
+        test_input = IOService._get_input_file_path(self.dir) if self.dir else None
+        path = _fetched_example_output(self.model_path, test_input)
+        if path is None:
+            self.logger.info(
+                "The example output from fetch cannot be reused; the model will run again."
+            )
+        return path
 
     def delete(self):
         """
@@ -878,7 +937,10 @@ class RunnerService:
                 )
             )
 
-        simple_output = self.checkup_service.check_simple_model_output(self.run_model)
+        self.fetch_output = self._reusable_fetch_output()
+        simple_output = self.checkup_service.check_simple_model_output(
+            self.run_model, reuse_output=self.fetch_output
+        )
         simple_output_async = self.checkup_service.check_simple_model_async_output(
             self.serve_model
         )

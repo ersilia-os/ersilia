@@ -5,6 +5,7 @@ import math
 import numpy as np
 import os
 import random
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -1253,10 +1254,27 @@ class CheckService:
         )
         return _completed_status
 
-    def check_simple_model_output(self, run_model):
+    def check_simple_model_output(self, run_model, reuse_output=None):
+        """
+        Run the model on the example input and check its output.
+
+        Parameters
+        ----------
+        run_model : callable
+            run_model(inputs, output, batch) -> result
+        reuse_output : str, optional
+            An output already produced for the same example input (by
+            'ersilia fetch'). It is checked instead of running the model again.
+        """
         input_path = IOService._get_input_file_path(self.dir)
         output_path = IOService._get_output_file_path(self.dir)
-        run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
+        if reuse_output:
+            self.logger.info(
+                f"Reusing the example output from fetch instead of running the model again: {reuse_output}"
+            )
+            shutil.copyfile(reuse_output, Options.OUTPUT_CSV.value)
+        else:
+            run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
         output_consistency = self._get_output_consistency()
         if output_consistency == "Fixed":
             res_one = self._find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
