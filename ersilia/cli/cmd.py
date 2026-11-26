@@ -58,13 +58,6 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.fetch")
         m.fetch_cmd()
 
-    def publish(self):
-        """
-        Publish data.
-        """
-        m = importlib.import_module("ersilia.cli.commands.publish")
-        m.publish_cmd()
-
     def run(self):
         """
         Execute the command.
