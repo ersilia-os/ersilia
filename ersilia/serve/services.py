@@ -1217,6 +1217,10 @@ class PulledDockerImageService(BaseServing):
             "REDIS_URI": os.getenv("REDIS_URI", "redis://redis:6379"),
             "REDIS_EXPIRATION": os.getenv("REDIS_EXPIRATION", str(3600 * 24 * 7)),
         }
+        # A container does not inherit the shell's environment. Forward the
+        # warm serving switch only when it is set, so the image default stays on.
+        if os.getenv("ERSILIA_WARM") is not None:
+            env["ERSILIA_WARM"] = os.environ["ERSILIA_WARM"]
         from ..utils.exceptions_utils.cli_exceptions import PortInUseError
         from ..utils.ports import is_port_in_use
 
