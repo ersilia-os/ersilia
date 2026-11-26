@@ -1,4 +1,5 @@
 import csv
+import filecmp
 import os
 import sys
 import warnings
@@ -25,13 +26,302 @@ from .setup import SetupService
 from .inspect import InspectService
 from .io import IOService, PackageInstaller
 from .checks import CheckService
-from ....default import PREDEFINED_COLUMN_FILE, _CONDA_BOOTSTRAP
+from ....default import (
+    EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
+    EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
+    PREDEFINED_COLUMN_FILE,
+    _CONDA_BOOTSTRAP,
+)
 from ....io.input import ExampleGenerator
 from ....utils.terminal import run_command_check_output, run_command
 from ....cli import echo
 from ....store.utils import echo_exceptions, ClickInterface
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
+
+_NON_FINITE_STRINGS = ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf")
+
+
+def _write_ersilia_input(example_input, path):
+    """
+    Write the example inputs the way Ersilia passes them to ``run.sh``.
+
+    When a model is served, ersilia-pack gives ``run.sh`` a CSV with an
+    ``input`` header and one input per row, written with ``csv.writer``.
+    The bash run uses the same file so both runs see identical input, and
+    the model's own ``run_input.csv`` is only read, never changed.
+
+    Parameters
+    ----------
+    example_input : str
+        The model's ``run_input.csv`` (a header, then one input per row in
+        the first column).
+    path : str
+        Where to write the input file for ``run.sh``.
+    """
+    with open(example_input, "r", newline="") as f:
+        rows = list(csv.reader(f))
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["input"])
+        for row in rows[1:]:
+            if row:
+                writer.writerow([row[0]])
+
+
+def _fetched_example_output(model_path, test_input):
+    """
+    Find the output that 'ersilia fetch' produced for the example input.
+
+    Fetch runs the model on its copy of ``run_input.csv`` and keeps the
+    result. The test can reuse it instead of running the model again, but
+    only when fetch ran on exactly the input the test would use: the copy
+    inside a Docker image can differ from the repository's.
+
+    Parameters
+    ----------
+    model_path : str
+        The fetched model's folder (``~/eos/dest/<model_id>``).
+    test_input : str or None
+        The example input the test would run (the repository's
+        ``run_input.csv``).
+
+    Returns
+    -------
+    str or None
+        The path to fetch's output, or None if it cannot be reused.
+    """
+    fetch_input = os.path.join(model_path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
+    fetch_output = os.path.join(model_path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME)
+    if not test_input or not os.path.isfile(test_input):
+        return None
+    if not os.path.isfile(fetch_input) or not os.path.isfile(fetch_output):
+        return None
+    if os.path.getsize(fetch_output) == 0:
+        return None
+    if not filecmp.cmp(fetch_input, test_input, shallow=False):
+        return None
+    return fetch_output
+
+
+def _parse_cell(value: str):
+    """
+    Convert a CSV cell to int or float when it looks numeric, otherwise keep the string.
+
+    Empty cells and non-finite markers such as ``nan`` or ``inf`` stay as strings.
+
+    Parameters
+    ----------
+    value : str
+        Raw cell value.
+
+    Returns
+    -------
+    int, float or str
+        The parsed value.
+    """
+    if value == "":
+        return value
+    try:
+        i = int(value)
+        if str(i) == value or (
+            value.startswith(("+", "-")) and str(i) == value.lstrip("+")
+        ):
+            return i
+    except ValueError:
+        pass
+    try:
+        f = float(value)
+        if value.lower() not in _NON_FINITE_STRINGS:
+            return f
+    except ValueError:
+        pass
+    return value
+
+
+def _read_output_csv(path: str, skip_columns: int = 0):
+    """
+    Read a model output CSV into a list of row dictionaries with parsed values.
+
+    Uses the csv module, so a quoted cell containing commas (for example a
+    CXSMILES such as ``CCO |&1:8,10|``) stays in a single column.
+
+    Parameters
+    ----------
+    path : str
+        Path to the CSV file.
+    skip_columns : int, optional
+        Number of leading columns to drop, e.g. 2 for ``key`` and ``input`` in
+        Ersilia output (default = 0).
+
+    Returns
+    -------
+    tuple
+        ``(rows, error)``, where ``rows`` is a list of dicts keyed by column name
+        and ``error`` is None, or a message if the file is empty.
+    """
+    with open(path, "r", newline="") as f:
+        reader = csv.reader(f)
+        header = next(reader, None)
+        if not header:
+            return [], "File is empty"
+        header = header[skip_columns:]
+        rows = []
+        for values in reader:
+            if not values:
+                continue
+            values = values[skip_columns:]
+            rows.append(dict(zip(header, (_parse_cell(v) for v in values))))
+    return rows, None
+
+
+def _normalize_quotes(obj):
+    """
+    Strip one pair of surrounding single or double quotes from strings.
+
+    Parameters
+    ----------
+    obj : str or list
+        A string, or a list of strings and numbers.
+
+    Returns
+    -------
+    str or list
+        The input with quotes stripped from each string; numbers are unchanged.
+    """
+
+    def strip_quotes(s):
+        if isinstance(s, (int, float)):
+            return s
+        if (s.startswith('"') and s.endswith('"')) or (
+            s.startswith("'") and s.endswith("'")
+        ):
+            return s[1:-1]
+        return s
+
+    if isinstance(obj, list):
+        return [strip_quotes(s) for s in obj]
+    elif isinstance(obj, str):
+        return strip_quotes(obj)
+    else:
+        raise TypeError("Input must be a string or a list of strings")
+
+
+def _compute_rmse(y_true, y_pred):
+    return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
+
+
+def _compare_outputs(bsh_data, ers_data, is_similar: Callable):
+    """
+    Compare bash and Ersilia run outputs column by column.
+
+    Numeric columns are compared by RMSE and text columns by string similarity.
+    Cells that are empty in both outputs are left out. A column that mixes numbers
+    and text fails instead of being skipped, because that usually means the CSV
+    was not read correctly.
+
+    Parameters
+    ----------
+    bsh_data : list of dict
+        Rows from the bash run output.
+    ers_data : list of dict
+        Rows from the Ersilia run output.
+    is_similar : Callable
+        ``is_similar(a, b)`` returns True if two strings count as the same output.
+
+    Returns
+    -------
+    list of tuple
+        Status rows ``(name, detail, status)`` for the test report.
+    """
+    failed = str(STATUS_CONFIGS.FAILED)
+    if not bsh_data or not ers_data:
+        msg = (
+            f"Cannot compare outputs: bash output has {len(bsh_data)} rows, "
+            f"ersilia output has {len(ers_data)} rows"
+        )
+        echo_exceptions(msg, ClickInterface())
+        return [(Checks.RUN_BASH.value, msg, failed)]
+
+    columns = sorted(set(bsh_data[0].keys()) & set(ers_data[0].keys()))
+    if not columns:
+        msg = "Cannot compare outputs: bash and ersilia outputs share no column names"
+        echo_exceptions(msg, ClickInterface())
+        return [(Checks.RUN_BASH.value, msg, failed)]
+
+    _completed_status, _rmse = [], []
+    for column in columns:
+        bv = [row.get(column, "") for row in bsh_data]
+        ev = _normalize_quotes([row.get(column, "") for row in ers_data])
+
+        for idx, (b_val, e_val) in enumerate(zip(bv, ev), start=1):
+            if type(b_val) is not type(e_val):
+                if type(b_val) is int and type(e_val) is float:
+                    continue
+                msg = (
+                    f"Datatype mismatch for column '{column}' at row {idx}: "
+                    f"bash value={b_val!r} ({type(b_val).__name__}), "
+                    f"ersilia value={e_val!r} ({type(e_val).__name__})"
+                )
+                echo_exceptions(msg, ClickInterface())
+                return [(f"Type Check-{column}", msg, failed)]
+
+        # Rows where both outputs are empty (e.g. variable-length outputs) carry
+        # nothing to compare; a one-sided empty cell already failed the type check
+        # above for numeric columns, and is compared as text for string columns.
+        pairs = [(b, e) for b, e in zip(bv, ev) if not (b == "" and e == "")]
+        values = [v for pair in pairs for v in pair]
+        if not values:
+            continue
+
+        if all(isinstance(v, (int, float)) for v in values):
+            rmse = _compute_rmse([b for b, _ in pairs], [e for _, e in pairs])
+            _rmse.append(rmse)
+
+            if rmse > 0.1:
+                rmse_perc = round(rmse * 100, 2)
+                _completed_status.append(
+                    (f"RMSE-{column}", f"RMSE > 10%: {rmse_perc}%", failed)
+                )
+                echo_exceptions(
+                    "Model output is inconsistent between bash and ersilia. Skipped the checks!",
+                    ClickInterface(),
+                )
+                return _completed_status
+
+        elif all(isinstance(v, str) for v in values):
+            if not all(is_similar(b, e) for b, e in pairs):
+                _completed_status.append(("String Similarity", "< 95%", failed))
+                echo_exceptions(
+                    "Model output is inconsistent between bash and ersilia. Skipped the checks!",
+                    ClickInterface(),
+                )
+                return _completed_status
+
+            _completed_status.append(
+                ("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED))
+            )
+
+        else:
+            n_text = sum(isinstance(v, str) for v in values)
+            msg = (
+                f"Column '{column}' mixes numbers and text "
+                f"({len(values) - n_text} numeric, {n_text} text values) and cannot "
+                "be compared. This usually means the output CSV was not parsed correctly."
+            )
+            echo_exceptions(msg, ClickInterface())
+            return [(f"Type Check-{column}", msg, failed)]
+
+    mean_rmse = sum(_rmse) / len(_rmse) if _rmse else 0
+    mean_rmse_perc = round(mean_rmse * 100, 2)
+    _completed_status.append(
+        (
+            "RMSE-MEAN",
+            f"RMSE < 10% | {mean_rmse_perc}%",
+            str(STATUS_CONFIGS.PASSED),
+        )
+    )
+    return _completed_status
 
 
 class RunnerService:
@@ -121,6 +411,7 @@ class RunnerService:
         self.inspector = inspector
         self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
+        self.fetch_output = None
         self.surface = surface
         self.permissive = permissive
         self.installer = PackageInstaller(self.dir, self.model_id)
@@ -163,6 +454,23 @@ class RunnerService:
         cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
+
+    def _reusable_fetch_output(self):
+        """
+        Get the example output from fetch, if the test can reuse it.
+
+        Returns
+        -------
+        str or None
+            The path to the output, or None if the model must run again.
+        """
+        test_input = IOService._get_input_file_path(self.dir) if self.dir else None
+        path = _fetched_example_output(self.model_path, test_input)
+        if path is None:
+            self.logger.info(
+                "The example output from fetch cannot be reused; the model will run again."
+            )
+        return path
 
     def delete(self):
         """
@@ -245,186 +553,27 @@ class RunnerService:
             If there is an error during the subprocess execution or output comparison.
         """
 
-        def normalize_quotes(obj):
-            def strip_quotes(s: str) -> str:
-                if isinstance(s, float) or isinstance(s, int):
-                    return s
-                if (s.startswith('"') and s.endswith('"')) or (
-                    s.startswith("'") and s.endswith("'")
-                ):
-                    return s[1:-1]
-                return s
-
-            if isinstance(obj, list):
-                return [strip_quotes(s) for s in obj]
-            elif isinstance(obj, str):
-                return strip_quotes(obj)
-            else:
-                raise TypeError("Input must be a string or a list of strings")
-
-        def compute_rmse(y_true, y_pred):
-            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
-                y_true
-            )
-
-        def compare_outputs(bsh_data, ers_data):
-            _completed_status, _rmse = [], []
-            columns = set(bsh_data[0].keys()) & set(ers_data[0].keys())
-            for column in columns:
-                bv = [row[column] for row in bsh_data]
-                ev = [row[column] for row in ers_data]
-
-                for idx, (b_val, e_val) in enumerate(zip(bv, ev), start=1):
-                    if type(b_val) is not type(e_val):
-                        if type(b_val) is int and type(e_val) is float:
-                            continue
-                        msg = (
-                            f"Datatype mismatch for column '{column}' at row {idx}: "
-                            f"bash value type={type(b_val).__name__}, "
-                            f"ersilia value type={type(e_val).__name__}"
-                            f"bash value={e_val}"
-                            f"ersilia value={e_val}"
-                        )
-                        echo_exceptions(msg, ClickInterface())
-                        return [
-                            (f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))
-                        ]
-
-                if all(isinstance(val, (int, float)) for val in bv + ev):
-                    rmse = compute_rmse(bv, ev)
-                    _rmse.append(rmse)
-
-                    if rmse > 0.1:
-                        rmse_perc = round(rmse * 100, 2)
-                        _completed_status.append(
-                            (
-                                f"RMSE-{column}",
-                                f"RMSE > 10%: {rmse_perc}%",
-                                str(STATUS_CONFIGS.FAILED),
-                            )
-                        )
-                        echo_exceptions(
-                            "Model output is inconsistent between bash and ersilia. Skipped the checks!",
-                            ClickInterface(),
-                        )
-                        return _completed_status
-
-                elif all(isinstance(val, str) for val in bv + normalize_quotes(ev)):
-                    if not all(
-                        self._compare_string_similarity(a, b, 95)
-                        for a, b in zip(bv, normalize_quotes(ev))
-                    ):
-                        _completed_status.append(
-                            ("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED))
-                        )
-                        echo_exceptions(
-                            "Model output is inconsistent between bash and ersilia. Skipped the checks!",
-                            ClickInterface(),
-                        )
-                        return _completed_status
-
-                    _completed_status.append(
-                        ("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED))
-                    )
-
-            mean_rmse = sum(_rmse) / len(_rmse) if _rmse else 0
-            mean_rmse_perc = round(mean_rmse * 100, 2)
-            _completed_status.append(
-                (
-                    "RMSE-MEAN",
-                    f"RMSE < 10% | {mean_rmse_perc}%",
-                    str(STATUS_CONFIGS.PASSED),
-                )
-            )
-
-            return _completed_status
-
         def read_csv(path, flag=False):
             if not os.path.exists(path):
-                echo_exceptions(
-                    f"File not found this might be due to error happened when executing the run.sh: {path}",
-                    ClickInterface(),
-                )
+                msg = f"File not found this might be due to error happened when executing the run.sh: {path}"
+                echo_exceptions(msg, ClickInterface())
+                return [], msg
             try:
-                with open(path, "r") as file:
-                    self.logger.info("Reading the lines")
-                    lines = file.readlines()
-
-                if not lines:
-                    self.logger.error(f"File at {path} is empty.")
-                    return [], "File is empty"
-
-                headers = lines[0].strip().split(",")
-                if flag:
-                    headers = headers[2:]
-
-                data = []
-
-                for line in lines[1:]:
-                    values = line.strip().split(",")
-                    values = values[2:] if flag else values
-
-                    def parse(value: str):
-                        if value == "":
-                            return value
-
-                        try:
-                            i = int(value)
-                            if str(i) == value or (
-                                value.startswith(("+", "-"))
-                                and str(i) == value.lstrip("+")
-                            ):
-                                return i
-                        except ValueError:
-                            pass
-                        try:
-                            f = float(value)
-                            if value.lower() not in (
-                                "nan",
-                                "+nan",
-                                "-nan",
-                                "none",
-                                "inf",
-                                "+inf",
-                                "-inf",
-                            ):
-                                return f
-                        except ValueError:
-                            pass
-
-                        return value
-
-                    try:
-                        _values = [parse(x) for x in values]
-                    except ValueError as e:
-                        return [], f"Invalid value detected in CSV file: {e}"
-
-                    data.append(dict(zip(headers, _values)))
-
-                return data, None
-
+                self.logger.info(f"Reading output CSV: {path}")
+                data, error = _read_output_csv(path, skip_columns=2 if flag else 0)
             except Exception as e:
-                echo_exceptions(f"Failed to read CSV from {path}.", ClickInterface())
+                msg = f"Failed to read CSV from {path}: {e}"
+                echo_exceptions(msg, ClickInterface())
+                return [], msg
+            if error:
+                self.logger.error(f"File at {path}: {error}")
+            return data, error
 
         def read_logs(path):
             if not os.path.exists(path):
                 return "No error detected!"
             with open(path, "r") as file:
                 return file.readlines()
-
-        def rename_col(path, old_col_name="input", new_col_name="smiles"):
-            with open(path, "r", newline="") as infile:
-                reader = csv.reader(infile)
-                rows = list(reader)
-                self.logger.info(f"Rows before rename: {rows}")
-
-                if rows and old_col_name in rows[0]:
-                    col_index = rows[0].index(old_col_name)
-                    rows[0][col_index] = new_col_name
-
-                with open(path, "w", newline="") as outfile:
-                    writer = csv.writer(outfile)
-                    writer.writerows(rows)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = os.path.join(self.dir)
@@ -435,8 +584,9 @@ class RunnerService:
             temp_script_path = os.path.join(temp_dir, "script.sh")
             bash_output_path = os.path.join(temp_dir, "bash_output.csv")
 
-            input_file_path = IOService._get_input_file_path(self.dir)
-            rename_col(input_file_path)
+            _write_ersilia_input(
+                IOService._get_input_file_path(self.dir), input_file_path
+            )
 
             run_sh_path = os.path.abspath(
                 os.path.join(model_path, "model", "framework", RUN_FILE)
@@ -545,7 +695,9 @@ class RunnerService:
                         bg=None,
                         fg="red",
                     )
-                bsh_data, _ = read_csv(bash_output_path)
+                bsh_data, bsh_error = read_csv(bash_output_path)
+                if bsh_error:
+                    raise Exception(f"Could not read bash output: {bsh_error}")
                 self.logger.info("Running model for bash data consistency checking")
                 if not os.path.exists(input_file_path):
                     raise Exception(
@@ -556,7 +708,9 @@ class RunnerService:
                 cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
                 self.logger.info(f"Running command: {cmd}")
                 out = run_command(cmd)
-                ers_data, _ = read_csv(output_path, flag=True)
+                ers_data, ers_error = read_csv(output_path, flag=True)
+                if ers_error:
+                    raise Exception(f"Could not read ersilia output: {ers_error}")
 
             except Exception as e:
                 return [
@@ -584,7 +738,11 @@ class RunnerService:
                         )
                     )
                 ]
-            status = compare_outputs(bsh_data, ers_data)
+            status = _compare_outputs(
+                bsh_data,
+                ers_data,
+                lambda a, b: self._compare_string_similarity(a, b, 95),
+            )
             return status
 
     @staticmethod
@@ -793,7 +951,10 @@ class RunnerService:
                 )
             )
 
-        simple_output = self.checkup_service.check_simple_model_output(self.run_model)
+        self.fetch_output = self._reusable_fetch_output()
+        simple_output = self.checkup_service.check_simple_model_output(
+            self.run_model, reuse_output=self.fetch_output
+        )
         simple_output_async = self.checkup_service.check_simple_model_async_output(
             self.serve_model
         )
@@ -825,7 +986,7 @@ class RunnerService:
         metadata = self.ios_service._read_metadata()
         is_online = metadata.get("Source") == "Online"
         model_output = self.checkup_service.check_model_output_content(
-            self.run_example, self.run_model
+            self.run_example, self.run_model, reuse_output=self.fetch_output
         )
         results.append(
             self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)

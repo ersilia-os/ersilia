@@ -5,6 +5,7 @@ import math
 import numpy as np
 import os
 import random
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -739,7 +740,21 @@ class CheckService:
         else:
             raise ValueError(f"Unsupported input type: {inp_type}")
 
-    def check_model_output_content(self, run_example, run_model):
+    def check_model_output_content(self, run_example, run_model, reuse_output=None):
+        """
+        Run the model on the example input and validate the output files.
+
+        Parameters
+        ----------
+        run_example : callable
+            Not used.
+        run_model : callable
+            run_model(inputs, output, batch) -> result
+        reuse_output : str, optional
+            A CSV output already produced for the example CSV input (by
+            'ersilia fetch'). It is validated instead of running the model
+            again for the CSV-to-CSV case; other cases still run the model.
+        """
         status = []
         self.logger.debug("Checking model output...")
         for inp_type in Options.INPUT_TYPES_TEST.value:
@@ -748,7 +763,13 @@ class CheckService:
                 self.original_data_list = self._get_original_data_list(
                     inp_type, inp_data
                 )
-                run_model(inputs=inp_data, output=output_file, batch=100)
+                if reuse_output and inp_type == "csv" and output_file.endswith(".csv"):
+                    self.logger.info(
+                        f"Reusing the example output from fetch instead of running the model again: {reuse_output}"
+                    )
+                    shutil.copyfile(reuse_output, output_file)
+                else:
+                    run_model(inputs=inp_data, output=output_file, batch=100)
                 self.logger.info("validating output")
                 _status = self.validate_file_content(output_file, inp_type)
                 status.append(_status)
@@ -1253,10 +1274,27 @@ class CheckService:
         )
         return _completed_status
 
-    def check_simple_model_output(self, run_model):
+    def check_simple_model_output(self, run_model, reuse_output=None):
+        """
+        Run the model on the example input and check its output.
+
+        Parameters
+        ----------
+        run_model : callable
+            run_model(inputs, output, batch) -> result
+        reuse_output : str, optional
+            An output already produced for the same example input (by
+            'ersilia fetch'). It is checked instead of running the model again.
+        """
         input_path = IOService._get_input_file_path(self.dir)
         output_path = IOService._get_output_file_path(self.dir)
-        run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
+        if reuse_output:
+            self.logger.info(
+                f"Reusing the example output from fetch instead of running the model again: {reuse_output}"
+            )
+            shutil.copyfile(reuse_output, Options.OUTPUT_CSV.value)
+        else:
+            run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
         output_consistency = self._get_output_consistency()
         if output_consistency == "Fixed":
             res_one = self._find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
