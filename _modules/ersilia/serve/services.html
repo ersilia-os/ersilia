@@ -1629,6 +1629,10 @@
             <span class="s2">"REDIS_URI"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"REDIS_URI"</span><span class="p">,</span> <span class="s2">"redis://redis:6379"</span><span class="p">),</span>
             <span class="s2">"REDIS_EXPIRATION"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"REDIS_EXPIRATION"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mi">3600</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)),</span>
         <span class="p">}</span>
+        <span class="c1"># A container does not inherit the shell's environment. Forward the</span>
+        <span class="c1"># warm serving switch only when it is set, so the image default stays on.</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"ERSILIA_WARM"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env</span><span class="p">[</span><span class="s2">"ERSILIA_WARM"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"ERSILIA_WARM"</span><span class="p">]</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.cli_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PortInUseError</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_port_in_use</span>
 
