@@ -311,6 +311,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
@@ -1064,7 +1065,21 @@
 
 <div class="viewcode-block" id="CheckService.check_model_output_content">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_model_output_content">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">check_model_output_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_example</span><span class="p">,</span> <span class="n">run_model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_model_output_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_example</span><span class="p">,</span> <span class="n">run_model</span><span class="p">,</span> <span class="n">reuse_output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Run the model on the example input and validate the output files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_example : callable</span>
+<span class="sd">            Not used.</span>
+<span class="sd">        run_model : callable</span>
+<span class="sd">            run_model(inputs, output, batch) -&gt; result</span>
+<span class="sd">        reuse_output : str, optional</span>
+<span class="sd">            A CSV output already produced for the example CSV input (by</span>
+<span class="sd">            'ersilia fetch'). It is validated instead of running the model</span>
+<span class="sd">            again for the CSV-to-CSV case; other cases still run the model.</span>
+<span class="sd">        """</span>
         <span class="n">status</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking model output..."</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">inp_type</span> <span class="ow">in</span> <span class="n">Options</span><span class="o">.</span><span class="n">INPUT_TYPES_TEST</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
@@ -1073,7 +1088,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_data_list</span><span class="p">(</span>
                     <span class="n">inp_type</span><span class="p">,</span> <span class="n">inp_data</span>
                 <span class="p">)</span>
-                <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inp_data</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">reuse_output</span> <span class="ow">and</span> <span class="n">inp_type</span> <span class="o">==</span> <span class="s2">"csv"</span> <span class="ow">and</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Reusing the example output from fetch instead of running the model again: </span><span class="si">{</span><span class="n">reuse_output</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">reuse_output</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inp_data</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"validating output"</span><span class="p">)</span>
                 <span class="n">_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_file_content</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">inp_type</span><span class="p">)</span>
                 <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_status</span><span class="p">)</span>
@@ -1596,10 +1617,27 @@
 
 <div class="viewcode-block" id="CheckService.check_simple_model_output">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_simple_model_output">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">check_simple_model_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_simple_model_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_model</span><span class="p">,</span> <span class="n">reuse_output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Run the model on the example input and check its output.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_model : callable</span>
+<span class="sd">            run_model(inputs, output, batch) -&gt; result</span>
+<span class="sd">        reuse_output : str, optional</span>
+<span class="sd">            An output already produced for the same example input (by</span>
+<span class="sd">            'ersilia fetch'). It is checked instead of running the model again.</span>
+<span class="sd">        """</span>
         <span class="n">input_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_output_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
-        <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reuse_output</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Reusing the example output from fetch instead of running the model again: </span><span class="si">{</span><span class="n">reuse_output</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">reuse_output</span><span class="p">,</span> <span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
         <span class="n">output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">output_consistency</span> <span class="o">==</span> <span class="s2">"Fixed"</span><span class="p">:</span>
             <span class="n">res_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_csv_mismatches</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>

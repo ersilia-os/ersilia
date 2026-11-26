@@ -305,6 +305,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.publish.test.services.runner</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">filecmp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -331,13 +332,302 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">InspectService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">IOService</span><span class="p">,</span> <span class="n">PackageInstaller</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckService</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">,</span> <span class="n">_CONDA_BOOTSTRAP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">,</span>
+    <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">,</span>
+    <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">,</span>
+    <span class="n">_CONDA_BOOTSTRAP</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command_check_output</span><span class="p">,</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo_exceptions</span><span class="p">,</span> <span class="n">ClickInterface</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">"Using slow pure-python SequenceMatcher.*"</span><span class="p">)</span>
+
+<span class="n">_NON_FINITE_STRINGS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">"+nan"</span><span class="p">,</span> <span class="s2">"-nan"</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">,</span> <span class="s2">"inf"</span><span class="p">,</span> <span class="s2">"+inf"</span><span class="p">,</span> <span class="s2">"-inf"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_ersilia_input</span><span class="p">(</span><span class="n">example_input</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Write the example inputs the way Ersilia passes them to ``run.sh``.</span>
+
+<span class="sd">    When a model is served, ersilia-pack gives ``run.sh`` a CSV with an</span>
+<span class="sd">    ``input`` header and one input per row, written with ``csv.writer``.</span>
+<span class="sd">    The bash run uses the same file so both runs see identical input, and</span>
+<span class="sd">    the model's own ``run_input.csv`` is only read, never changed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    example_input : str</span>
+<span class="sd">        The model's ``run_input.csv`` (a header, then one input per row in</span>
+<span class="sd">        the first column).</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Where to write the input file for ``run.sh``.</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">example_input</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">"input"</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fetched_example_output</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">test_input</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Find the output that 'ersilia fetch' produced for the example input.</span>
+
+<span class="sd">    Fetch runs the model on its copy of ``run_input.csv`` and keeps the</span>
+<span class="sd">    result. The test can reuse it instead of running the model again, but</span>
+<span class="sd">    only when fetch ran on exactly the input the test would use: the copy</span>
+<span class="sd">    inside a Docker image can differ from the repository's.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        The fetched model's folder (``~/eos/dest/&lt;model_id&gt;``).</span>
+<span class="sd">    test_input : str or None</span>
+<span class="sd">        The example input the test would run (the repository's</span>
+<span class="sd">        ``run_input.csv``).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or None</span>
+<span class="sd">        The path to fetch's output, or None if it cannot be reused.</span>
+<span class="sd">    """</span>
+    <span class="n">fetch_input</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">)</span>
+    <span class="n">fetch_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">test_input</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">test_input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fetch_input</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fetch_output</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fetch_output</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filecmp</span><span class="o">.</span><span class="n">cmp</span><span class="p">(</span><span class="n">fetch_input</span><span class="p">,</span> <span class="n">test_input</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">fetch_output</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_cell</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert a CSV cell to int or float when it looks numeric, otherwise keep the string.</span>
+
+<span class="sd">    Empty cells and non-finite markers such as ``nan`` or ``inf`` stay as strings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : str</span>
+<span class="sd">        Raw cell value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int, float or str</span>
+<span class="sd">        The parsed value.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"+"</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_NON_FINITE_STRINGS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_output_csv</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skip_columns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Read a model output CSV into a list of row dictionaries with parsed values.</span>
+
+<span class="sd">    Uses the csv module, so a quoted cell containing commas (for example a</span>
+<span class="sd">    CXSMILES such as ``CCO |&amp;1:8,10|``) stays in a single column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to the CSV file.</span>
+<span class="sd">    skip_columns : int, optional</span>
+<span class="sd">        Number of leading columns to drop, e.g. 2 for ``key`` and ``input`` in</span>
+<span class="sd">        Ersilia output (default = 0).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(rows, error)``, where ``rows`` is a list of dicts keyed by column name</span>
+<span class="sd">        and ``error`` is None, or a message if the file is empty.</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="s2">"File is empty"</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="n">skip_columns</span><span class="p">:]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">skip_columns</span><span class="p">:]</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="p">(</span><span class="n">_parse_cell</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">rows</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_quotes</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Strip one pair of surrounding single or double quotes from strings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : str or list</span>
+<span class="sd">        A string, or a list of strings and numbers.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or list</span>
+<span class="sd">        The input with quotes stripped from each string; numbers are unchanged.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">strip_quotes</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">s</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'"'</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"'"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"'"</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">strip_quotes</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">strip_quotes</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Input must be a string or a list of strings"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_outputs</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">,</span> <span class="n">ers_data</span><span class="p">,</span> <span class="n">is_similar</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Compare bash and Ersilia run outputs column by column.</span>
+
+<span class="sd">    Numeric columns are compared by RMSE and text columns by string similarity.</span>
+<span class="sd">    Cells that are empty in both outputs are left out. A column that mixes numbers</span>
+<span class="sd">    and text fails instead of being skipped, because that usually means the CSV</span>
+<span class="sd">    was not read correctly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bsh_data : list of dict</span>
+<span class="sd">        Rows from the bash run output.</span>
+<span class="sd">    ers_data : list of dict</span>
+<span class="sd">        Rows from the Ersilia run output.</span>
+<span class="sd">    is_similar : Callable</span>
+<span class="sd">        ``is_similar(a, b)`` returns True if two strings count as the same output.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of tuple</span>
+<span class="sd">        Status rows ``(name, detail, status)`` for the test report.</span>
+<span class="sd">    """</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bsh_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">ers_data</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Cannot compare outputs: bash output has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows, "</span>
+            <span class="sa">f</span><span class="s2">"ersilia output has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ers_data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows"</span>
+        <span class="p">)</span>
+        <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">RUN_BASH</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">failed</span><span class="p">)]</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">ers_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">columns</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot compare outputs: bash and ersilia outputs share no column names"</span>
+        <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">RUN_BASH</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">failed</span><span class="p">)]</span>
+
+    <span class="n">_completed_status</span><span class="p">,</span> <span class="n">_rmse</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+        <span class="n">bv</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">bsh_data</span><span class="p">]</span>
+        <span class="n">ev</span> <span class="o">=</span> <span class="n">_normalize_quotes</span><span class="p">([</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ers_data</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">b_val</span><span class="p">,</span> <span class="n">e_val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">ev</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b_val</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">e_val</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b_val</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">e_val</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Datatype mismatch for column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' at row </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: "</span>
+                    <span class="sa">f</span><span class="s2">"bash value=</span><span class="si">{</span><span class="n">b_val</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">b_val</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">), "</span>
+                    <span class="sa">f</span><span class="s2">"ersilia value=</span><span class="si">{</span><span class="n">e_val</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e_val</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)"</span>
+                <span class="p">)</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                <span class="k">return</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">"Type Check-</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">failed</span><span class="p">)]</span>
+
+        <span class="c1"># Rows where both outputs are empty (e.g. variable-length outputs) carry</span>
+        <span class="c1"># nothing to compare; a one-sided empty cell already failed the type check</span>
+        <span class="c1"># above for numeric columns, and is compared as text for string columns.</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">ev</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="s2">""</span> <span class="ow">and</span> <span class="n">e</span> <span class="o">==</span> <span class="s2">""</span><span class="p">)]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">):</span>
+            <span class="n">rmse</span> <span class="o">=</span> <span class="n">_compute_rmse</span><span class="p">([</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">],</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">])</span>
+            <span class="n">_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                <span class="n">rmse_perc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">rmse</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s2">"RMSE-</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"RMSE &gt; 10%: </span><span class="si">{</span><span class="n">rmse_perc</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span> <span class="n">failed</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span>
+                    <span class="s2">"Model output is inconsistent between bash and ersilia. Skipped the checks!"</span><span class="p">,</span>
+                    <span class="n">ClickInterface</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">_completed_status</span>
+
+        <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_similar</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">):</span>
+                <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"String Similarity"</span><span class="p">,</span> <span class="s2">"&lt; 95%"</span><span class="p">,</span> <span class="n">failed</span><span class="p">))</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span>
+                    <span class="s2">"Model output is inconsistent between bash and ersilia. Skipped the checks!"</span><span class="p">,</span>
+                    <span class="n">ClickInterface</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">_completed_status</span>
+
+            <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">"String Similarity"</span><span class="p">,</span> <span class="s2">"&gt; 95%"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_text</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' mixes numbers and text "</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n_text</span><span class="si">}</span><span class="s2"> numeric, </span><span class="si">{</span><span class="n">n_text</span><span class="si">}</span><span class="s2"> text values) and cannot "</span>
+                <span class="s2">"be compared. This usually means the output CSV was not parsed correctly."</span>
+            <span class="p">)</span>
+            <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">"Type Check-</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">failed</span><span class="p">)]</span>
+
+    <span class="n">mean_rmse</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">_rmse</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">_rmse</span><span class="p">)</span> <span class="k">if</span> <span class="n">_rmse</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">mean_rmse_perc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean_rmse</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="s2">"RMSE-MEAN"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"RMSE &lt; 10% | </span><span class="si">{</span><span class="n">mean_rmse_perc</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_completed_status</span>
 
 
 <div class="viewcode-block" id="RunnerService">
@@ -429,6 +719,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span> <span class="o">=</span> <span class="n">inspector</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">example</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_using_bash</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_output</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">permissive</span> <span class="o">=</span> <span class="n">permissive</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">installer</span> <span class="o">=</span> <span class="n">PackageInstaller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -477,6 +768,23 @@
         <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reusable_fetch_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the example output from fetch, if the test can reuse it.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The path to the output, or None if the model must run again.</span>
+<span class="sd">        """</span>
+        <span class="n">test_input</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">_fetched_example_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="n">test_input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"The example output from fetch cannot be reused; the model will run again."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span>
 
 <div class="viewcode-block" id="RunnerService.delete">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.runner.RunnerService.delete">[docs]</a>
@@ -570,186 +878,27 @@
 <span class="sd">            If there is an error during the subprocess execution or output comparison.</span>
 <span class="sd">        """</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">normalize_quotes</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">strip_quotes</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">s</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'"'</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
-                    <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"'"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"'"</span><span class="p">)</span>
-                <span class="p">):</span>
-                    <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">return</span> <span class="n">s</span>
-
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">return</span> <span class="p">[</span><span class="n">strip_quotes</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">strip_quotes</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Input must be a string or a list of strings"</span><span class="p">)</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span>
-                <span class="n">y_true</span>
-            <span class="p">)</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">compare_outputs</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">,</span> <span class="n">ers_data</span><span class="p">):</span>
-            <span class="n">_completed_status</span><span class="p">,</span> <span class="n">_rmse</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">ers_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
-                <span class="n">bv</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">bsh_data</span><span class="p">]</span>
-                <span class="n">ev</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ers_data</span><span class="p">]</span>
-
-                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">b_val</span><span class="p">,</span> <span class="n">e_val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">ev</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b_val</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">e_val</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b_val</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">e_val</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">:</span>
-                            <span class="k">continue</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">"Datatype mismatch for column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' at row </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: "</span>
-                            <span class="sa">f</span><span class="s2">"bash value type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">b_val</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, "</span>
-                            <span class="sa">f</span><span class="s2">"ersilia value type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e_val</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
-                            <span class="sa">f</span><span class="s2">"bash value=</span><span class="si">{</span><span class="n">e_val</span><span class="si">}</span><span class="s2">"</span>
-                            <span class="sa">f</span><span class="s2">"ersilia value=</span><span class="si">{</span><span class="n">e_val</span><span class="si">}</span><span class="s2">"</span>
-                        <span class="p">)</span>
-                        <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
-                        <span class="k">return</span> <span class="p">[</span>
-                            <span class="p">(</span><span class="sa">f</span><span class="s2">"Type Check-</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))</span>
-                        <span class="p">]</span>
-
-                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">bv</span> <span class="o">+</span> <span class="n">ev</span><span class="p">):</span>
-                    <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">ev</span><span class="p">)</span>
-                    <span class="n">_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
-                        <span class="n">rmse_perc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">rmse</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                        <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">"RMSE-</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                                <span class="sa">f</span><span class="s2">"RMSE &gt; 10%: </span><span class="si">{</span><span class="n">rmse_perc</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span>
-                                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
-                            <span class="p">)</span>
-                        <span class="p">)</span>
-                        <span class="n">echo_exceptions</span><span class="p">(</span>
-                            <span class="s2">"Model output is inconsistent between bash and ersilia. Skipped the checks!"</span><span class="p">,</span>
-                            <span class="n">ClickInterface</span><span class="p">(),</span>
-                        <span class="p">)</span>
-                        <span class="k">return</span> <span class="n">_completed_status</span>
-
-                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">bv</span> <span class="o">+</span> <span class="n">normalize_quotes</span><span class="p">(</span><span class="n">ev</span><span class="p">)):</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_compare_string_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">normalize_quotes</span><span class="p">(</span><span class="n">ev</span><span class="p">))</span>
-                    <span class="p">):</span>
-                        <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="p">(</span><span class="s2">"String Similarity"</span><span class="p">,</span> <span class="s2">"&lt; 95%"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))</span>
-                        <span class="p">)</span>
-                        <span class="n">echo_exceptions</span><span class="p">(</span>
-                            <span class="s2">"Model output is inconsistent between bash and ersilia. Skipped the checks!"</span><span class="p">,</span>
-                            <span class="n">ClickInterface</span><span class="p">(),</span>
-                        <span class="p">)</span>
-                        <span class="k">return</span> <span class="n">_completed_status</span>
-
-                    <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="p">(</span><span class="s2">"String Similarity"</span><span class="p">,</span> <span class="s2">"&gt; 95%"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))</span>
-                    <span class="p">)</span>
-
-            <span class="n">mean_rmse</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">_rmse</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">_rmse</span><span class="p">)</span> <span class="k">if</span> <span class="n">_rmse</span> <span class="k">else</span> <span class="mi">0</span>
-            <span class="n">mean_rmse_perc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean_rmse</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="s2">"RMSE-MEAN"</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">"RMSE &lt; 10% | </span><span class="si">{</span><span class="n">mean_rmse_perc</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">_completed_status</span>
-
         <span class="k">def</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="n">echo_exceptions</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"File not found this might be due to error happened when executing the run.sh: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                    <span class="n">ClickInterface</span><span class="p">(),</span>
-                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"File not found this might be due to error happened when executing the run.sh: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                <span class="k">return</span> <span class="p">[],</span> <span class="n">msg</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Reading the lines"</span><span class="p">)</span>
-                    <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="p">[],</span> <span class="s2">"File is empty"</span>
-
-                <span class="n">headers</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">flag</span><span class="p">:</span>
-                    <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-
-                <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-
-                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                    <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
-                    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="n">flag</span> <span class="k">else</span> <span class="n">values</span>
-
-                    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
-                            <span class="k">return</span> <span class="n">value</span>
-
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">or</span> <span class="p">(</span>
-                                <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">))</span>
-                                <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"+"</span><span class="p">)</span>
-                            <span class="p">):</span>
-                                <span class="k">return</span> <span class="n">i</span>
-                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                            <span class="k">pass</span>
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
-                                <span class="s2">"nan"</span><span class="p">,</span>
-                                <span class="s2">"+nan"</span><span class="p">,</span>
-                                <span class="s2">"-nan"</span><span class="p">,</span>
-                                <span class="s2">"none"</span><span class="p">,</span>
-                                <span class="s2">"inf"</span><span class="p">,</span>
-                                <span class="s2">"+inf"</span><span class="p">,</span>
-                                <span class="s2">"-inf"</span><span class="p">,</span>
-                            <span class="p">):</span>
-                                <span class="k">return</span> <span class="n">f</span>
-                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                            <span class="k">pass</span>
-
-                        <span class="k">return</span> <span class="n">value</span>
-
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="n">_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">parse</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
-                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="p">[],</span> <span class="sa">f</span><span class="s2">"Invalid value detected in CSV file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
-
-                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">_values</span><span class="p">)))</span>
-
-                <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="kc">None</span>
-
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reading output CSV: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">_read_output_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">skip_columns</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">flag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to read CSV from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Failed to read CSV from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                <span class="k">return</span> <span class="p">[],</span> <span class="n">msg</span>
+            <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">error</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">read_logs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
                 <span class="k">return</span> <span class="s2">"No error detected!"</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">rename_col</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">old_col_name</span><span class="o">=</span><span class="s2">"input"</span><span class="p">,</span> <span class="n">new_col_name</span><span class="o">=</span><span class="s2">"smiles"</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-                <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-                <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rows before rename: </span><span class="si">{</span><span class="n">rows</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">rows</span> <span class="ow">and</span> <span class="n">old_col_name</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="n">col_index</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">old_col_name</span><span class="p">)</span>
-                    <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_col_name</span>
-
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-                    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-                    <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
             <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
@@ -760,8 +909,9 @@
             <span class="n">temp_script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">"script.sh"</span><span class="p">)</span>
             <span class="n">bash_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">"bash_output.csv"</span><span class="p">)</span>
 
-            <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
-            <span class="n">rename_col</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
+            <span class="n">_write_ersilia_input</span><span class="p">(</span>
+                <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">),</span> <span class="n">input_file_path</span>
+            <span class="p">)</span>
 
             <span class="n">run_sh_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="s2">"framework"</span><span class="p">,</span> <span class="n">RUN_FILE</span><span class="p">)</span>
@@ -870,7 +1020,9 @@
                         <span class="n">bg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="n">bsh_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">)</span>
+                <span class="n">bsh_data</span><span class="p">,</span> <span class="n">bsh_error</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">bsh_error</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not read bash output: </span><span class="si">{</span><span class="n">bsh_error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Running model for bash data consistency checking"</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -881,7 +1033,9 @@
                 <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-cache &amp;&amp; ersilia -v run -i </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Running command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-                <span class="n">ers_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">ers_data</span><span class="p">,</span> <span class="n">ers_error</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ers_error</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not read ersilia output: </span><span class="si">{</span><span class="n">ers_error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[</span>
@@ -909,7 +1063,11 @@
                         <span class="p">)</span>
                     <span class="p">)</span>
                 <span class="p">]</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="n">compare_outputs</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">,</span> <span class="n">ers_data</span><span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">_compare_outputs</span><span class="p">(</span>
+                <span class="n">bsh_data</span><span class="p">,</span>
+                <span class="n">ers_data</span><span class="p">,</span>
+                <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_string_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="n">status</span></div>
 
 
@@ -1122,7 +1280,10 @@
                 <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="n">simple_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_simple_model_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reusable_fetch_output</span><span class="p">()</span>
+        <span class="n">simple_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_simple_model_output</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_model</span><span class="p">,</span> <span class="n">reuse_output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fetch_output</span>
+        <span class="p">)</span>
         <span class="n">simple_output_async</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_simple_model_async_output</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">serve_model</span>
         <span class="p">)</span>
@@ -1154,7 +1315,7 @@
         <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
         <span class="n">is_online</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Source"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"Online"</span>
         <span class="n">model_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_model_output_content</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">run_example</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_example</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_model</span><span class="p">,</span> <span class="n">reuse_output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fetch_output</span>
         <span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_OUTPUT</span><span class="p">,</span> <span class="n">model_output</span><span class="p">)</span>

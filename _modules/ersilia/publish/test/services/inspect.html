@@ -306,6 +306,7 @@
           <h1>Source code for ersilia.publish.test.services.inspect</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
@@ -340,6 +341,92 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">"Result"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"success"</span><span class="p">,</span> <span class="s2">"details"</span><span class="p">])</span>
+
+<span class="n">KILL_GRACE_SECONDS</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">CLOSE_TIMEOUT_SECONDS</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mi">60</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_signal_group</span><span class="p">(</span><span class="n">pgid</span><span class="p">,</span> <span class="n">sig</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">killpg</span><span class="p">(</span><span class="n">pgid</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ProcessLookupError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_wait_for_group_exit</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="n">pgid</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+    <span class="n">deadline</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">deadline</span><span class="p">:</span>
+        <span class="n">proc</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>  <span class="c1"># reap the shell so it does not keep the group alive</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_signal_group</span><span class="p">(</span><span class="n">pgid</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_stop_process_group</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="n">grace</span><span class="o">=</span><span class="n">KILL_GRACE_SECONDS</span><span class="p">):</span>
+    <span class="c1"># Ask every process in the group to stop, give them `grace` seconds,</span>
+    <span class="c1"># then kill whatever is left. Signals are delivered asynchronously, so</span>
+    <span class="c1"># wait until the group is gone before returning.</span>
+    <span class="n">pgid</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">pid</span>
+    <span class="n">_signal_group</span><span class="p">(</span><span class="n">pgid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_wait_for_group_exit</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="n">pgid</span><span class="p">,</span> <span class="n">grace</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="n">_signal_group</span><span class="p">(</span><span class="n">pgid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">_wait_for_group_exit</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="n">pgid</span><span class="p">,</span> <span class="n">grace</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_with_timeout</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">grace</span><span class="o">=</span><span class="n">KILL_GRACE_SECONDS</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Run a shell command, stopping it and everything it started on timeout.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cmd : str</span>
+<span class="sd">        The shell command.</span>
+<span class="sd">    timeout : float</span>
+<span class="sd">        Seconds to wait for the command to finish.</span>
+<span class="sd">    grace : float, optional</span>
+<span class="sd">        Seconds the processes get to stop before they are killed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int or None</span>
+<span class="sd">        The exit code, or None if the command timed out.</span>
+<span class="sd">    """</span>
+    <span class="c1"># A new session puts the shell and every command it starts in one process</span>
+    <span class="c1"># group. Killing only the shell would leave 'ersilia run' and the model</span>
+    <span class="c1"># computing in the background after the timeout.</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="n">cmd</span><span class="p">,</span>
+        <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+        <span class="n">start_new_session</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+        <span class="n">_stop_process_group</span><span class="p">(</span><span class="n">proc</span><span class="p">,</span> <span class="n">grace</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_close_model</span><span class="p">():</span>
+    <span class="c1"># Any new 'ersilia' command stops the containers of sessions whose owner</span>
+    <span class="c1"># process has died, and 'close' also closes a session named with</span>
+    <span class="c1"># ERSILIA_SESSION, so this cleans up after the chain was cut short.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="s2">"ersilia close"</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">CLOSE_TIMEOUT_SECONDS</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"'ersilia close' did not finish after the deep check"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ModelInspector">
@@ -863,31 +950,22 @@
                 <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">"</span>
             <span class="p">),</span> <span class="n">timeout</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                <span class="n">cmd</span><span class="p">,</span>
-                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">timeout</span><span class="o">=</span><span class="n">TIMEOUT_SECONDS</span><span class="p">,</span>
+        <span class="n">returncode</span> <span class="o">=</span> <span class="n">_run_with_timeout</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">TIMEOUT_SECONDS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">returncode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Deep check with </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> inputs passed the </span><span class="si">{</span><span class="n">TIMEOUT_SECONDS</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="s2">-minute"</span>
+                <span class="s2">" limit; it was stopped and the model is being closed."</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">_close_model</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
                 <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">"</span>
             <span class="p">),</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="n">NO_INPUT_PROCESSED_EXIT_CODE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">returncode</span> <span class="o">==</span> <span class="n">NO_INPUT_PROCESSED_EXIT_CODE</span><span class="p">:</span>
             <span class="c1"># The model ran but returned empty values for every input, which</span>
             <span class="c1"># generative models may do (e.g. for a single example). The time</span>
             <span class="c1"># is still valid; the chain stopped before 'ersilia close'.</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                <span class="s2">"ersilia close"</span><span class="p">,</span>
-                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_close_model</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">"Something happened when running the deep check!"</span><span class="p">),</span> <span class="kc">False</span>
         <span class="n">execution_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
