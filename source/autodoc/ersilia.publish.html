@@ -414,59 +414,6 @@
 </dd></dl>
 
 </section>
-<section id="ersilia-publish-publish-module">
-<h2>ersilia.publish.publish module<a class="headerlink" href="#ersilia-publish-publish-module" title="Link to this heading">¶</a></h2>
-</section>
-<section id="module-ersilia.publish.rebase">
-<span id="ersilia-publish-rebase-module"></span><h2>ersilia.publish.rebase module<a class="headerlink" href="#module-ersilia.publish.rebase" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.publish.rebase.TemplateRebaser">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.publish.rebase.</span></span><span class="sig-name descname"><span class="pre">TemplateRebaser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'eos-template'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/rebase.html#TemplateRebaser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.rebase.TemplateRebaser" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<p>Class for rebasing model repositories with a template repository.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model to be rebased.</p></li>
-<li><p><strong>template_repo</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the template repository. Default is ‘eos-template’.</p></li>
-<li><p><strong>config_json</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the configuration JSON file.</p></li>
-<li><p><strong>credentials_json</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the credentials JSON file.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.rebase.TemplateRebaser.clean">
-<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/rebase.html#TemplateRebaser.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.rebase.TemplateRebaser.clean" title="Link to this definition">¶</a></dt>
-<dd><p>Clean up temporary directories.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.rebase.TemplateRebaser.clone_current_model">
-<span class="sig-name descname"><span class="pre">clone_current_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/rebase.html#TemplateRebaser.clone_current_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.rebase.TemplateRebaser.clone_current_model" title="Link to this definition">¶</a></dt>
-<dd><p>Clone the current model repository.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.rebase.TemplateRebaser.clone_template">
-<span class="sig-name descname"><span class="pre">clone_template</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/rebase.html#TemplateRebaser.clone_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.rebase.TemplateRebaser.clone_template" title="Link to this definition">¶</a></dt>
-<dd><p>Clone the template repository.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.rebase.TemplateRebaser.dvc_part">
-<span class="sig-name descname"><span class="pre">dvc_part</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/rebase.html#TemplateRebaser.dvc_part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.rebase.TemplateRebaser.dvc_part" title="Link to this definition">¶</a></dt>
-<dd><p>Set up DVC (Data Version Control) for the model repository.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.rebase.TemplateRebaser.rebase">
-<span class="sig-name descname"><span class="pre">rebase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/rebase.html#TemplateRebaser.rebase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.rebase.TemplateRebaser.rebase" title="Link to this definition">¶</a></dt>
-<dd><p>Rebase the model repository with the template repository.</p>
-</dd></dl>
-
-</dd></dl>
-
-</section>
 <section id="module-ersilia.publish.s3">
 <span id="ersilia-publish-s3-module"></span><h2>ersilia.publish.s3 module<a class="headerlink" href="#module-ersilia.publish.s3" title="Link to this heading">¶</a></h2>
 <dl class="py class">
@@ -671,18 +618,6 @@
 <li><a class="reference internal" href="#ersilia.publish.dockerhub.DockerHubUploader.build_image"><code class="docutils literal notranslate"><span class="pre">DockerHubUploader.build_image()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.dockerhub.DockerHubUploader.set_credentials"><code class="docutils literal notranslate"><span class="pre">DockerHubUploader.set_credentials()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.dockerhub.DockerHubUploader.upload"><code class="docutils literal notranslate"><span class="pre">DockerHubUploader.upload()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ersilia-publish-publish-module">ersilia.publish.publish module</a></li>
-<li><a class="reference internal" href="#module-ersilia.publish.rebase">ersilia.publish.rebase module</a><ul>
-<li><a class="reference internal" href="#ersilia.publish.rebase.TemplateRebaser"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.publish.rebase.TemplateRebaser.clean"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.clean()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.publish.rebase.TemplateRebaser.clone_current_model"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.clone_current_model()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.publish.rebase.TemplateRebaser.clone_template"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.clone_template()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.publish.rebase.TemplateRebaser.dvc_part"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.dvc_part()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.publish.rebase.TemplateRebaser.rebase"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.rebase()</span></code></a></li>
 </ul>
 </li>
 </ul>

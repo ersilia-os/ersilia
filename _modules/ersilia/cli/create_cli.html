@@ -304,8 +304,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.create_cli</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">..auth.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">Auth</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
@@ -315,20 +314,14 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Creates and configures the Ersilia CLI.</span>
 
-<span class="sd">    This function initializes the Command class, checks if the user is a contributor,</span>
-<span class="sd">    and dynamically imports and executes various CLI commands based on the user's role.</span>
+<span class="sd">    This function initializes the Command class and registers the available</span>
+<span class="sd">    CLI commands.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    ersilia_cli : module</span>
 <span class="sd">        The configured Ersilia CLI module.</span>
 <span class="sd">    """</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">is_contributor</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">is_contributor</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="c1"># Checking contributor status (a GitHub call) must never break the CLI.</span>
-        <span class="n">is_contributor</span> <span class="o">=</span> <span class="kc">False</span>
-
     <span class="n">cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">()</span>
 
     <span class="n">cmd</span><span class="o">.</span><span class="n">catalog</span><span class="p">()</span>
@@ -339,10 +332,6 @@
     <span class="n">cmd</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
-    <span class="c1"># TODO: publishing functionalities</span>
-    <span class="k">if</span> <span class="n">is_contributor</span><span class="p">:</span>
-        <span class="n">cmd</span><span class="o">.</span><span class="n">publish</span><span class="p">()</span>
-
     <span class="n">cmd</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
