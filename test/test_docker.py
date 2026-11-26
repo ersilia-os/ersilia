@@ -100,3 +100,35 @@ class TestDelete:
             with patch("ersilia.utils.docker.run_command") as mock_run_cmd:
                 d.delete("ersiliaos", "eos0001", "latest")
                 mock_run_cmd.assert_called_once()
+
+
+class TestPulledDockerImageServiceEnv:
+    """The container does not inherit the shell's environment, so serve() must
+    forward the variables the model server reads."""
+
+    def _serve_and_get_env(self, monkeypatch):
+        from ersilia.serve.services import PulledDockerImageService
+
+        svc = PulledDockerImageService.__new__(PulledDockerImageService)
+        svc.model_id = "eos0000"
+        svc.image_name = "ersiliaos/eos0000:latest"
+        svc.port = 8080
+        svc._port_given = False
+        svc._mem_gb = None
+        svc.logger = MagicMock()
+        svc.client = MagicMock()
+        monkeypatch.setattr(svc, "_create_docker_network", lambda: None)
+        monkeypatch.setattr(svc, "_wait_until_container_is_running", lambda: None)
+        monkeypatch.setattr(svc, "_get_apis", lambda: [])
+        svc.serve()
+        return svc.client.containers.run.call_args.kwargs["environment"]
+
+    def test_forwards_ersilia_warm_when_set(self, monkeypatch):
+        monkeypatch.setenv("ERSILIA_WARM", "0")
+        env = self._serve_and_get_env(monkeypatch)
+        assert env["ERSILIA_WARM"] == "0"
+
+    def test_omits_ersilia_warm_when_unset(self, monkeypatch):
+        monkeypatch.delenv("ERSILIA_WARM", raising=False)
+        env = self._serve_and_get_env(monkeypatch)
+        assert "ERSILIA_WARM" not in env
