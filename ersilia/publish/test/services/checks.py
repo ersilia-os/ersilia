@@ -1460,9 +1460,9 @@ class CheckService:
         self.logger.debug("Confirming model produces consistent output...")
 
         def compute_rmse(y_true, y_pred):
-            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
-                y_true
-            )
+            return (
+                sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) / len(y_true)
+            ) ** 0.5
 
         def _compare_output_strings(output1, output2):
             return fuzz.ratio(output1, output2)
