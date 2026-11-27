@@ -208,7 +208,7 @@ def _normalize_quotes(obj):
 
 
 def _compute_rmse(y_true, y_pred):
-    return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
+    return (sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) / len(y_true)) ** 0.5
 
 
 def _compare_outputs(bsh_data, ers_data, is_similar: Callable):

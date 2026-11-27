@@ -5,6 +5,7 @@ import pytest
 from ersilia.publish.test.services.constants import STATUS_CONFIGS
 from ersilia.publish.test.services.runner import (
     _compare_outputs,
+    _compute_rmse,
     _read_output_csv,
     _write_ersilia_input,
 )
@@ -92,6 +93,18 @@ def test_numeric_column_with_blanks_passes():
     ers = [{"score": 0.5}, {"score": ""}, {"score": 1.0}]
     status = _compare_outputs(bsh, ers, _exact)
     assert status == [("RMSE-MEAN", "RMSE < 10% | 0.0%", PASSED)]
+
+
+def test_compute_rmse_divides_inside_square_root():
+    assert _compute_rmse([0.0] * 10, [0.3] * 10) == pytest.approx(0.3)
+    assert _compute_rmse([0.0, 3.0], [4.0, 3.0]) == pytest.approx((16 / 2) ** 0.5)
+
+
+def test_inconsistent_numeric_column_fails_rmse_for_many_rows():
+    bsh = [{"score": 0.0} for _ in range(100)]
+    ers = [{"score": 1.0} for _ in range(100)]
+    status = _compare_outputs(bsh, ers, _exact)
+    assert status == [("RMSE-score", "RMSE > 10%: 100.0%", FAILED)]
 
 
 def test_string_column_with_blanks_passes():
